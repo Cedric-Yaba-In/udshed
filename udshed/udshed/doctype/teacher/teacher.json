@@ -1,0 +1,137 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:email",
+ "creation": "2026-02-02 06:22:38.033751",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "informations_de_base_section",
+  "first_name",
+  "email",
+  "full_name",
+  "column_break_orpe",
+  "last_name",
+  "phone",
+  "user",
+  "informations_professionel_section",
+  "tittre",
+  "universite_rattache",
+  "column_break_cpvj",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "informations_de_base_section",
+   "fieldtype": "Section Break",
+   "label": "Informations de base"
+  },
+  {
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Nom",
+   "reqd": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Email",
+   "options": "Email",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_orpe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Pr\u00e9nom",
+   "reqd": 1
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Phone",
+   "label": "T\u00e9l\u00e9phone",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Utilisateur",
+   "options": "User"
+  },
+  {
+   "fieldname": "informations_professionel_section",
+   "fieldtype": "Section Break",
+   "label": "Informations professionel"
+  },
+  {
+   "fieldname": "tittre",
+   "fieldtype": "Select",
+   "label": "Titre",
+   "options": "Ing\u00e9nieur\nAssistant\nCharg\u00e9 de cours\nDocteur\nMaitre de conf\u00e9rence\nProfesseur"
+  },
+  {
+   "fieldname": "column_break_cpvj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Permanent\nVacataire",
+   "reqd": 1
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "is_virtual": 1,
+   "label": "Nom complet",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "universite_rattache",
+   "fieldtype": "Select",
+   "label": "Universit\u00e9 de rattache",
+   "options": "Non d\u00e9finis\nDshang\nYaound\u00e9\nBandjoun\nBuea\nGaroua\nDouala"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-02-03 05:33:30.871801",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "Teacher",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "full_name"
+}

@@ -1,0 +1,132 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:code",
+ "creation": "2026-02-01 23:28:50.421367",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "nouveau_cours_section",
+  "code",
+  "nombre_dheure_cm",
+  "nombre_dheure_tp",
+  "nombre_dheure_total",
+  "tronc_commun",
+  "column_break_askz",
+  "intitule",
+  "teacher",
+  "filiere",
+  "niveau",
+  "semestre"
+ ],
+ "fields": [
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Code",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "nombre_dheure_cm",
+   "fieldtype": "Float",
+   "label": "Nombre d'heure (CM)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "nombre_dheure_tp",
+   "fieldtype": "Float",
+   "label": "Nombre d'heure (TP)",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_askz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "teacher",
+   "fieldtype": "Link",
+   "label": "Enseignant",
+   "options": "Teacher"
+  },
+  {
+   "fieldname": "nouveau_cours_section",
+   "fieldtype": "Section Break",
+   "label": "Nouveau cours"
+  },
+  {
+   "fieldname": "filiere",
+   "fieldtype": "Link",
+   "label": "Filiere",
+   "options": "Field of study",
+   "reqd": 1
+  },
+  {
+   "fieldname": "niveau",
+   "fieldtype": "Link",
+   "label": "Niveau",
+   "options": "Field of study Level",
+   "reqd": 1
+  },
+  {
+   "fieldname": "semestre",
+   "fieldtype": "Select",
+   "label": "Semestre",
+   "options": "Semestre 1\nSemestre 2",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "tronc_commun",
+   "fieldtype": "Check",
+   "label": "Tronc commun "
+  },
+  {
+   "fieldname": "intitule",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Intitul\u00e9",
+   "reqd": 1
+  },
+  {
+   "fieldname": "nombre_dheure_total",
+   "fieldtype": "Float",
+   "is_virtual": 1,
+   "label": "Total",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-02-03 05:36:52.676947",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "Course",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "intitule"
+}

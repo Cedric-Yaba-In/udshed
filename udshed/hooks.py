@@ -21,6 +21,20 @@ app_license = "mit"
 # 	}
 # ]
 
+
+
+#Fixutres
+#------------
+fixtures = [
+    {
+        "dt" : "Role",
+        "filters": [
+            ["name","in",["Teacher"]]
+        ]
+    }
+]
+
+
 # Includes in <head>
 # ------------------
 

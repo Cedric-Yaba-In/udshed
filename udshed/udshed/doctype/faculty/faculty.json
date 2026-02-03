@@ -1,0 +1,75 @@
+{
+ "actions": [],
+ "autoname": "field:faculty_code",
+ "creation": "2026-02-01 22:58:13.580556",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "faculty_name",
+  "column_break_wtov",
+  "faculty_code",
+  "section_break_janr",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "faculty_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Nom ",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_wtov",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_janr",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "faculty_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Code",
+   "reqd": 1,
+   "unique": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-02-03 05:02:14.207487",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "Faculty",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "faculty_name"
+}

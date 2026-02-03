@@ -1,0 +1,111 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format: {start_year}-{end_year}",
+ "creation": "2026-02-01 22:38:25.312078",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "d\u00e9but_section",
+  "start_month",
+  "column_break_qzpe",
+  "start_year",
+  "fin_section",
+  "end_month",
+  "column_break_zevo",
+  "end_year",
+  "en_cours__section",
+  "is_current_year"
+ ],
+ "fields": [
+  {
+   "fieldname": "d\u00e9but_section",
+   "fieldtype": "Section Break",
+   "label": "D\u00e9but"
+  },
+  {
+   "fieldname": "start_month",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Mois de d\u00e9but",
+   "options": "Janvier\nF\u00e9vri\u00e9r\nMars\nAvril\nMai\nJuin\nJuillet\nAout\nSeptembre\nOctobre\nNovembre\nDecembre",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_qzpe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "start_year",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Ann\u00e9e de d\u00e9but",
+   "options": "2024\n2025\n2026\n2027\n2028\n2029\n2030",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fin_section",
+   "fieldtype": "Section Break",
+   "label": "Fin"
+  },
+  {
+   "fieldname": "end_month",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Mois de fin",
+   "options": "Janvier\nF\u00e9vri\u00e9r\nMars\nAvril\nMai\nJuin\nJuillet\nAout\nSeptembre\nOctobre\nNovembre\nDecembre",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_zevo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "end_year",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Ann\u00e9e de fin",
+   "options": "2024\n2025\n2026\n2027\n2028\n2029\n2030",
+   "reqd": 1
+  },
+  {
+   "fieldname": "en_cours__section",
+   "fieldtype": "Section Break",
+   "label": "En cours ?"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_current_year",
+   "fieldtype": "Check",
+   "label": "C'est l'ann\u00e9e en cours?"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-02-02 10:37:44.338196",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "Academic Year",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

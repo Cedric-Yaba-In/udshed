@@ -1,0 +1,113 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-02-03 05:52:50.028149",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "g\u00e9n\u00e9ral_tab",
+  "current_year",
+  "column_break_lpdk",
+  "school_name",
+  "plage_horaire_section",
+  "start_hours_morning",
+  "end_hours_morning",
+  "column_break_eqll",
+  "start_hours_evening",
+  "end_hours_evening",
+  "tab_2_tab"
+ ],
+ "fields": [
+  {
+   "fieldname": "g\u00e9n\u00e9ral_tab",
+   "fieldtype": "Tab Break",
+   "label": "G\u00e9n\u00e9ral"
+  },
+  {
+   "fieldname": "current_year",
+   "fieldtype": "Link",
+   "label": "Ann\u00e9e Acad\u00e9mique courante",
+   "options": "Academic Year"
+  },
+  {
+   "fieldname": "tab_2_tab",
+   "fieldtype": "Tab Break",
+   "label": "Tab 2"
+  },
+  {
+   "fieldname": "school_name",
+   "fieldtype": "Data",
+   "label": "Nom de l'\u00e9tablissement"
+  },
+  {
+   "fieldname": "column_break_lpdk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "plage_horaire_section",
+   "fieldtype": "Section Break",
+   "label": "Plage horaire"
+  },
+  {
+   "fieldname": "column_break_eqll",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "2",
+   "fieldname": "start_hours_morning",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Heure de debut (matin\u00e9e)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "end_hours_morning",
+   "fieldtype": "Time",
+   "hide_days": 1,
+   "hide_seconds": 1,
+   "in_list_view": 1,
+   "label": "Heure de fin (matin\u00e9e)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "start_hours_evening",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Heure de d\u00e9but (soir\u00e9e)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "end_hours_evening",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "Heure de fin (soir\u00e9e)",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-02-03 06:14:24.155363",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "Udshed Setting",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

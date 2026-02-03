@@ -1,0 +1,103 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:field_of_study_code",
+ "creation": "2026-02-01 23:01:40.682086",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "entrez_les_informations_de_la_fili\u00e9re_section",
+  "name_of_field",
+  "facult\u00e9",
+  "coordonateur",
+  "column_break_fzsk",
+  "field_of_study_code",
+  "description",
+  "levels",
+  "table_aeew"
+ ],
+ "fields": [
+  {
+   "fieldname": "name_of_field",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Intitul\u00e9",
+   "reqd": 1
+  },
+  {
+   "fieldname": "coordonateur",
+   "fieldtype": "Link",
+   "label": "Coordonateur",
+   "link_filters": "[[\"Teacher\",\"status\",\"=\",\"Permanent\"]]",
+   "options": "Teacher"
+  },
+  {
+   "fieldname": "column_break_fzsk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "entrez_les_informations_de_la_fili\u00e9re_section",
+   "fieldtype": "Section Break",
+   "label": "Entrez les informations de la fili\u00e9re"
+  },
+  {
+   "fieldname": "facult\u00e9",
+   "fieldtype": "Link",
+   "label": "Facult\u00e9",
+   "options": "Faculty",
+   "reqd": 1
+  },
+  {
+   "fieldname": "levels",
+   "fieldtype": "Section Break",
+   "label": "Niveaux d'\u00e9tude"
+  },
+  {
+   "fieldname": "table_aeew",
+   "fieldtype": "Table",
+   "options": "Field of study Level"
+  },
+  {
+   "fieldname": "field_of_study_code",
+   "fieldtype": "Data",
+   "label": "Code",
+   "reqd": 1,
+   "unique": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-02-03 05:04:45.170110",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "Field of study",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "name_of_field"
+}

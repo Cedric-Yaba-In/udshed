@@ -1,47 +1,57 @@
 frappe.require('/assets/udshed/css/planning_academique.css');
 /** Show Dialog when open cell */
 function openCreatePlanningDialog(day, halfDay) {
+  let translateValue = {"Morning":"Matin","Afternoon":"Après-midi"};
   const dialog = new frappe.ui.Dialog({
-    title: "Nouvelle planification",
+    title: `Nouvelle planification du ${day.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'long' })} (${translateValue[halfDay]})`,
     fields: [
       {
         fieldtype: "Link",
         label: "Cours",
-        fieldname: "subject",
+        fieldname: "cours",
         options: "Course",
-        reqd: 1
-      },
-      {
-        fieldtype: "Link",
-        label: "Salle",
-        fieldname: "room",
-        options: "Room",
         reqd: 1
       },
       {
         fieldtype: "Select",
         label: "Type",
         fieldname: "course_type",
-        options: ["CM", "TP", "CC", "EXAM"]
+        options: [ "Cours", "Traveaux Pratiques (TP)", "Controlle Continue (CC)", "Examen de session normal", "Examen de rattrapage"]
       }
     ],
     primary_action_label: "Créer",
     primary_action(values) {
       frappe.call({
-        method: "udshed.api.create_planning",
+        method: "udshed.api.planning_calendar.create_planning",
         args: {
           ...values,
-          day_of_week: day,
+          day_of_week: day.toISOString().split('T')[0],
           half_day: halfDay,
-          week_start: frappe.datetime.obj_to_str(currentWeekStart)
         },
-        callback: () => {
+        callback: (e) => {
           dialog.hide();
           loadPlanning(
             document.getElementById("week-select"),
             document.getElementById("month-picker")
           );
-        }
+        },
+		error: (err) => {
+			// ici on reçoit l'exception Python
+			if (err.exc_type === "ValidationError") {
+				frappe.msgprint({
+				title: "Conflit de planning",
+				indicator: "red",
+				message: err.exception.split(":")[1]   // <-- ici ton texte: "Conflit de planning détecté..."
+				});
+			} else {
+				frappe.msgprint({
+				title: "Erreur inattendue",
+				indicator: "red",
+				message: "Une erreur est survenue, vérifiez la console."
+				});
+				console.error(err);
+			}
+			}
       });
     }
   });
@@ -59,7 +69,8 @@ function openEditPlanningDialog(course) {
         label: "Cours",
         fieldname: "subject",
         options: "Course",
-        default: course.subject
+        default: course.subject,
+		"reqd": 1
       },
       {
         fieldtype: "Link",
@@ -443,14 +454,16 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 	// Evenement sur les celuules de planning
 
 	$(document).on("click", ".planning-cell", function () {
-		const day = $(this).data("day");
+		currentDay = new Date(parseInt(weekSelect.value)); // Récupérer la date de la semaine sélectionnée
+		let day ={ "Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3, "Friday": 4,"Saturday": 5}
+		currentDay.setDate(currentDay.getDate() + day[($(this).data("day"))]);
 		const half = $(this).data("half");
 		const courseData = $(this).data("course");
 
 		if (courseData) {
 			openEditPlanningDialog(courseData);
 		} else {
-			openCreatePlanningDialog(day, half);
+			openCreatePlanningDialog(currentDay, half);
 		}
 	});
 

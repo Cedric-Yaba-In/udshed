@@ -10,9 +10,10 @@
  "field_order": [
   "cours",
   "type",
+  "academic_year",
   "column_break_ieyd",
-  "periode_debut",
-  "period_fin"
+  "date",
+  "period"
  ],
  "fields": [
   {
@@ -32,25 +33,30 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "periode_debut",
+   "fieldname": "date",
    "fieldtype": "Datetime",
    "in_list_view": 1,
-   "label": "Periode de debut",
+   "label": "Date",
    "reqd": 1
   },
   {
-   "fieldname": "period_fin",
-   "fieldtype": "Datetime",
-   "in_list_view": 1,
-   "label": "Periode de fin",
-   "reqd": 1
+   "fieldname": "period",
+   "fieldtype": "Select",
+   "label": "Period",
+   "options": "Morning\nAfternoon"
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "label": "Ann\u00e9e acad\u00e9mique",
+   "options": "Academic Year"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2026-02-04 07:09:47.820803",
+ "modified": "2026-02-05 14:05:33.947733",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Planning Item",

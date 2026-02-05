@@ -11,15 +11,15 @@ app_license = "mit"
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "udshed",
-# 		"logo": "/assets/udshed/logo.png",
-# 		"title": "Udshed",
-# 		"route": "/udshed",
-# 		"has_permission": "udshed.api.permission.has_app_permission"
-# 	}
-# ]
+add_to_apps_screen = [
+	{
+		"name": "udshed",
+		"logo": "/assets/udshed/logo-basic.png",
+		"title": "Udshed",
+		"route": "/udshed",
+		"has_permission": "udshed.api.permission.has_app_permission"
+	}
+]
 
 
 

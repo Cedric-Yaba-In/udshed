@@ -9,12 +9,12 @@
   "entrez_les_informations_de_la_fili\u00e9re_section",
   "name_of_field",
   "facult\u00e9",
-  "coordonateur",
+  "department_coordinator",
   "column_break_fzsk",
   "field_of_study_code",
   "description",
   "levels",
-  "table_aeew"
+  "field_of_study_level"
  ],
  "fields": [
   {
@@ -23,13 +23,6 @@
    "in_list_view": 1,
    "label": "Intitul\u00e9",
    "reqd": 1
-  },
-  {
-   "fieldname": "coordonateur",
-   "fieldtype": "Link",
-   "label": "Coordonateur",
-   "link_filters": "[[\"Teacher\",\"status\",\"=\",\"Permanent\"]]",
-   "options": "Teacher"
   },
   {
    "fieldname": "column_break_fzsk",
@@ -58,23 +51,30 @@
    "label": "Niveaux d'\u00e9tude"
   },
   {
-   "fieldname": "table_aeew",
-   "fieldtype": "Table",
-   "options": "Field of study Level"
-  },
-  {
    "fieldname": "field_of_study_code",
    "fieldtype": "Data",
    "label": "Code",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "fieldname": "department_coordinator",
+   "fieldtype": "Link",
+   "label": "Chefs de d\u00e9partement",
+   "link_filters": "[[\"Teacher\",\"status\",\"=\",\"Permanent\"]]",
+   "options": "Teacher"
+  },
+  {
+   "fieldname": "field_of_study_level",
+   "fieldtype": "Table",
+   "options": "Field of study Level"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-03 05:04:45.170110",
- "modified_by": "Administrator",
+ "modified": "2026-02-03 11:41:40.036802",
+ "modified_by": "admin@udshed.com",
  "module": "Udshed",
  "name": "Field of study",
  "naming_rule": "By fieldname",
@@ -89,6 +89,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Coordonateur",
    "share": 1,
    "write": 1
   }

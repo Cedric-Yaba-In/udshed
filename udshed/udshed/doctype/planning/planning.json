@@ -1,12 +1,17 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format: {field_of_study} {field_of_study_level}",
  "creation": "2026-02-03 05:45:28.636221",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "informations_du_planing_section",
-  "classe"
+  "field_of_study",
+  "column_break_oqyy",
+  "field_of_study_level",
+  "planning_section",
+  "planning_table"
  ],
  "fields": [
   {
@@ -15,19 +20,40 @@
    "label": "Informations du planing"
   },
   {
-   "fieldname": "classe",
+   "fieldname": "column_break_oqyy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "field_of_study",
    "fieldtype": "Link",
-   "label": "Salle",
+   "label": "Fili\u00e9re",
+   "options": "Field of study"
+  },
+  {
+   "fieldname": "field_of_study_level",
+   "fieldtype": "Link",
+   "label": "Niveau",
    "options": "Field of study Level"
+  },
+  {
+   "fieldname": "planning_section",
+   "fieldtype": "Section Break",
+   "label": "Planning"
+  },
+  {
+   "fieldname": "planning_table",
+   "fieldtype": "Table",
+   "options": "Planning Item"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-03 05:47:37.408523",
- "modified_by": "Administrator",
+ "modified": "2026-02-04 06:31:35.986628",
+ "modified_by": "admin@udshed.com",
  "module": "Udshed",
  "name": "Planning",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {

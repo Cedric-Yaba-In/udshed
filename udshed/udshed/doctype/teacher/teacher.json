@@ -1,7 +1,6 @@
 {
  "actions": [],
- "allow_rename": 1,
- "autoname": "field:email",
+ "autoname": "format:{first_name} {last_name}",
  "creation": "2026-02-02 06:22:38.033751",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -90,9 +89,9 @@
    "reqd": 1
   },
   {
+   "default": "f\"{first_name} {last_name}\"",
    "fieldname": "full_name",
    "fieldtype": "Data",
-   "is_virtual": 1,
    "label": "Nom complet",
    "read_only": 1,
    "unique": 1
@@ -107,11 +106,11 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-03 05:33:30.871801",
- "modified_by": "Administrator",
+ "modified": "2026-02-03 11:12:18.835907",
+ "modified_by": "admin@udshed.com",
  "module": "Udshed",
  "name": "Teacher",
- "naming_rule": "By fieldname",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -129,7 +128,7 @@
  ],
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
- "show_title_field_in_link": 1,
+ "search_fields": "email",
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],

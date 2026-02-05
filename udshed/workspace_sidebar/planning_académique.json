@@ -1,0 +1,29 @@
+{
+ "app": "udshed",
+ "creation": "2026-02-05 05:11:58.859067",
+ "docstatus": 0,
+ "doctype": "Workspace Sidebar",
+ "header_icon": "calendar-range",
+ "idx": 0,
+ "items": [
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "calendar",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Plaining",
+   "link_to": "planning-academique",
+   "link_type": "Page",
+   "show_arrow": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-02-05 05:50:56.549573",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "Planning Acad\u00e9mique",
+ "owner": "Administrator",
+ "standard": 1,
+ "title": "Planning Acad\u00e9mique"
+}

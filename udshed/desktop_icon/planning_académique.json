@@ -1,0 +1,31 @@
+{
+ "app": "udshed",
+ "creation": "2026-02-05 05:14:20.337087",
+ "docstatus": 0,
+ "doctype": "Desktop Icon",
+ "hidden": 0,
+ "icon": "calendar-range",
+ "icon_type": "Link",
+ "idx": 0,
+ "label": "Planning Acad\u00e9mique",
+ "link_to": "Planning Acad\u00e9mique",
+ "link_type": "Workspace Sidebar",
+ "modified": "2026-02-05 05:14:30.343699",
+ "modified_by": "Administrator",
+ "name": "Planning Acad\u00e9mique",
+ "owner": "Administrator",
+ "restrict_removal": 0,
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Enseignant"
+  },
+  {
+   "role": "Coordonateur"
+  }
+ ],
+ "sidebar": "Planning Acad\u00e9mique",
+ "standard": 1
+}

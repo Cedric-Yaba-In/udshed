@@ -8,16 +8,16 @@
  "field_order": [
   "nouveau_cours_section",
   "code",
+  "intitule",
+  "semestre",
+  "column_break_askz",
   "nombre_dheure_cm",
   "nombre_dheure_tp",
   "nombre_dheure_total",
-  "tronc_commun",
-  "column_break_askz",
-  "intitule",
-  "teacher",
-  "filiere",
-  "niveau",
-  "semestre"
+  "enseignant_section",
+  "table_enseignant",
+  "classes_concern\u00e9es_section",
+  "course_levels"
  ],
  "fields": [
   {
@@ -40,17 +40,11 @@
    "fieldtype": "Float",
    "label": "Nombre d'heure (TP)",
    "non_negative": 1,
-   "reqd": 1
+   "precision": "0"
   },
   {
    "fieldname": "column_break_askz",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "teacher",
-   "fieldtype": "Link",
-   "label": "Enseignant",
-   "options": "Teacher"
   },
   {
    "fieldname": "nouveau_cours_section",
@@ -58,31 +52,11 @@
    "label": "Nouveau cours"
   },
   {
-   "fieldname": "filiere",
-   "fieldtype": "Link",
-   "label": "Filiere",
-   "options": "Field of study",
-   "reqd": 1
-  },
-  {
-   "fieldname": "niveau",
-   "fieldtype": "Link",
-   "label": "Niveau",
-   "options": "Field of study Level",
-   "reqd": 1
-  },
-  {
    "fieldname": "semestre",
    "fieldtype": "Select",
    "label": "Semestre",
    "options": "Semestre 1\nSemestre 2",
    "reqd": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "tronc_commun",
-   "fieldtype": "Check",
-   "label": "Tronc commun "
   },
   {
    "fieldname": "intitule",
@@ -97,13 +71,33 @@
    "is_virtual": 1,
    "label": "Total",
    "read_only": 1
+  },
+  {
+   "fieldname": "enseignant_section",
+   "fieldtype": "Section Break",
+   "label": "Enseignants"
+  },
+  {
+   "fieldname": "classes_concern\u00e9es_section",
+   "fieldtype": "Section Break",
+   "label": "Classes concern\u00e9es"
+  },
+  {
+   "fieldname": "table_enseignant",
+   "fieldtype": "Table",
+   "options": "Course Teacher Item"
+  },
+  {
+   "fieldname": "course_levels",
+   "fieldtype": "Table",
+   "options": "Course Field of study level item"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-03 05:36:52.676947",
- "modified_by": "Administrator",
+ "modified": "2026-02-03 11:59:34.034563",
+ "modified_by": "admin@udshed.com",
  "module": "Udshed",
  "name": "Course",
  "naming_rule": "By fieldname",
@@ -118,6 +112,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Coordonateur",
    "share": 1,
    "write": 1
   }

@@ -7,26 +7,33 @@ frappe.ui.form.on("Course", {
             "nombre_dheure_total":parseInt(frm.doc.nombre_dheure_cm) + parseInt(frm.doc.nombre_dheure_tp) 
         })
     },
-	filiere(frm) {
-        if(!frm.doc.filiere) {
-            frm.set_value({ niveau: '', })
+
+    filiere(frm) {
+        frm.clear_table('course_levels');
+
+        if (!frm.doc.filiere) {
+            frm.refresh_field('course_levels');
             return;
         }
-        // frappe.db.get_list('Niveau', {
-        //     filters: { 
-        //         filiere: frm.doc.filiere
+
+        // frappe.call({
+        //     method: 'frappe.client.get_list',
+        //     args: {
+        //         doctype: 'Field of study Level',
+        //         filters: {
+        //             filiere: frm.doc.filiere
+        //         },
+        //         fields: ['name']
         //     },
-        //     order_by: 'name asc',
-        //     limit_page_length:1
-        // }).then((r) =>{
-        //     frm.set_value('niveau',r.length ? r)
-        // })
-        frm.fields_dict['niveau'].get_query = function (doc) {
-            return {
-                filters: {
-                    filiere: frm.doc.filiere
-                }
-            }
-        }
+        //     callback: function (r) {
+        //         if (r.message) {
+        //             r.message.forEach(n => {
+        //                 let row = frm.add_child('course_levels');
+        //                 row.niveau = n.name;
+        //             });
+        //             frm.refresh_field('course_levels');
+        //         }
+        //     }
+        // });
     }
 });

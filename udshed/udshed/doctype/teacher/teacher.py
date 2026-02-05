@@ -6,16 +6,21 @@ from frappe.model.document import Document
 import frappe
 
 
+
 class Teacher(Document):
 	
-	def get_full_name(self):
-		nom = self.first_name or ''
-		prenom = self.last_name or ''
-		return f'{nom} {prenom}'.strip()
+	# @property
+	# def full_name(self):
+	# 	if not self.user:
+	# 		return ""
+
+	# 	first_name, last_name = frappe.db.get_value(
+	# 		"User",
+	# 		self.user,
+	# 		["first_name", "last_name"]
+	# 	) or ("", "")
+	# 	return f"{first_name or ''} {last_name or ''}".strip()
 	
-	def before_save(self):
-		# self.full_name = self.get_full_name()
-		pass
 	
 	def after_insert(self):
 		if not frappe.db.exists('User', self.email):

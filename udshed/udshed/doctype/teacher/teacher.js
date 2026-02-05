@@ -12,8 +12,8 @@ frappe.ui.form.on("Teacher", {
             }
         }
 
-        frm.set_value({
-          full_name: `${frm.doc.first_name || ''} ${frm.doc.last_name || ''}`,
-        })
+        // frm.set_value({
+        //   full_name: `${frm.doc.first_name || ''} ${frm.doc.last_name || ''}`,
+        // })
     }
 });

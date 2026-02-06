@@ -130,6 +130,18 @@ function render_grid(items) {
 }
 
 
+fetchPlanningItems = (weekStart) => {
+  // 🔑 ICI tu fais ton appel API pour récupérer les items de la semaine
+  // ex:
+  frappe.call({
+    method: "udshed.api.get_week_planning",
+    args: { week_start: weekStart.toISOString().split('T')[0] },
+    callback: (res) => {
+      const items = res.message; // supposons que l'API retourne une liste d'items
+      render_grid(items);
+    }
+  });
+}
 
 function show_calendar(grid_wrapper, grid_data={
         "Monday": { "Morning": null, "Afternoon": null },
@@ -352,7 +364,23 @@ function syncSelectors(weekSelect,monthPicker) {
 /**Grid end days */
 
 
+//**Load data */
 
+/** Load default data */
+function get_data_of_user()
+{
+	frappe.call({
+        method: "udshed.api.user_data.get_user_session_data",
+        args: {
+        },
+        callback: (e) => {
+          console.log("User session data:", e.message);
+        },
+		error: (err) => {
+			console.error("Error fetching user session data:", err);
+		}
+      });
+}
 
 
 frappe.pages['planning-academique'].on_page_load = function(wrapper) {
@@ -372,12 +400,14 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		show_calendar(filters);
     });
 
-	// page.add_field({
-	// 	fieldtype: 'Link',
-	// 	label: 'Année académique',
-	// 	fieldname: 'academic_year',
-	// 	options: 'Academic Year'
-	// });
+	get_data_of_user();
+
+	page.add_field({
+		fieldtype: 'Link',
+		label: 'Année académique',
+		fieldname: 'academic_year',
+		options: 'Academic Year'
+	});
 
 	page.add_field({
 		fieldtype: 'Link',
@@ -390,7 +420,11 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		fieldtype: 'Link',
 		label: 'Filière',
 		fieldname: 'filiere',
-		options: 'Field of study'
+		options: 'Field of study',
+		change() {
+			console.log("Filière sélectionnée :", this.get_value());
+			// Ici tu peux déclencher un rechargement de la grille ou une mise à jour des options de niveau
+		}
 	});
 
 	page.add_field({

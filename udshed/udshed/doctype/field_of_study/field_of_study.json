@@ -8,7 +8,7 @@
  "field_order": [
   "entrez_les_informations_de_la_fili\u00e9re_section",
   "name_of_field",
-  "facult\u00e9",
+  "faculte",
   "department_coordinator",
   "column_break_fzsk",
   "field_of_study_code",
@@ -39,13 +39,6 @@
    "label": "Entrez les informations de la fili\u00e9re"
   },
   {
-   "fieldname": "facult\u00e9",
-   "fieldtype": "Link",
-   "label": "Facult\u00e9",
-   "options": "Faculty",
-   "reqd": 1
-  },
-  {
    "fieldname": "levels",
    "fieldtype": "Section Break",
    "label": "Niveaux d'\u00e9tude"
@@ -68,13 +61,22 @@
    "fieldname": "field_of_study_level",
    "fieldtype": "Table",
    "options": "Field of study Level"
+  },
+  {
+   "fieldname": "faculte",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Facult\u00e9",
+   "options": "Faculty",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-03 11:41:40.036802",
- "modified_by": "admin@udshed.com",
+ "modified": "2026-02-06 07:12:05.939367",
+ "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Field of study",
  "naming_rule": "By fieldname",
@@ -103,6 +105,16 @@
    "role": "Coordonateur",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Enseignant",
+   "select": 1,
+   "share": 1
   }
  ],
  "row_format": "Dynamic",

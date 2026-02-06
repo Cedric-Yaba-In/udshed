@@ -13,11 +13,7 @@
   "column_break_askz",
   "nombre_dheure_cm",
   "nombre_dheure_tp",
-  "nombre_dheure_total",
-  "enseignant_section",
-  "table_enseignant",
-  "classes_concern\u00e9es_section",
-  "course_levels"
+  "nombre_dheure_total"
  ],
  "fields": [
   {
@@ -71,33 +67,13 @@
    "is_virtual": 1,
    "label": "Total",
    "read_only": 1
-  },
-  {
-   "fieldname": "enseignant_section",
-   "fieldtype": "Section Break",
-   "label": "Enseignants"
-  },
-  {
-   "fieldname": "classes_concern\u00e9es_section",
-   "fieldtype": "Section Break",
-   "label": "Classes concern\u00e9es"
-  },
-  {
-   "fieldname": "table_enseignant",
-   "fieldtype": "Table",
-   "options": "Course Teacher Item"
-  },
-  {
-   "fieldname": "course_levels",
-   "fieldtype": "Table",
-   "options": "Course Field of study level item"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-03 11:59:34.034563",
- "modified_by": "admin@udshed.com",
+ "modified": "2026-02-06 05:53:13.960831",
+ "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Course",
  "naming_rule": "By fieldname",

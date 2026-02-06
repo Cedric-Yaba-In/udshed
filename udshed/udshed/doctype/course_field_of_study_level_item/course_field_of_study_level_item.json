@@ -6,17 +6,11 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "fili\u00e9re",
+  "filiere",
   "column_break_rnnn",
   "niveau"
  ],
  "fields": [
-  {
-   "fieldname": "fili\u00e9re",
-   "fieldtype": "Link",
-   "label": "Fili\u00e9re",
-   "options": "Field of study"
-  },
   {
    "fieldname": "column_break_rnnn",
    "fieldtype": "Column Break"
@@ -26,14 +20,20 @@
    "fieldtype": "Link",
    "label": "Niveau",
    "options": "Field of study Level"
+  },
+  {
+   "fieldname": "filiere",
+   "fieldtype": "Link",
+   "label": "Fili\u00e9re",
+   "options": "Field of study"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-02-03 11:35:59.701300",
- "modified_by": "admin@udshed.com",
+ "modified": "2026-02-05 21:50:05.003206",
+ "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Course Field of study level item",
  "owner": "Administrator",

@@ -34,14 +34,28 @@ def get_week_planning(filiere, niveau, academic_year, week_start):
     CourseNiveauFiliere = DocType("Course Field of study level item")
     CourseEnseignant = DocType("Course Teacher Item")
 
-    # query = (
-    #     frappe.qb.from_(PlanningItem)
-    #     .join(Course)
-    #     .on(PlanningItem.course == Course.name)
-    #     .join(CourseNiveauFiliere)
-    #     .on(   CourseNiveauFiliere.parent == Course.name
-    #         & (CourseNiveauFiliere.field_of_study == filiere)
-    # )
+    query = (
+        frappe.qb.from_(PlanningItem)
+        .join(Course)
+        .on(PlanningItem.course == Course.name)
+        .join(CourseNiveauFiliere)
+        .on(   CourseNiveauFiliere.parent == Course.name)
+        .join(CourseEnseignant)
+        .on(CourseEnseignant.parent == Course.name)
+        .select(
+            PlanningItem.name,
+            PlanningItem.course,
+            PlanningItem.date
+        )
+        .where(
+            (CourseNiveauFiliere.field_of_study == filiere) &
+            (CourseNiveauFiliere.level == niveau) &
+            (PlanningItem.academic_year == academic_year) &
+            (PlanningItem.date >= week_start) &
+            (PlanningItem.date < frappe.utils.add_days(week_start, 7))
+        )
+    )
+    return query.run(as_dict=True)
 
 
 @frappe.whitelist()

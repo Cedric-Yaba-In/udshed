@@ -1,6 +1,6 @@
 import frappe
 from frappe.utils import cint
-
+from frappe.query_builder import DocType
 
 @frappe.whitelist()
 def get_teaching_units(
@@ -105,8 +105,29 @@ def get_teaching_units(
 
 	return results
 
+def get_single_teaching_unit(cours,academic_year):
+	print("Cours ",cours,academic_year)
+	if not frappe.db.exists('Teaching Unit', { 'course': cours,"academic_year":academic_year }):
+		frappe.throw("Unité d'enseignement introuvable")
+	teaching_unit = frappe.get_doc("Teaching Unit",{"course":cours,"academic_year":academic_year})
+	return teaching_unit
 
 @frappe.whitelist()
 def get_levels_for_field(field_of_study):
 	doc = frappe.get_doc("Field of study", field_of_study)
 	return [{"level":row.level,"name":row.name} for row in doc.field_of_study_level]
+
+@frappe.whitelist()
+def get_levels(doctype, txt, searchfield, start, page_len, filters):
+	filiere = filters.get("parent")
+
+	return frappe.db.sql("""
+        SELECT
+            CAST(name AS CHAR) AS value,
+            CONCAT(level, ' - ', parent) AS label
+        FROM `tabField of study Level`
+        WHERE parent = %s
+          AND level LIKE %s
+        ORDER BY level
+        LIMIT %s, %s
+    """, (filiere, f"%{txt}%", start, page_len))

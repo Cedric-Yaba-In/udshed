@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "format:{first_name} {last_name}",
+ "autoname": "format:{grade} {first_name} {last_name}",
  "creation": "2026-02-02 06:22:38.033751",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -16,8 +16,10 @@
   "informations_professionel_section",
   "tittre",
   "universite_rattache",
+  "grade",
   "column_break_cpvj",
-  "status"
+  "status",
+  "facult\u00e9"
  ],
  "fields": [
   {
@@ -73,6 +75,7 @@
   {
    "fieldname": "tittre",
    "fieldtype": "Select",
+   "in_standard_filter": 1,
    "label": "Titre",
    "options": "Ing\u00e9nieur\nAssistant\nCharg\u00e9 de cours\nDocteur\nMaitre de conf\u00e9rence\nProfesseur"
   },
@@ -84,6 +87,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Status",
    "options": "Permanent\nVacataire",
    "reqd": 1
@@ -101,13 +105,27 @@
    "fieldtype": "Select",
    "label": "Universit\u00e9 de rattache",
    "options": "Non d\u00e9finis\nDshang\nYaound\u00e9\nBandjoun\nBuea\nGaroua\nDouala"
+  },
+  {
+   "fieldname": "facult\u00e9",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Facult\u00e9",
+   "options": "Field of study"
+  },
+  {
+   "fieldname": "grade",
+   "fieldtype": "Select",
+   "label": "Grade",
+   "options": "Pr\nDr\nIng\nM.",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-03 11:12:18.835907",
- "modified_by": "admin@udshed.com",
+ "modified": "2026-02-08 08:27:06.267252",
+ "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Teacher",
  "naming_rule": "Expression (old style)",
@@ -124,6 +142,27 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Coordonateur",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Enseignant",
+   "share": 1
   }
  ],
  "row_format": "Dynamic",

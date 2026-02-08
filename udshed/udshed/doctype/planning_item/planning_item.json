@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format: {cours} {periode_debut} - {period_fin}",
+ "autoname": "autoincrement",
  "creation": "2026-02-03 06:19:59.611899",
  "default_view": "Calendar",
  "doctype": "DocType",
@@ -20,13 +20,15 @@
    "fieldname": "cours",
    "fieldtype": "Link",
    "label": "Cours",
-   "options": "Course"
+   "options": "Teaching Unit",
+   "reqd": 1
   },
   {
    "fieldname": "type",
    "fieldtype": "Select",
    "label": "Type",
-   "options": "Cours\nTraveaux Pratiques (TP)\nControlle Continue (CC)\nExamen de session normal\nExamen de rattrapage"
+   "options": "Cours\nTraveaux Pratiques (TP)\nControlle Continue (CC)\nExamen de session normal\nExamen de rattrapage",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_ieyd",
@@ -43,24 +45,26 @@
    "fieldname": "period",
    "fieldtype": "Select",
    "label": "Period",
-   "options": "Morning\nAfternoon"
+   "options": "Morning\nAfternoon",
+   "reqd": 1
   },
   {
    "fieldname": "academic_year",
    "fieldtype": "Link",
    "label": "Ann\u00e9e acad\u00e9mique",
-   "options": "Academic Year"
+   "options": "Academic Year",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2026-02-05 14:05:33.947733",
+ "modified": "2026-02-08 07:52:05.304842",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Planning Item",
- "naming_rule": "Expression (old style)",
+ "naming_rule": "Autoincrement",
  "owner": "Administrator",
  "permissions": [
   {
@@ -101,5 +105,6 @@
  "rows_threshold_for_grid_search": 20,
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "cours"
 }

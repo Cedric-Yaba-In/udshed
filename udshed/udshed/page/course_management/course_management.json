@@ -4,7 +4,7 @@
  "docstatus": 0,
  "doctype": "Page",
  "idx": 0,
- "modified": "2026-02-05 22:04:20.400230",
+ "modified": "2026-02-08 06:11:41.022554",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "course-management",
@@ -16,6 +16,12 @@
   },
   {
    "role": "System Manager"
+  },
+  {
+   "role": "Teacher"
+  },
+  {
+   "role": "Enseignant"
   }
  ],
  "script": null,

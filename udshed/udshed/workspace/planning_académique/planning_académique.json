@@ -15,7 +15,7 @@
  "label": "Planning Acad\u00e9mique",
  "link_type": "DocType",
  "links": [],
- "modified": "2026-02-05 19:16:36.415929",
+ "modified": "2026-02-08 06:10:39.278032",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Planning Acad\u00e9mique",
@@ -33,6 +33,9 @@
   },
   {
    "role": "Enseignant"
+  },
+  {
+   "role": "Teacher"
   }
  ],
  "sequence_id": 23.0,

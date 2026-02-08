@@ -1,7 +1,11 @@
 import frappe
 import json
 from datetime import date
+import udshed.api.course as course
 from frappe.query_builder import DocType
+from frappe.query_builder.functions import Count
+from datetime import datetime
+
 
 def get_default_academic_year():
     default_academic_year =frappe.db.get_single_value('Academic Year', 'current_year')
@@ -26,48 +30,61 @@ def get_default_academic_year():
     frappe.db.set_single_value('Academic Year', 'current_year', default_academic_year.name)
     return default_academic_year.name
 
-
 @frappe.whitelist()
-def get_week_planning(filiere, niveau, academic_year, week_start):
+def get_week_planning(academic_year,filiere, niveau,  week_start):
     PlanningItem = DocType("Planning Item")
-    Course = DocType("Course")
+    TeachingUnit = DocType("Teaching Unit")
     CourseNiveauFiliere = DocType("Course Field of study level item")
     CourseEnseignant = DocType("Course Teacher Item")
+    date_week_start = datetime.fromisoformat(week_start)
 
     query = (
         frappe.qb.from_(PlanningItem)
-        .join(Course)
-        .on(PlanningItem.course == Course.name)
+        .join(TeachingUnit)
+        .on(PlanningItem.cours == TeachingUnit.name)
         .join(CourseNiveauFiliere)
-        .on(   CourseNiveauFiliere.parent == Course.name)
+        .on(CourseNiveauFiliere.parent == TeachingUnit.name)
         .join(CourseEnseignant)
-        .on(CourseEnseignant.parent == Course.name)
+        .on(CourseEnseignant.parent == TeachingUnit.name)
         .select(
+            TeachingUnit.course,
             PlanningItem.name,
-            PlanningItem.course,
-            PlanningItem.date
+            PlanningItem.type,
+            PlanningItem.cours,
+            PlanningItem.date,
+            PlanningItem.period,
+            CourseNiveauFiliere.niveau,
+            CourseNiveauFiliere.filiere,
+            CourseEnseignant.enseignant,
         )
         .where(
-            (CourseNiveauFiliere.field_of_study == filiere) &
-            (CourseNiveauFiliere.level == niveau) &
-            (PlanningItem.academic_year == academic_year) &
-            (PlanningItem.date >= week_start) &
-            (PlanningItem.date < frappe.utils.add_days(week_start, 7))
+            (CourseNiveauFiliere.filiere == filiere) &
+            (CourseNiveauFiliere.niveau == niveau) &
+            (PlanningItem.academic_year == academic_year) #&
+            # (PlanningItem.date >= date_week_start) &
+            # (PlanningItem.date < frappe.utils.add_days(date_week_start, 7))
         )
     )
-    return query.run(as_dict=True)
+    data =  query.run(as_dict=True)
+    data = [item for item in data if item.date >= date_week_start and item.date <= frappe.utils.add_days(date_week_start, 7)]
+
+    for doc in data:
+        teacher = frappe.get_doc("Teacher",{"name":doc.enseignant})
+        doc["enseignant"] = f"{teacher.grade}. {teacher.first_name} {teacher.last_name}"
+
+    return data
 
 
 @frappe.whitelist()
-def create_planning(cours, course_type, day_of_week, half_day):
+def create_planning(academic_year, cours, course_type, day_of_week, half_day):
 
-    cours_value = frappe.get_doc("Course", {"name":cours})
-    cours_teachers = list(map(lambda x: x.enseignant, cours_value.table_enseignant))
-    default_academic_year =get_default_academic_year()
+    teaching_unit = course.get_single_teaching_unit(cours,academic_year)
+    cours_teachers = list(map(lambda x: x.enseignant, teaching_unit.table_enseignant))
+    date_week_start = datetime.fromisoformat(day_of_week)
 
-    planning_days = frappe.get_all("Planning Item",{"date":day_of_week, "period":half_day},["name","cours","type","date","period"])
+    planning_days = frappe.get_all("Planning Item",{"date":date_week_start, "period":half_day},["name","cours","type","date","period"])
     for plan in planning_days:
-        doc = frappe.get_doc("Course", plan.cours)
+        doc = course.get_single_teaching_unit(plan.cours,academic_year)
         cours_teachers_existing = list(map(lambda x: x.enseignant, doc.table_enseignant))
         # Check for common teachers
         common_teachers = set(cours_teachers).intersection(set(cours_teachers_existing))
@@ -76,11 +93,11 @@ def create_planning(cours, course_type, day_of_week, half_day):
 
     planning = frappe.get_doc({
         "doctype":"Planning Item",
-        "cours":cours_value.name,
+        "cours":teaching_unit.name,
         "type":course_type,
-        "date":day_of_week,
+        "date":date_week_start,
         "period":half_day,
-        "academic_year":default_academic_year
+        "academic_year":academic_year
     })
 
     planning.insert(ignore_permissions = True)

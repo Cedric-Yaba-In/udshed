@@ -22,6 +22,7 @@ class Teacher(Document):
 	# 	return f"{first_name or ''} {last_name or ''}".strip()
 	
 	
+	
 	def after_insert(self):
 		if not frappe.db.exists('User', self.email):
 			user = frappe.get_doc({

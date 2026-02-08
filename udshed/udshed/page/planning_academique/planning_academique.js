@@ -1,505 +1,213 @@
-frappe.require('/assets/udshed/css/planning_academique.css');
-/** Show Dialog when open cell */
-function openCreatePlanningDialog(day, halfDay) {
-  let translateValue = {"Morning":"Matin","Afternoon":"Après-midi"};
-  const dialog = new frappe.ui.Dialog({
-    title: `Nouvelle planification du ${day.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'long' })} (${translateValue[halfDay]})`,
-    fields: [
-      {
-        fieldtype: "Link",
-        label: "Cours",
-        fieldname: "cours",
-        options: "Course",
-        reqd: 1
-      },
-      {
-        fieldtype: "Select",
-        label: "Type",
-        fieldname: "course_type",
-        options: [ "Cours", "Traveaux Pratiques (TP)", "Controlle Continue (CC)", "Examen de session normal", "Examen de rattrapage"]
-      }
-    ],
-    primary_action_label: "Créer",
-    primary_action(values) {
-      frappe.call({
-        method: "udshed.api.planning_calendar.create_planning",
-        args: {
-          ...values,
-          day_of_week: day.toISOString().split('T')[0],
-          half_day: halfDay,
-        },
-        callback: (e) => {
-          dialog.hide();
-          loadPlanning(
-            document.getElementById("week-select"),
-            document.getElementById("month-picker")
-          );
-        },
-		error: (err) => {
-			// ici on reçoit l'exception Python
-			if (err.exc_type === "ValidationError") {
-				frappe.msgprint({
-				title: "Conflit de planning",
-				indicator: "red",
-				message: err.exception.split(":")[1]   // <-- ici ton texte: "Conflit de planning détecté..."
-				});
-			} else {
-				frappe.msgprint({
-				title: "Erreur inattendue",
-				indicator: "red",
-				message: "Une erreur est survenue, vérifiez la console."
-				});
-				console.error(err);
-			}
-			}
-      });
-    }
-  });
-
-  dialog.show();
-}
-
-
-function openEditPlanningDialog(course) {
-  const dialog = new frappe.ui.Dialog({
-    title: "Modifier la planification",
-    fields: [
-      {
-        fieldtype: "Link",
-        label: "Cours",
-        fieldname: "subject",
-        options: "Course",
-        default: course.subject,
-		"reqd": 1
-      },
-      {
-        fieldtype: "Link",
-        label: "Salle",
-        fieldname: "room",
-        options: "Room",
-        default: course.room
-      },
-      {
-        fieldtype: "Select",
-        label: "Type",
-        fieldname: "course_type",
-        options: ["CM", "TP", "CC", "EXAM"],
-        default: course.course_type
-      }
-    ],
-    primary_action_label: "Mettre à jour",
-    primary_action(values) {
-      frappe.call({
-        method: "udshed.api.update_planning",
-        args: {
-          name: course.name, // ID DocType
-          ...values
-        },
-        callback: () => {
-          dialog.hide();
-          loadPlanning(
-            document.getElementById("week-select"),
-            document.getElementById("month-picker")
-          );
-        }
-      });
-    }
-  });
-
-  dialog.show();
-}
-
-/**End Dialog */
-
-/**Grid show */
-function render_grid(items) {
-    let grid = {
-        "Monday": { "Morning": null, "Afternoon": null },
-        "Tuesday": { "Morning": null, "Afternoon": null },
-        "Wednesday": { "Morning": null, "Afternoon": null },
-        "Thursday": { "Morning": null, "Afternoon": null },
-        "Friday": { "Morning": null, "Afternoon": null },
-        "Saturday": { "Morning": null, "Afternoon": null }
-    };
-
-    items.forEach(item => {
-        grid[item.day_of_week][item.half_day] = item;
-    });
-
-    // ici tu construis le HTML de la table
-}
-
-
-fetchPlanningItems = (weekStart) => {
-  // 🔑 ICI tu fais ton appel API pour récupérer les items de la semaine
-  // ex:
-  frappe.call({
-    method: "udshed.api.get_week_planning",
-    args: { week_start: weekStart.toISOString().split('T')[0] },
-    callback: (res) => {
-      const items = res.message; // supposons que l'API retourne une liste d'items
-      render_grid(items);
-    }
-  });
-}
-
-function show_calendar(grid_wrapper, grid_data={
-        "Monday": { "Morning": null, "Afternoon": null },
-        "Tuesday": { "Morning": null, "Afternoon": null },
-        "Wednesday": { "Morning": null, "Afternoon": null },
-        "Thursday": { "Morning": null, "Afternoon": null },
-        "Friday": { "Morning": null, "Afternoon": null },
-        "Saturday": { "Morning": null, "Afternoon": null }
-    })
-{
-	grid_wrapper.empty();
-
-	let morningPlan = [];
-	let afternoonPlan = [];
-
-	// Construire les lignes du matin et de l'après-midi
-	for (let day of ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]) {
-		let morningItem = grid_data[day]["Morning"];
-		let afternoonItem = grid_data[day]["Afternoon"];
-
-		morningPlan.push(morningItem ? `
-			<div class="planning-cell" data-day="${day}" data-half="${morningItem.half_day}" data-course='${JSON.stringify(morningItem)}'>
-				<div class="planning-item">
-					<div class="planning-item-title">${morningItem.subject}</div>
-					<div class="planning-item-meta">${morningItem.level} – ${morningItem.room}</div>
-				</div>
-			</div>` : `<div class="planning-cell empty" data-day="${day}" data-half="Morning">
-				 <div class="no-course">Pas cours</div>
-			</div>`);
-
-		afternoonPlan.push(afternoonItem ? `
-			<div class="planning-cell" data-day="${day}" data-half="${afternoonItem.half_day}" data-course='${JSON.stringify(afternoonItem)}'>
-				<div class="planning-item">
-					<div class="planning-item-title">${afternoonItem.subject}</div>
-					<div class="planning-item-meta">${afternoonItem.level} – ${afternoonItem.room}</div>
-				</div>
-			</div>` : `<div class="planning-cell empty" data-day="${day}" data-half="Afternoon">
-			 <div class="no-course">Pas cours</div>
-			</div>`);
-	}
-
-	return `
-		<div class="planning-calendar" id="planning_calendar">
-
-		<div class="planning-nav">
-			<div class="planning-nav-left">
-				<button class="btn btn-default btn-sm" id="prev-week">
-				◀
-				</button>
-
-				<button class="btn btn-default btn-sm" id="today-week">
-				Aujourd’hui
-				</button>
-
-				<button class="btn btn-default btn-sm" id="next-week">
-				▶
-				</button>
-			</div>
-
-			<div class="planning-nav-center">
-				<span id="week-label"></span>
-			</div>
-
-			<div class="planning-nav-right">
-				<select id="month-picker" class="form-control input-sm"></select>
-  				<select id="week-select" class="form-control input-sm"></select>
-			</div>
-			</div>
-
-
-			<div class="planning-grid">
-
-				<div></div>
-				<div class="planning-header">Lundi</div>
-				<div class="planning-header">Mardi</div>
-				<div class="planning-header">Mercredi</div>
-				<div class="planning-header">Jeudi</div>
-				<div class="planning-header">Vendredi</div>
-				<div class="planning-header">Samedi</div>
-
-				<div class="planning-time-label">
-				<span>Matin</span>
-				<div class="planning-time-range">08:00 - 12:00</div>
-				</div>
-				
-				${morningPlan.join('')}
-
-				<div class="planning-time-label">
-					<span>Après-midi</span>
-					<div class="planning-time-range">13:00 - 17:00</div>
-				</div>				
-				${afternoonPlan.join('')}
-			</div>
-		</div>`
-	
-} 
-
-function loadPlanning(weekSelect,monthPicker) {
-  updateWeekLabel();
-  syncSelectors(weekSelect,monthPicker);
-
-  console.log("Planning chargé :", currentWeekStart);
-
-  // 🔁 ICI tu recharges ta grille
-  // ex:
-  // fetchPlanningItems(currentWeekStart)
-  console.log("Chargement semaine :", currentWeekStart);
-}
-
-/** End show grid */
-
-/**Grid days */
-function createLocalDate(year, month, day) {
-  return new Date(year, month, day, 12, 0, 0);
-}
-
-
-function getMonday(date) {
-	console.log("Date for getMonday:", date);
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-//   return new Date(d.setDate(diff));
-	return createLocalDate(d.getFullYear(), d.getMonth(), diff);
-}
-var currentWeekStart = getMonday(new Date());
-
-function updateWeekLabel() {
-  const start = new Date(currentWeekStart);
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);
-
-  const options = { day: '2-digit', month: 'long', year: 'numeric' };
-
-  document.getElementById("week-label").innerText =
-    `Semaine du ${start.toLocaleDateString('fr-FR', options)} au ${end.toLocaleDateString('fr-FR', options)}`;
-}
-
-function initMonthPicker(monthPicker) {
-  const now = new Date();
-  const year = now.getFullYear();
-
-  for (let m = 0; m < 12; m++) {
-    const date = new Date(year, m, 1);
-    const option = document.createElement("option");
-
-    option.value = `${year}-${m}`;
-    option.text = date.toLocaleDateString('fr-FR', {
-      month: 'long',
-      year: 'numeric'
-    });
-
-    if (m === now.getMonth()) option.selected = true;
-    monthPicker.appendChild(option);
-  }
-}
-
-function getWeeksOfMonth(year, month) {
-  const weeks = [];
-  const firstDay = createLocalDate(year, month, 1);
-  const lastDay = createLocalDate(year, month + 1, 0);
-
-  let current = getMonday(firstDay);
-
-  while (current <= lastDay) {
-    weeks.push(new Date(current));
-    current.setDate(current.getDate() + 7);
-  }
-
-  return weeks;
-}
-
-function updateWeekSelect(year, month,weekSelect) {
-  weekSelect.innerHTML = "";
-
-  const weeks = getWeeksOfMonth(year, month);
-
-  weeks.forEach((weekStart, index) => {
-    const end = new Date(weekStart);
-    end.setDate(weekStart.getDate() + 6);
-
-    const option = document.createElement("option");
-    option.value = weekStart.getTime();
-
-    option.text = `Semaine ${index + 1} : ${
-      weekStart.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })
-    } - ${
-      end.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })
-    }`;
-
-    weekSelect.appendChild(option);
-  });
-}
-
-function getFirstWeekInsideMonth(weeks, year, month) {
-  return weeks.find(weekStart => {
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekStart.getDate() + 6);
-
-    return (
-      weekStart.getMonth() === month ||
-      weekEnd.getMonth() === month
-    );
-  });
-}
-
-
-
-
-function syncSelectors(weekSelect,monthPicker) {
-
-	const year = currentWeekStart.getFullYear();
-	const month = monthPicker.value.split("-")[1];
-
-	updateWeekSelect(year, Number(month),weekSelect);
-	weekSelect.value = currentWeekStart.getTime();
-}
-
-
-/**Grid end days */
-
-
-//**Load data */
-
-/** Load default data */
-function get_data_of_user()
-{
-	frappe.call({
-        method: "udshed.api.user_data.get_user_session_data",
-        args: {
-        },
-        callback: (e) => {
-          console.log("User session data:", e.message);
-        },
-		error: (err) => {
-			console.error("Error fetching user session data:", err);
-		}
-      });
-}
-
 
 frappe.pages['planning-academique'].on_page_load = function(wrapper) {
-	var page = frappe.ui.make_app_page({
-		parent: wrapper,
-		title: 'Planning',
-		single_column: true
-	});
+	
+	frappe.require([
+		'/assets/udshed/css/planning_academique.css',
+		'/assets/udshed/js/planning_calendar/dialog_box.js',
+		'/assets/udshed/js/planning_calendar/date_utils.js',
+		'/assets/udshed/js/planning_calendar/utils.js',
+		'/assets/udshed/js/planning_calendar/queries.js',
+		'/assets/udshed/js/planning_calendar/ui.js'
+	]).then(() => {
 
-	page.set_primary_action('Actualiser', () => {
-		 let filters = {
-			filiere: page.fields_dict.filiere.get_value(),
-			niveau: page.fields_dict.niveau.get_value(),
-			academic_year: page.fields_dict.academic_year.get_value()
+		var currentWeekStart = Udshed.DateUtils.getMonday(new Date());
+
+		
+		function loadPlanning(weekSelect,monthPicker,filters,calendar_zone) {
+			Udshed.DateUtils.updateWeekLabel(currentWeekStart);
+			Udshed.DateUtils.syncSelectors(weekSelect,monthPicker,currentWeekStart);
+			Udshed.Queries.fetchPlanningItems(filters,currentWeekStart,(items)=>{
+				Udshed.UI.show_calendar(calendar_zone, Udshed.UI.get_grid_calendar_item(items,filters));
+			});
+		}
+
+
+	
+		let page = frappe.ui.make_app_page({
+			parent: wrapper,
+			title: 'Planning',
+			single_column: true
+		});
+
+		let filters = {
+			academic_year: null,
+			faculty: null,
+			filiere: null,
+			niveau: null
 		};
 
-		show_calendar(filters);
-    });
-
-	get_data_of_user();
-
-	page.add_field({
-		fieldtype: 'Link',
-		label: 'Année académique',
-		fieldname: 'academic_year',
-		options: 'Academic Year'
-	});
-
-	page.add_field({
-		fieldtype: 'Link',
-		label: 'Faculté',
-		fieldname: 'faculty',
-		options: 'Faculty'
-	});
-
-	page.add_field({
-		fieldtype: 'Link',
-		label: 'Filière',
-		fieldname: 'filiere',
-		options: 'Field of study',
-		change() {
-			console.log("Filière sélectionnée :", this.get_value());
-			// Ici tu peux déclencher un rechargement de la grille ou une mise à jour des options de niveau
-		}
-	});
-
-	page.add_field({
-		fieldtype: 'Link',
-		label: 'Niveau',
-		fieldname: 'niveau',
-		options: 'Field of study Level'
-	});
+		let levelMap = {}; // label => name
 
 
 
-	let grid_wrapper = $('<div id="planning-grid-wrapper"></div>');
-	$(wrapper).append(grid_wrapper);
 
-	// afficher la grille vide au chargement
-	grid_wrapper.html(show_calendar(grid_wrapper));
+		let grid_wrapper = $('<div id="planning-grid-wrapper"></div>');
+		$(wrapper).append(grid_wrapper);
 
-	const monthPicker = document.getElementById("month-picker");
-	const weekSelect = document.getElementById("week-select");
+		// afficher la grille vide au chargement
+		grid_wrapper.html(Udshed.UI.show_calendar_hearder());
+		calendar_zone = grid_wrapper.find("#planning_calendar .planning-grid");
+		Udshed.UI.show_calendar(calendar_zone);
 
-	console.log("Week select element:", weekSelect,monthPicker);
+		const monthPicker = document.getElementById("month-picker");
+		const weekSelect = document.getElementById("week-select");
 
-	document.getElementById("prev-week").onclick = () => {
-		currentWeekStart.setDate(currentWeekStart.getDate() - 7);
-		loadPlanning(weekSelect,monthPicker);
-	};
+		
+		page.set_primary_action('Actualiser', () => {
+			let filters = {
+				filiere: page.fields_dict.filiere.get_value(),
+				niveau: page.fields_dict.niveau.get_value(),
+				academic_year: page.fields_dict.academic_year.get_value()
+			};
+			// show_calendar(filters);
+			loadPlanning(grid_wrapper,weekSelect,monthPicker,filters,calendar_zone)
+		});
 
-	document.getElementById("next-week").onclick = () => {
-		currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-		loadPlanning(weekSelect,monthPicker);
-	};
+		page.add_menu_item("Exporter en PDF", () => {
+			let filters = {
+				faculty: page.fields_dict.faculty.get_value(),
+				filiere: page.fields_dict.filiere.get_value(),
+				niveau: page.fields_dict.niveau.get_value(),
+				week_start: currentWeekStart.toISOString().split('T')[0],
+				academic_year: page.fields_dict.academic_year.get_value()
+			};
 
-	document.getElementById("today-week").onclick = () => {
-		currentWeekStart = getMonday(new Date());
-		loadPlanning(weekSelect,monthPicker);
-	};
+			let url = `/api/method/udshed.www.planning_pdf.generate_planning_pdf?filters=${encodeURIComponent(JSON.stringify(filters))}`;
+			window.open(url);
+		});
+
+		// get_data_of_user();
+
+		page.add_field({
+			fieldtype: 'Link',
+			label: 'Année académique',
+			fieldname: 'academic_year',
+			options: 'Academic Year',
+			change() {
+				filters.academic_year = this.get_value();
+				Udshed.Utils.refresh_filter(filters,"academic_year",page,levelMap);
+				// show_calendar(filters);
+
+			}
+		});
+
+		const faculty_field = page.add_field({
+			fieldtype: 'Link',
+			label: 'Faculté',
+			fieldname: 'faculty',
+			options: 'Faculty',
+			change() {
+				filters.faculty = this.get_value();
+				Udshed.Utils.refresh_filter(filters,"faculty",page,levelMap);
+			}
+		});
+
+		const filiere_field = page.add_field({
+			fieldtype: 'Link',
+			label: 'Filière',
+			fieldname: 'filiere',
+			options: 'Field of study',
+			get_query() {
+				if (!faculty_field.get_value()) {
+					return {};
+				}
+
+				return {
+					filters: {
+						faculte: faculty_field.get_value()
+					}
+				};
+			},
+			change() {
+				filters.filiere = this.get_value();
+				Udshed.Utils.refresh_filter(filters,"filiere",page,levelMap);
+
+				Udshed.Queries.loadLevels(this.get_value(),niveau_field,(levels)=>{
+					levelMap = levels ? levels.reduce((acc, curr) => {
+						acc[curr.level] = curr.name;
+						return acc;
+					}, {}) : {};
+					niveau_field.df.options = levels ? levels.map((value)=>({value:value.level,name:value.name})) || [] : [];
+					niveau_field.refresh();
+				});
+			}
+		});
+
+		const niveau_field = page.add_field({
+			fieldtype: 'Select',
+			label: 'Niveau',
+			fieldname: 'niveau',
+			change() {
+				filters.niveau = levelMap[this.get_value()];
+				loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+			}
+		});
+
+		document.getElementById("prev-week").onclick = () => {
+			currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+			loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+		};
+
+		document.getElementById("next-week").onclick = () => {
+			currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+			loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+		};
+
+		document.getElementById("today-week").onclick = () => {
+			currentWeekStart = getMonday(new Date());
+			loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+		};
 
 	
-	monthPicker.addEventListener("change", function () {
-		const [year, month] = this.value.split("-").map(Number);
-		updateWeekSelect(year, month,weekSelect);
+		monthPicker.addEventListener("change", function () {
+			const [year, month] = this.value.split("-").map(Number);
+			Udshed.DateUtils.updateWeekSelect(year, month,weekSelect);
 
-		// 🔑 On force la 1ère semaine visible du mois
-		const weeks = getWeeksOfMonth(year, month);
-		currentWeekStart = getFirstWeekInsideMonth(weeks, year, month);
+			// 🔑 On force la 1ère semaine visible du mois
+			const weeks = Udshed.DateUtils.getWeeksOfMonth(year, month);
+			currentWeekStart = Udshed.DateUtils.getFirstWeekInsideMonth(weeks, year, month);
+			loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+		});
 
-		loadPlanning(weekSelect,monthPicker);
-	});
-
-	weekSelect.addEventListener("change", (e) => {
-
-		currentWeekStart = new Date(Number(e.currentTarget.value));
-		loadPlanning(weekSelect,monthPicker);
-	});
+		weekSelect.addEventListener("change", (e) => {
+			currentWeekStart = new Date(Number(e.currentTarget.value));
+			loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+		});
 
 
-	initMonthPicker(monthPicker);
-	updateWeekSelect(new Date().getFullYear(), new Date().getMonth(),weekSelect);
-	loadPlanning(weekSelect,monthPicker);
+		Udshed.DateUtils.initMonthPicker(monthPicker);
+		Udshed.DateUtils.updateWeekSelect(new Date().getFullYear(), new Date().getMonth(),weekSelect);
+		Udshed.Queries.get_data_of_user();
+		loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+		Udshed.Utils.refresh_filter(filters,null,page,levelMap);
 
-	// Evenement sur les celuules de planning
+		// Evenement sur les celuules de planning
 
-	$(document).on("click", ".planning-cell", function () {
-		currentDay = new Date(parseInt(weekSelect.value)); // Récupérer la date de la semaine sélectionnée
-		let day ={ "Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3, "Friday": 4,"Saturday": 5}
-		currentDay.setDate(currentDay.getDate() + day[($(this).data("day"))]);
-		const half = $(this).data("half");
-		const courseData = $(this).data("course");
+		$(document).on("click", ".planning-cell", function () {
+			currentDay = new Date(parseInt(weekSelect.value)); // Récupérer la date de la semaine sélectionnée
+			let day ={ "Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3, "Friday": 4,"Saturday": 5}
+			currentDay.setDate(currentDay.getDate() + day[($(this).data("day"))]);
+			const half = $(this).data("half");
+			const courseData = $(this).data("course");
 
-		if (courseData) {
-			openEditPlanningDialog(courseData);
-		} else {
-			openCreatePlanningDialog(currentDay, half);
-		}
-	});
+			if (courseData) {
+				Udshed.Dialogs.openEditPlanningDialog(courseData,() => {
+					loadPlanning(weekSelect,monthPicker,filters,calendar_zone)
+				});
+			} else {
+				Udshed.Dialogs.openCreatePlanningDialog(filters.academic_year,currentDay, half, () => {
+					loadPlanning(weekSelect,monthPicker,filters,calendar_zone)
+				});
+			}
+		});	
+	})
 
-	
-}
+};
+
+
+
+
+
+
+
+

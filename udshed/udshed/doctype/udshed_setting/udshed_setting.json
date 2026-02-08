@@ -88,7 +88,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-02-03 06:14:24.155363",
+ "modified": "2026-02-08 06:14:03.496183",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Udshed Setting",
@@ -101,6 +101,16 @@
    "print": 1,
    "read": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Coordonateur",
    "share": 1,
    "write": 1
   }

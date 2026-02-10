@@ -37,12 +37,13 @@ window.Udshed.Queries  = {
         });
     },
 
-    get_data_of_user()
+    get_data_of_user(callback)
     {
         frappe.call({
             method: "udshed.api.user_data.get_user_context",
             callback: (e) => {
-            console.log("User session data:", e.message);
+                console.log("User session data:", e.message);
+                callback(e.message);
             },
             error: (err) => {
                 console.error("Error fetching user session data:", err);

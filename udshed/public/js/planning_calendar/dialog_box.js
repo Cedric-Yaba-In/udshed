@@ -80,22 +80,22 @@ window.Udshed.Dialogs = {
                     },
                     error: (err) => {
                         // ici on reçoit l'exception Python
-                        if (err.exc_type === "ValidationError") {
-                            frappe.msgprint({
-                            title: "Conflit de planning",
-                            indicator: "red",
-                            message: err.exception.split(":")[1]   // <-- ici ton texte: "Conflit de planning détecté..."
-                            });
-                            return;
-                        } else {
-                            frappe.msgprint({
-                            title: "Erreur inattendue",
-                            indicator: "red",
-                            message: "Une erreur est survenue, vérifiez la console."
-                            });
-                            console.error(err);
-                            return;
-                        }
+                        // if (err.exc_type === "ValidationError") {
+                        //     frappe.msgprint({
+                        //     title: "Conflit de planning",
+                        //     indicator: "red",
+                        //     message: err.exception.split(":")[1]   // <-- ici ton texte: "Conflit de planning détecté..."
+                        //     });
+                        //     return;
+                        // } else {
+                        //     frappe.msgprint({
+                        //     title: "Erreur inattendue",
+                        //     indicator: "red",
+                        //     message: "Une erreur est survenue, vérifiez la console."
+                        //     });
+                        //     console.error(err);
+                        //     return;
+                        // }
                         }
                 });
             }

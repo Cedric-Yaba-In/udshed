@@ -10,7 +10,6 @@ window.Udshed.UI = {
             "Friday": { "Morning": null, "Afternoon": null },
             "Saturday": { "Morning": null, "Afternoon": null }
         };
-        console.log("new items ", items);
         items.forEach(item => {
 
             let dayOfWeek = new Date(item.date).toLocaleDateString('en-US', { weekday: 'long' }); // ex: "Monday"
@@ -33,7 +32,6 @@ window.Udshed.UI = {
             }
         });
 
-        console.log("Grid to show ", grid);
 
         return grid;
     },

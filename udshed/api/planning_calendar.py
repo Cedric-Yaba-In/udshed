@@ -92,7 +92,7 @@ def create_planning(academic_year, cours, course_type, day_of_week, half_day):
         # Check for common teachers
         common_teachers = set(cours_teachers).intersection(set(cours_teachers_existing))
         if common_teachers:
-            raise frappe.ValidationError(f"Conflit de planning détecté avec le cours '{doc.name}' pour les enseignants: {', '.join(common_teachers)}")
+            frappe.throw(f"Conflit de planning détecté avec le cours '{doc.intitule_cours}' pour les enseignants: {', '.join(common_teachers)}")
 
     planning = frappe.get_doc({
         "doctype":"Planning Item",

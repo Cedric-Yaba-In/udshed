@@ -177,9 +177,59 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 
 		Udshed.DateUtils.initMonthPicker(monthPicker);
 		Udshed.DateUtils.updateWeekSelect(new Date().getFullYear(), new Date().getMonth(),weekSelect);
-		Udshed.Queries.get_data_of_user();
+		
 		loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
 		Udshed.Utils.refresh_filter(filters,null,page,levelMap);
+
+		Udshed.Queries.get_data_of_user((data) => {
+			let userContext = Udshed.Utils.normalizeUserContext(data);
+		console.log("USer context ",data,userContext)
+
+
+			//academic_year
+			page.fields_dict.academic_year.get_query = () => ({
+				filters: {
+					name: ["in", userContext.academic_year]
+				}
+			});
+			if(userContext.default_academic_year) {
+				page.fields_dict.academic_year.set_value(userContext.default_academic_year);
+				filters.academic_year = userContext.default_academic_year;
+			}
+			
+			//faculty
+			page.fields_dict.faculty.get_query = () => ({
+				filters: {
+					name: ["in", userContext.faculty]
+				}
+			});
+
+			if(userContext.faculty.length > 0) page.fields_dict.faculty.set_value(userContext.faculty[0])
+			// if (userContext.locks.faculty ) page.fields_dict.faculty.$input.prop("disabled", true);
+
+
+			//filiere
+			page.fields_dict.filiere.get_query = () => {
+				let f = faculty_field.get_value();
+				return {
+					filters: {
+						name: ["in", userContext.filiere],
+						...(f ? { faculte: f } : {})
+					}
+				};
+			};
+			if(userContext.filiere.length > 0) page.fields_dict.filiere.set_value(userContext.filiere[0])
+			// if (userContext.locks.fileire ) page.fields_dict.filiere.$input.prop("disabled", true);
+
+
+			const allowedNiveau = new Set(userContext.niveau);
+
+			niveau_field.df.options = niveau_field.df.options.filter(o =>
+				allowedNiveau.has(levelMap[o.value])
+			);
+			niveau_field.refresh();
+			
+		});
 
 		// Evenement sur les celuules de planning
 

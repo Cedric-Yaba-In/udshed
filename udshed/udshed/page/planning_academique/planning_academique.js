@@ -191,11 +191,11 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			const courseData = $(this).data("course");
 
 			if (courseData) {
-				Udshed.Dialogs.openEditPlanningDialog(courseData,() => {
+				Udshed.Dialogs.openEditPlanningDialog(filters,courseData,() => {
 					loadPlanning(weekSelect,monthPicker,filters,calendar_zone)
 				});
 			} else {
-				Udshed.Dialogs.openCreatePlanningDialog(filters.academic_year,currentDay, half, () => {
+				Udshed.Dialogs.openCreatePlanningDialog(filters,currentDay, half, () => {
 					loadPlanning(weekSelect,monthPicker,filters,calendar_zone)
 				});
 			}

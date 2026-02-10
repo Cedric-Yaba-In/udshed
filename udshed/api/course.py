@@ -107,9 +107,9 @@ def get_teaching_units(
 
 def get_single_teaching_unit(cours,academic_year):
 	print("Cours ",cours,academic_year)
-	if not frappe.db.exists('Teaching Unit', { 'course': cours,"academic_year":academic_year }):
+	if not frappe.db.exists('Teaching Unit', { 'name': cours,"academic_year":academic_year }):
 		frappe.throw("Unité d'enseignement introuvable")
-	teaching_unit = frappe.get_doc("Teaching Unit",{"course":cours,"academic_year":academic_year})
+	teaching_unit = frappe.get_doc("Teaching Unit",{"name":cours,"academic_year":academic_year})
 	return teaching_unit
 
 @frappe.whitelist()
@@ -117,17 +117,45 @@ def get_levels_for_field(field_of_study):
 	doc = frappe.get_doc("Field of study", field_of_study)
 	return [{"level":row.level,"name":row.name} for row in doc.field_of_study_level]
 
+
 @frappe.whitelist()
 def get_levels(doctype, txt, searchfield, start, page_len, filters):
-	filiere = filters.get("parent")
+    filiere = filters.get("parent")
+    if not filiere:
+        return []
 
-	return frappe.db.sql("""
-        SELECT
-            CAST(name AS CHAR) AS value,
-            CONCAT(level, ' - ', parent) AS label
+    # On utilise frappe.db.sql pour cibler la child table
+    # 'name' est l'ID unique de la ligne dans la table enfant
+    return frappe.db.sql("""
+        SELECT 
+            name, 
+            level as label
         FROM `tabField of study Level`
-        WHERE parent = %s
-          AND level LIKE %s
+        WHERE parent = %s 
+        AND (level LIKE %s OR name LIKE %s)
         ORDER BY level
         LIMIT %s, %s
-    """, (filiere, f"%{txt}%", start, page_len))
+    """, (filiere, f"%{txt}%", f"%{txt}%", start, page_len))
+
+@frappe.whitelist()
+def get_teaching_unit_by_level(doctype, txt, searchfield, start, page_len, filters):
+	TeachingUnit = DocType("Teaching Unit")
+	CourseNiveauFiliere = DocType("Course Field of study level item")
+
+	query = (
+    	frappe.qb.from_(TeachingUnit)
+    	.join(CourseNiveauFiliere)
+    	.on(CourseNiveauFiliere.parent == TeachingUnit.name)
+    	.select(
+        	TeachingUnit.name.as_("value"),
+			TeachingUnit.intitule_cours.as_("label") 
+    	)
+    	.where(
+        	(CourseNiveauFiliere.filiere == filters.get("filiere")) &
+        	(CourseNiveauFiliere.niveau == filters.get("niveau")) &
+        	(TeachingUnit.academic_year == filters.get("academic_year")) 
+		)
+	)
+
+	data =  query.run()
+	return data

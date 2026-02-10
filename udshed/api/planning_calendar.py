@@ -38,6 +38,7 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
     CourseEnseignant = DocType("Course Teacher Item")
     date_week_start = datetime.fromisoformat(week_start)
 
+    print("filiere & niveau ",filiere,niveau)
     query = (
         frappe.qb.from_(PlanningItem)
         .join(TeachingUnit)
@@ -71,6 +72,8 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
     for doc in data:
         teacher = frappe.get_doc("Teacher",{"name":doc.enseignant})
         doc["enseignant"] = f"{teacher.grade}. {teacher.first_name} {teacher.last_name}"
+        cours  = frappe.get_doc("Course",doc.course)
+        doc["cours_label"] = cours.intitule
 
     return data
 

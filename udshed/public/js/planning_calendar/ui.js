@@ -136,7 +136,7 @@ window.Udshed.UI = {
             morningPlan.push(morningItem ? `
                 <div class="planning-cell" data-day="${day}" data-half="${morningItem.half_day}" data-course='${JSON.stringify(morningItem)}'>
                     <div class="planning-item ${morning_cours_type_class}">
-                        <div class="planning-item-title">${morningItem.subject}</div>
+                        <div class="planning-item-title"><span style="font-style:italic">${morningItem.subject}</span><br/>${morningItem.item.cours_label}</div>
                         <div class="planning-item-meta">${morningItem.item.type} <br/> - <br/> ${morningItem.room?morningItem.room:""}</div>
                         <div class="planning-item-meta">${morningItem.teachers.map(t => `<b>${t}</b>`).join('<br/> ')}</div>
                     </div>
@@ -147,7 +147,9 @@ window.Udshed.UI = {
             afternoonPlan.push(afternoonItem ? `
                 <div class="planning-cell" data-day="${day}" data-half="${afternoonItem.half_day}" data-course='${JSON.stringify(afternoonItem)}'>
                     <div class="planning-item ${afternoon_cours_type_class}">
-                        <div class="planning-item-title">${afternoonItem.subject}</div>
+                        <div class="planning-item-title">
+                            <span style="font-style:italic">${afternoonItem.subject}</span><br/>${afternoonItem.item.cours_label}
+                        </div>
                         <div class="planning-item-meta">${afternoonItem.item.type} <br/> - <br/> ${afternoonItem.room?afternoonItem.room:""}</div>
                         <div class="planning-item-meta">${afternoonItem.teachers.map(t => `<b>${t}</b>`).join('<br/> ')}</div>
                     </div>

@@ -2,33 +2,34 @@ window.Udshed = window.Udshed || {};
 
 window.Udshed.Dialogs = {
 
-    openCreatePlanningDialog(academic_year,day, halfDay,callbak) {
-        // if(!filter.filiere)
-        // {
-        // 	frappe.msgprint({
-        // 		title: "Filière requise",
-        // 		indicator: "red",
-        // 		message: "Veuillez sélectionner une filière avant de créer une planification."
-        // 	});
-        // }
+    openCreatePlanningDialog(filter,day, halfDay,callbak) {
+        if(!filter.filiere)
+        {
+        	frappe.msgprint({
+        		title: "Filière requise",
+        		indicator: "red",
+        		message: "Veuillez sélectionner une filière avant de créer une planification."
+        	});
+            return;
+        }
         
-        // if(!filter.niveau) {
-        // 	frappe.msgprint({
-        // 		title: "Niveau requis",
-        // 		indicator: "red",
-        // 		message: "Veuillez sélectionner un niveau avant de créer une planification."
-        // 	});
-        // 	return;
-        // }
-        // if(!filter.faculty) {
-        // 	frappe.msgprint({
-        // 		title: "Faculté requise",
-        // 		indicator: "red",
-        // 		message: "Veuillez sélectionner une faculté avant de créer une planification."
-        // 	});
-        // 	return;
-        // }
-        if(!academic_year) {
+        if(!filter.niveau) {
+        	frappe.msgprint({
+        		title: "Niveau requis",
+        		indicator: "red",
+        		message: "Veuillez sélectionner un niveau avant de créer une planification."
+        	});
+        	return;
+        }
+        if(!filter.faculty) {
+        	frappe.msgprint({
+        		title: "Faculté requise",
+        		indicator: "red",
+        		message: "Veuillez sélectionner une faculté avant de créer une planification."
+        	});
+        	return;
+        }
+        if(!filter.academic_year) {
             frappe.msgprint({
                 title: "Année académique requise",
                 indicator: "red",
@@ -44,7 +45,15 @@ window.Udshed.Dialogs = {
                     fieldtype: "Link",
                     label: "Cours",
                     fieldname: "cours",
-                    options: "Course",
+                    options: "Teaching Unit",
+                    get_query() {
+                        return {
+                            query:"udshed.api.course.get_teaching_unit_by_level",
+                            filters: {
+                                ...filter
+                            }
+                        };
+                    },
                     reqd: 1
                 },
                 { 
@@ -59,7 +68,7 @@ window.Udshed.Dialogs = {
                 frappe.call({
                     method: "udshed.api.planning_calendar.create_planning",
                     args: {
-                        academic_year,
+                        academic_year:filter.academic_year,
                     ...values,
                     day_of_week: day.toISOString().split('T')[0],
                     half_day: halfDay,
@@ -77,6 +86,7 @@ window.Udshed.Dialogs = {
                             indicator: "red",
                             message: err.exception.split(":")[1]   // <-- ici ton texte: "Conflit de planning détecté..."
                             });
+                            return;
                         } else {
                             frappe.msgprint({
                             title: "Erreur inattendue",
@@ -84,6 +94,7 @@ window.Udshed.Dialogs = {
                             message: "Une erreur est survenue, vérifiez la console."
                             });
                             console.error(err);
+                            return;
                         }
                         }
                 });
@@ -94,7 +105,7 @@ window.Udshed.Dialogs = {
     },
 
 
-    openEditPlanningDialog(course,callback) {
+    openEditPlanningDialog(filter,course,callback) {
         const dialog = new frappe.ui.Dialog({
             title: "Modifier la planification",
             fields: [

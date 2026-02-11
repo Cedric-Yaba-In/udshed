@@ -137,7 +137,7 @@ window.Udshed.UI = {
                         <div class="planning-item-title"><span style="font-style:italic">${morningItem.subject}</span><br/>${morningItem.item.cours_label}</div>
                         <div class="planning-item-meta">${morningItem.item.type} <br/> - <br/> ${morningItem.room?morningItem.room:""}</div>
 
-                        <div class="planning-item-meta">Batiment: ${morningItem.item.batiment?morningItem.item.batiment:""}  <br/> Salle: ${morningItem.item.room?morningItem.item.room:""}<br/> - <br/></div>
+                        <div class="planning-item-meta">Batiment: ${morningItem.item.batiment?morningItem.item.batiment:""}  <br/> Salle: ${morningItem.item.salle?morningItem.item.salle:""}<br/> - <br/></div>
 
                         <div class="planning-item-meta">${morningItem.teachers.map(t => `<b>${t}</b>`).join('<br/> ')}</div>
                     </div>
@@ -152,7 +152,7 @@ window.Udshed.UI = {
                             <span style="font-style:italic">${afternoonItem.subject}</span><br/>${afternoonItem.item.cours_label}
                         </div>
                         <div class="planning-item-meta">${afternoonItem.item.type} <br/> - <br/> ${afternoonItem.room?afternoonItem.room:""}</div>
-                        <div class="planning-item-meta">Batiment: ${afternoonItem.item.batiment}  <br/> Salle: ${afternoonItem.item.room?afternoonItem.item.room:""}<br/> - <br/></div>
+                        <div class="planning-item-meta">Batiment: ${afternoonItem.item.batiment}  <br/> Salle: ${afternoonItem.item.salle?afternoonItem.item.salle:""}<br/> - <br/></div>
 
                         <div class="planning-item-meta">${afternoonItem.teachers.map(t => `<b>${t}</b>`).join('<br/> ')}</div>
                     </div>

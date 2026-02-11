@@ -85,6 +85,17 @@ window.Udshed.Queries  = {
                 callback_function(r.message);                
             }
         });
-    }
+    },
 
+    deletePlanning(planning_name,callback_function=()=>{})
+    {
+        console.log("Planing Name delete ",planning_name)
+        frappe.call({
+            method: "udshed.api.planning_calendar.delete_planning",
+            args: { planning_name:planning_name },
+            callback: (r) => {
+                callback_function(r.message);                
+            }
+        });
+    }
 }

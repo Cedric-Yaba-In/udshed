@@ -106,7 +106,6 @@ def get_teaching_units(
 	return results
 
 def get_single_teaching_unit(cours,academic_year):
-	print("Cours ",cours,academic_year)
 	if not frappe.db.exists('Teaching Unit', { 'name': cours,"academic_year":academic_year }):
 		frappe.throw("Unité d'enseignement introuvable")
 	teaching_unit = frappe.get_doc("Teaching Unit",{"name":cours,"academic_year":academic_year})

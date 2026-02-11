@@ -256,9 +256,9 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			const half = $(this).data("half");
 			const courseData = $(this).data("course");
 
-			console.log("User Context ",userContext)
+			// console.log("User Context ",userContext)
 			if (courseData) {
-				Udshed.Dialogs.openEditPlanningDialog(filters,courseData,userContext,() => {
+				Udshed.Dialogs.openEditPlanningDialog(filters,currentDay,half,courseData,userContext,() => {
 					loadPlanning(weekSelect,monthPicker,filters,calendar_zone)
 				});
 			} else {

@@ -86,7 +86,6 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
 
 @frappe.whitelist()
 def create_planning(academic_year, cours, course_type,batiment,salle, day_of_week, half_day):
-
     teaching_unit = course.get_single_teaching_unit(cours,academic_year)
     cours_teachers = list(map(lambda x: x.enseignant, teaching_unit.table_enseignant))
     date_week_start = datetime.fromisoformat(day_of_week)
@@ -99,6 +98,10 @@ def create_planning(academic_year, cours, course_type,batiment,salle, day_of_wee
         common_teachers = set(cours_teachers).intersection(set(cours_teachers_existing))
         if common_teachers:
             frappe.throw(f"Conflit de planning détecté avec le cours '{doc.intitule_cours}' pour les enseignants: {', '.join(common_teachers)}")
+        
+        if salle and doc.salle == salle:
+            frappe.throw(f"Conflit de salle détecté avec la salle '{doc.salle}' utilisé pour le cours {doc.intitule_cours}")
+            
 
     planning_data = {
         "doctype":"Planning Item",
@@ -118,3 +121,42 @@ def create_planning(academic_year, cours, course_type,batiment,salle, day_of_wee
 
     planning.insert(ignore_permissions = True)
     return planning
+
+
+@frappe.whitelist()
+def update_planning(planning_item_name,academic_year,cours,course_type,batiment,salle, day_of_week, half_day):
+    planning_item = frappe.get_doc("Planning Item", planning_item_name)
+    teaching_unit = course.get_single_teaching_unit(cours,academic_year)
+
+    planning_item.cours = teaching_unit.name
+    planning_item.type = course_type
+
+    cours_teachers = list(map(lambda x: x.enseignant, teaching_unit.table_enseignant))
+    date_week_start = datetime.fromisoformat(day_of_week)
+       
+    planning_days = frappe.get_all("Planning Item",{"date":date_week_start, "period":half_day},["name","cours","type","date","period"])
+    for plan in planning_days:
+        if plan.name == planning_item_name:
+            continue
+        doc = course.get_single_teaching_unit(plan.cours,academic_year)
+        cours_teachers_existing = list(map(lambda x: x.enseignant, doc.table_enseignant))
+        # Check for common teachers
+        common_teachers = set(cours_teachers).intersection(set(cours_teachers_existing))
+        if common_teachers:
+            frappe.throw(f"Conflit de planning détecté avec le cours '{doc.intitule_cours}' pour les enseignants: {', '.join(common_teachers)}")
+        if salle and doc.salle == salle:
+            frappe.throw(f"Conflit de salle détecté avec la salle '{doc.salle}' utilisé pour le cours {doc.intitule_cours}")
+    if salle:
+        planning_item.salle = salle
+    if batiment:
+        planning_item.batiment = batiment
+     
+    planning_item.save()
+
+    return planning_item
+
+
+@frappe.whitelist()
+def delete_planning(planning_name):
+    frappe.delete_doc("Planning Item",planning_name)
+    return True

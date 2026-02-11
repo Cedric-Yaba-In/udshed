@@ -130,9 +130,9 @@ window.Udshed.Dialogs = {
     },
 
 
-    openEditPlanningDialog(filter,course,userContext,callback) {
+    openEditPlanningDialog(filter,day, halfDay,course,userContext,callback) {
+        console.log("Cours ",course)
         // TODO check user context role
-
         // if(!Udshed.Perms.user_can_edit_planning_cell(filter,userContext)) return;
         const dialog = new frappe.ui.Dialog({
             title: "Modifier la planification",
@@ -140,33 +140,59 @@ window.Udshed.Dialogs = {
                 {
                     fieldtype: "Link",
                     label: "Cours",
-                    fieldname: "subject",
-                    options: "Course",
-                    default: course.subject,
-                    "reqd": 1
+                    fieldname: "cours",
+                    options: "Teaching Unit",
+                    get_query() {
+                        return {
+                            query:"udshed.api.course.get_teaching_unit_by_level",
+                            filters: {
+                                ...filter
+                            }
+                        };
+                    },
+                    reqd: 1,
+                    default: course.item.cours,
+                },
+                { 
+                    fieldtype: "Select",
+                    label: "Type",
+                    default: course.item.type,
+                    fieldname: "course_type",
+                    options: [ "Cours", "Traveaux Pratiques (TP)", "Controlle Continue (CC)", "Examen de session normal", "Examen de rattrapage"],
+                    reqd: 1
                 },
                 {
                     fieldtype: "Link",
-                    label: "Salle",
-                    fieldname: "room",
-                    options: "Room",
-                    default: course.room
+                    label: "Batiment",
+                    fieldname: "batiment",
+                    options: "Building",
+                    default: course.item.batiment,
+                    change() {
+
+                        Udshed.Queries.loadRooms(this.get_value(),cur_dialog.fields_dict.salle,(data)=>{
+                            cur_dialog.fields_dict.salle.df.options = data;
+                            cur_dialog.fields_dict.salle.refresh();
+                        });
+                    }
                 },
                 {
                     fieldtype: "Select",
-                    label: "Type",
-                    fieldname: "course_type",
-                    options: ["CM", "TP", "CC", "EXAM"],
-                    default: course.course_type
-                }
+                    label: "Salle",
+                    fieldname: "salle",
+                    default: course.item.room
+                },                
             ],
             primary_action_label: "Mettre à jour",
+            // secondary_action_label:"Supprimer",
             primary_action(values) {
                 frappe.call({
-                    method: "udshed.api.update_planning",
+                    method: "udshed.api.planning_calendar.update_planning",
                     args: {
-                    name: course.name, // ID DocType
-                    ...values
+                        planning_item_name: course.item.name, // ID DocType
+                        academic_year:filter.academic_year,
+                        ...values,
+                        day_of_week: day.toISOString().split('T')[0],
+                        half_day: halfDay,
                     },
                     callback: () => {
                     dialog.hide();
@@ -176,8 +202,25 @@ window.Udshed.Dialogs = {
                 });
             }
         });
-
+         dialog.$wrapper.find(".modal-footer").prepend(`
+            <button class="btn btn-danger btn-delete-planning">
+                <i class="fa fa-trash"></i> Supprimer
+            </button>
+        `);
+        dialog.$wrapper.find(".btn-delete-planning").on("click", () => {
+                frappe.confirm(
+                    __("Voulez-vous vraiment supprimer ce planning ?"),
+                    () => {
+                        Udshed.Queries.deletePlanning(course.item.name,()=>{
+                            dialog.hide();
+                            callback();
+                        });
+                        
+                    }
+                );
+        });
         dialog.show();
+       
     }
 };
 /**End Dialog */

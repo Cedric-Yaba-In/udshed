@@ -136,6 +136,9 @@ window.Udshed.UI = {
                     <div class="planning-item ${morning_cours_type_class}">
                         <div class="planning-item-title"><span style="font-style:italic">${morningItem.subject}</span><br/>${morningItem.item.cours_label}</div>
                         <div class="planning-item-meta">${morningItem.item.type} <br/> - <br/> ${morningItem.room?morningItem.room:""}</div>
+
+                        <div class="planning-item-meta">Batiment: ${morningItem.item.batiment?morningItem.item.batiment:""}  <br/> Salle: ${morningItem.item.room?morningItem.item.room:""}<br/> - <br/></div>
+
                         <div class="planning-item-meta">${morningItem.teachers.map(t => `<b>${t}</b>`).join('<br/> ')}</div>
                     </div>
                 </div>` : `<div class="planning-cell empty" data-day="${day}" data-half="Morning">
@@ -149,6 +152,8 @@ window.Udshed.UI = {
                             <span style="font-style:italic">${afternoonItem.subject}</span><br/>${afternoonItem.item.cours_label}
                         </div>
                         <div class="planning-item-meta">${afternoonItem.item.type} <br/> - <br/> ${afternoonItem.room?afternoonItem.room:""}</div>
+                        <div class="planning-item-meta">Batiment: ${afternoonItem.item.batiment}  <br/> Salle: ${afternoonItem.item.room?afternoonItem.item.room:""}<br/> - <br/></div>
+
                         <div class="planning-item-meta">${afternoonItem.teachers.map(t => `<b>${t}</b>`).join('<br/> ')}</div>
                     </div>
                 </div>` : `<div class="planning-cell empty" data-day="${day}" data-half="Afternoon">

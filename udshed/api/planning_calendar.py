@@ -49,6 +49,8 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
         .on(CourseEnseignant.parent == TeachingUnit.name)
         .select(
             TeachingUnit.course,
+            PlanningItem.salle,
+            PlanningItem.batiment,
             PlanningItem.name,
             PlanningItem.type,
             PlanningItem.cours,
@@ -74,17 +76,21 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
         doc["enseignant"] = f"{teacher.grade}. {teacher.first_name} {teacher.last_name}"
         cours  = frappe.get_doc("Course",doc.course)
         doc["cours_label"] = cours.intitule
+        if doc.salle:
+            doc["salle"] = (frappe.get_doc("Room",doc.salle)).code
+        if doc.batiment:
+            doc["batiment"] = (frappe.get_doc("Building", doc.batiment)).code
 
     return data
 
 
 @frappe.whitelist()
-def create_planning(academic_year, cours, course_type, day_of_week, half_day):
+def create_planning(academic_year, cours, course_type,batiment,salle, day_of_week, half_day):
 
     teaching_unit = course.get_single_teaching_unit(cours,academic_year)
     cours_teachers = list(map(lambda x: x.enseignant, teaching_unit.table_enseignant))
     date_week_start = datetime.fromisoformat(day_of_week)
-
+       
     planning_days = frappe.get_all("Planning Item",{"date":date_week_start, "period":half_day},["name","cours","type","date","period"])
     for plan in planning_days:
         doc = course.get_single_teaching_unit(plan.cours,academic_year)
@@ -94,14 +100,21 @@ def create_planning(academic_year, cours, course_type, day_of_week, half_day):
         if common_teachers:
             frappe.throw(f"Conflit de planning détecté avec le cours '{doc.intitule_cours}' pour les enseignants: {', '.join(common_teachers)}")
 
-    planning = frappe.get_doc({
+    planning_data = {
         "doctype":"Planning Item",
         "cours":teaching_unit.name,
         "type":course_type,
         "date":date_week_start,
         "period":half_day,
         "academic_year":academic_year
-    })
+    }
+
+    if salle:
+        planning_data["salle"] = salle
+    if batiment:
+        planning_data["batiment"] = batiment
+     
+    planning = frappe.get_doc(planning_data)
 
     planning.insert(ignore_permissions = True)
     return planning

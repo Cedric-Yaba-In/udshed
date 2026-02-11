@@ -69,6 +69,18 @@
   {
    "child": 0,
    "collapsible": 1,
+   "icon": "building-2",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Batiment",
+   "link_to": "Building",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
    "icon": "setting-gear",
    "indent": 0,
    "keep_closed": 0,
@@ -79,7 +91,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-02-05 22:05:24.988645",
+ "modified": "2026-02-10 19:06:55.659137",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Planning Acad\u00e9mique",

@@ -7,7 +7,8 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		'/assets/udshed/js/planning_calendar/date_utils.js',
 		'/assets/udshed/js/planning_calendar/utils.js',
 		'/assets/udshed/js/planning_calendar/queries.js',
-		'/assets/udshed/js/planning_calendar/ui.js'
+		'/assets/udshed/js/planning_calendar/ui.js',
+		'/assets/udshed/js/planning_calendar/permission.js'
 	]).then(() => {
 
 		var currentWeekStart = Udshed.DateUtils.getMonday(new Date());
@@ -154,7 +155,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		};
 
 		document.getElementById("today-week").onclick = () => {
-			currentWeekStart = getMonday(new Date());
+			currentWeekStart = Udshed.DateUtils.getMonday(new Date());
 			loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
 		};
 
@@ -181,57 +182,72 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
 		Udshed.Utils.refresh_filter(filters,null,page,levelMap);
 
+		let userContext = null;
 		Udshed.Queries.get_data_of_user((data) => {
-			let userContext = Udshed.Utils.normalizeUserContext(data);
-		console.log("USer context ",data,userContext)
+			userContext = Udshed.Perms.normalizeUserContext(data);
+			
+			if(Udshed.Perms.should_apply_filter(userContext))
+			{
+				//Apply filters
+				//academic_year
+				page.fields_dict.academic_year.get_query = () => ({
+					filters: {
+						name: ["in", userContext.academic_year]
+					}
+				});
+				
+				
+				//faculty
+				page.fields_dict.faculty.get_query = () => ({
+					filters: {
+						name: ["in", userContext.faculty]
+					}
+				});
+
+				//filiere
+				page.fields_dict.filiere.get_query = () => {
+					let f = faculty_field.get_value();
+					return {
+						filters: {
+							name: ["in", userContext.filiere],
+							...(f ? { faculte: f } : {})
+						}
+					};
+				};
 
 
-			//academic_year
-			page.fields_dict.academic_year.get_query = () => ({
-				filters: {
-					name: ["in", userContext.academic_year]
-				}
-			});
+				const allowedNiveau = new Set(userContext.niveau);
+
+				niveau_field.df.options = niveau_field.df.options.filter(o =>
+					allowedNiveau.has(levelMap[o.value])
+				);
+				niveau_field.refresh();
+			}
+			
+			//Apply default value
 			if(userContext.default_academic_year) {
 				page.fields_dict.academic_year.set_value(userContext.default_academic_year);
 				filters.academic_year = userContext.default_academic_year;
 			}
-			
-			//faculty
-			page.fields_dict.faculty.get_query = () => ({
-				filters: {
-					name: ["in", userContext.faculty]
-				}
-			});
 
-			if(userContext.faculty.length > 0) page.fields_dict.faculty.set_value(userContext.faculty[0])
+			if(userContext.faculty.length > 0) {
+				page.fields_dict.faculty.set_value(userContext.faculty[0])
+				filters.faculty = userContext.faculty[0];
+			}
 			// if (userContext.locks.faculty ) page.fields_dict.faculty.$input.prop("disabled", true);
 
 
-			//filiere
-			page.fields_dict.filiere.get_query = () => {
-				let f = faculty_field.get_value();
-				return {
-					filters: {
-						name: ["in", userContext.filiere],
-						...(f ? { faculte: f } : {})
-					}
-				};
-			};
-			if(userContext.filiere.length > 0) page.fields_dict.filiere.set_value(userContext.filiere[0])
+			
+			if(userContext.filiere.length > 0) {
+				filters.filiere = userContext.filiere[0]
+				page.fields_dict.filiere.set_value(userContext.filiere[0])
+			}
 			// if (userContext.locks.fileire ) page.fields_dict.filiere.$input.prop("disabled", true);
-
-
-			const allowedNiveau = new Set(userContext.niveau);
-
-			niveau_field.df.options = niveau_field.df.options.filter(o =>
-				allowedNiveau.has(levelMap[o.value])
-			);
-			niveau_field.refresh();
 			
 		});
 
 		// Evenement sur les celuules de planning
+		
 
 		$(document).on("click", ".planning-cell", function () {
 			currentDay = new Date(parseInt(weekSelect.value)); // Récupérer la date de la semaine sélectionnée
@@ -240,12 +256,13 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			const half = $(this).data("half");
 			const courseData = $(this).data("course");
 
+			console.log("User Context ",userContext)
 			if (courseData) {
-				Udshed.Dialogs.openEditPlanningDialog(filters,courseData,() => {
+				Udshed.Dialogs.openEditPlanningDialog(filters,courseData,userContext,() => {
 					loadPlanning(weekSelect,monthPicker,filters,calendar_zone)
 				});
 			} else {
-				Udshed.Dialogs.openCreatePlanningDialog(filters,currentDay, half, () => {
+				Udshed.Dialogs.openCreatePlanningDialog(filters,currentDay,half,userContext, () => {
 					loadPlanning(weekSelect,monthPicker,filters,calendar_zone)
 				});
 			}

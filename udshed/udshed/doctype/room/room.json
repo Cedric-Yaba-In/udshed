@@ -1,0 +1,52 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:code",
+ "creation": "2026-02-10 18:53:57.677331",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "code",
+  "column_break_elta",
+  "etage"
+ ],
+ "fields": [
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Code",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_elta",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "etage",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Etage",
+   "options": "Rez-de-chauss\u00e9\n1er Etage\n2nd Etage\n3ieme Etage\n4ieme Etage\n5ieme Etag",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-02-11 06:30:24.552981",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "Room",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

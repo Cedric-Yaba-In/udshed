@@ -2,7 +2,24 @@ window.Udshed = window.Udshed || {};
 
 window.Udshed.Dialogs = {
 
-    openCreatePlanningDialog(filter,day, halfDay,callbak) {
+    openCreatePlanningDialog(filter,day, halfDay,userContext,callbak) {
+        if(!filter.academic_year) {
+            frappe.msgprint({
+                title: "Année académique requise",
+                indicator: "red",
+                message: "Veuillez sélectionner une année académique avant de créer une planification."
+            });
+            return;
+        }
+
+        if(!filter.faculty) {
+        	frappe.msgprint({
+        		title: "Faculté requise",
+        		indicator: "red",
+        		message: "Veuillez sélectionner une faculté avant de créer une planification."
+        	});
+        	return;
+        }
         if(!filter.filiere)
         {
         	frappe.msgprint({
@@ -20,23 +37,12 @@ window.Udshed.Dialogs = {
         		message: "Veuillez sélectionner un niveau avant de créer une planification."
         	});
         	return;
-        }
-        if(!filter.faculty) {
-        	frappe.msgprint({
-        		title: "Faculté requise",
-        		indicator: "red",
-        		message: "Veuillez sélectionner une faculté avant de créer une planification."
-        	});
-        	return;
-        }
-        if(!filter.academic_year) {
-            frappe.msgprint({
-                title: "Année académique requise",
-                indicator: "red",
-                message: "Veuillez sélectionner une année académique avant de créer une planification."
-            });
-            return;
-        }
+        }       
+        
+
+        // TODO check user context role
+        // if(!Udshed.Perms.user_can_edit_planning_cell(filter,userContext)) return;
+
         let translateValue = {"Morning":"Matin","Afternoon":"Après-midi"};
         const dialog = new frappe.ui.Dialog({
             title: `Nouvelle planification du ${day.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'long' })} (${translateValue[halfDay]})`,
@@ -60,8 +66,27 @@ window.Udshed.Dialogs = {
                     fieldtype: "Select",
                     label: "Type",
                     fieldname: "course_type",
-                    options: [ "Cours", "Traveaux Pratiques (TP)", "Controlle Continue (CC)", "Examen de session normal", "Examen de rattrapage"]
-                }
+                    options: [ "Cours", "Traveaux Pratiques (TP)", "Controlle Continue (CC)", "Examen de session normal", "Examen de rattrapage"],
+                    reqd: 1
+                },
+                {
+                    fieldtype: "Link",
+                    label: "Batiment",
+                    fieldname: "batiment",
+                    options: "Building",
+                    change() {
+
+                        Udshed.Queries.loadRooms(this.get_value(),cur_dialog.fields_dict.salle,(data)=>{
+                            cur_dialog.fields_dict.salle.df.options = data;
+                            cur_dialog.fields_dict.salle.refresh();
+                        });
+                    }
+                },
+                {
+                    fieldtype: "Select",
+                    label: "Salle",
+                    fieldname: "salle",
+                },                
             ],
             primary_action_label: "Créer",
             primary_action(values) {
@@ -105,7 +130,10 @@ window.Udshed.Dialogs = {
     },
 
 
-    openEditPlanningDialog(filter,course,callback) {
+    openEditPlanningDialog(filter,course,userContext,callback) {
+        // TODO check user context role
+
+        // if(!Udshed.Perms.user_can_edit_planning_cell(filter,userContext)) return;
         const dialog = new frappe.ui.Dialog({
             title: "Modifier la planification",
             fields: [

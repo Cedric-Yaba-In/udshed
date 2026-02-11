@@ -66,6 +66,25 @@ window.Udshed.Queries  = {
                 callback_function(r.message);                
             }
         });
+    },
+
+    loadRooms(batiment,salle_field,callback_function) {
+        if (!batiment) {
+            salle_field.df.options = [];
+            salle_field.refresh();
+            callback_function(null);
+            return;
+        }
+        console.log("Batimer",batiment)
+
+
+        frappe.call({
+            method: "udshed.api.building.get_room_by_building",
+            args: { building:batiment },
+            callback: (r) => {
+                callback_function(r.message);                
+            }
+        });
     }
 
 }

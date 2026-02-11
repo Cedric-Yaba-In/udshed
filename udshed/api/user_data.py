@@ -12,7 +12,7 @@ def get_user_context():
 
 	# ADMIN
 	if user == "Administrator" or "System Manager" in frappe.get_roles(user):
-		return {
+		return [{
 			"role": "Administrator",
 			"lock_faculty": False,
 			"lock_filiere": False,
@@ -21,7 +21,7 @@ def get_user_context():
 			"can_edit_course": True,
 			"default_academic_year": default_academic_year,
 			"academic_year_list": academic_year_list
-		}
+		}]
 
 	print("Frappe role ", frappe.get_roles(user))
 	# COORDINATEUR DE NIVEAU
@@ -129,13 +129,13 @@ def get_user_context():
 
 	if not data_result:
 			# AUTRES UTILISATEURS
-		return {
+		return [{
 			"role": "Guest",
 			"can_create_course": False,
 			"can_edit_course": False,
 			"default_academic_year": default_academic_year,
 			"academic_year_list": academic_year_list
-		}
+		}]
 	
 	return data_result
 

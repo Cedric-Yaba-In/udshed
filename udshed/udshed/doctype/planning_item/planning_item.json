@@ -13,7 +13,9 @@
   "academic_year",
   "column_break_ieyd",
   "date",
-  "period"
+  "period",
+  "batiment",
+  "salle"
  ],
  "fields": [
   {
@@ -54,13 +56,25 @@
    "label": "Ann\u00e9e acad\u00e9mique",
    "options": "Academic Year",
    "reqd": 1
+  },
+  {
+   "fieldname": "batiment",
+   "fieldtype": "Link",
+   "label": "Batiment",
+   "options": "Building"
+  },
+  {
+   "fieldname": "salle",
+   "fieldtype": "Link",
+   "label": "Salle",
+   "options": "Room"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2026-02-08 07:52:05.304842",
+ "modified": "2026-02-11 04:18:11.830877",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Planning Item",

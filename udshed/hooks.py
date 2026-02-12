@@ -29,7 +29,7 @@ fixtures = [
     {
         "dt" : "Role",
         "filters": [
-            ["name","in",["Teacher"]]
+            ["name","in",["Teacher","Coordonateur"]]
         ]
     }
 ]
@@ -100,7 +100,7 @@ fixtures = [
 # ------------
 
 # before_install = "udshed.install.before_install"
-# after_install = "udshed.install.after_install"
+after_install = "udshed.scripts.install.after_install"
 
 # Uninstallation
 # ------------

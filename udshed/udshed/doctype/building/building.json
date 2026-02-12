@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
  "autoname": "format:{code}-{batiment}",
  "creation": "2026-02-10 18:49:23.065057",
@@ -46,7 +47,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-11 05:45:02.580078",
+ "modified": "2026-02-11 23:01:27.841960",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Building",

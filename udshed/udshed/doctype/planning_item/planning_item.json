@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
  "autoname": "autoincrement",
  "creation": "2026-02-03 06:19:59.611899",
@@ -74,7 +75,7 @@
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2026-02-11 04:18:11.830877",
+ "modified": "2026-02-11 23:02:51.306858",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Planning Item",

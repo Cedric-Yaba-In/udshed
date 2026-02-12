@@ -53,4 +53,8 @@ window.Udshed.Utils = {
         })
     },
     
+    is_valide_filter(filter)
+    {
+        return filter.academic_year && filter.faculty && filter.filiere && filter.niveau;
+    }
 }

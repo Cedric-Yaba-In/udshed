@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
  "autoname": "field:field_of_study_code",
  "creation": "2026-02-01 23:01:40.682086",
@@ -75,7 +76,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-06 07:12:05.939367",
+ "modified": "2026-02-11 23:03:57.001882",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Field of study",

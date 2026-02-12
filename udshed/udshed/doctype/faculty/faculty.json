@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "autoname": "field:faculty_code",
  "creation": "2026-02-01 22:58:13.580556",
  "doctype": "DocType",
@@ -45,7 +46,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-08 06:16:04.477442",
+ "modified": "2026-02-11 23:04:11.399908",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Faculty",

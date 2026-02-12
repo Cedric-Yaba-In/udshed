@@ -38,7 +38,7 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
     CourseEnseignant = DocType("Course Teacher Item")
     date_week_start = datetime.fromisoformat(week_start)
 
-    print("filiere & niveau ",filiere,niveau)
+    print("filiere & niveau ",academic_year,filiere, niveau,  week_start)
     query = (
         frappe.qb.from_(PlanningItem)
         .join(TeachingUnit)
@@ -70,7 +70,6 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
     )
     data =  query.run(as_dict=True)
     data = [item for item in data if item.date >= date_week_start and item.date <= frappe.utils.add_days(date_week_start, 7)]
-
     for doc in data:
         teacher = frappe.get_doc("Teacher",{"name":doc.enseignant})
         doc["enseignant"] = f"{teacher.grade}. {teacher.first_name} {teacher.last_name}"

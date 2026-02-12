@@ -13,7 +13,6 @@ const ROLE_LIST= {
 window.Udshed.Perms = {
     user_can_edit_planning_cell(cellFilter,userContext) {
         if(this.is_admin(userContext)) return true;
-        console.log("Perms Item",userContext,cellFilter)
 
         let permsContext = userContext.perms.filter((p)=>p.academic_year == cellFilter.academic_year && p.filiere == cellFilter.filiere && p.niveau == cellFilter.niveau)
         if(permsContext.length==0) return false;

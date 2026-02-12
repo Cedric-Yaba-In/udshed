@@ -64,17 +64,20 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			loadPlanning(grid_wrapper,weekSelect,monthPicker,filters,calendar_zone)
 		});
 
-		page.add_menu_item("Exporter en PDF", () => {
-			let filters = {
-				faculty: page.fields_dict.faculty.get_value(),
-				filiere: page.fields_dict.filiere.get_value(),
-				niveau: page.fields_dict.niveau.get_value(),
-				week_start: currentWeekStart.toISOString().split('T')[0],
-				academic_year: page.fields_dict.academic_year.get_value()
-			};
-
-			let url = `/api/method/udshed.www.planning_pdf.generate_planning_pdf?filters=${encodeURIComponent(JSON.stringify(filters))}`;
-			window.open(url);
+		page.set_secondary_action("Exporter en PDF", () => {
+			// let filters = {
+			// 	faculty: page.fields_dict.faculty.get_value(),
+			// 	filiere: page.fields_dict.filiere.get_value(),
+			// 	niveau: page.fields_dict.niveau.get_value(),
+			// 	week_start: currentWeekStart.toISOString().split('T')[0],
+			// 	academic_year: page.fields_dict.academic_year.get_value()
+			// };
+			if(Udshed.Utils.is_valide_filter(filters))
+			{
+				let url = `/api/method/udshed.www.planning_pdf.generate_planning_pdf?filters=${encodeURIComponent(JSON.stringify({...filters,week_start:currentWeekStart.toISOString().split('T')[0]}))}`;
+				window.open(url);
+			}
+			
 		});
 
 		// get_data_of_user();

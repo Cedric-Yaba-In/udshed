@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
  "autoname": "format: {start_year}-{end_year}",
  "creation": "2026-02-01 22:38:25.312078",
@@ -83,7 +84,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-08 06:16:22.957154",
+ "modified": "2026-02-11 23:09:17.037474",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Academic Year",
@@ -109,6 +110,15 @@
    "read": 1,
    "report": 1,
    "role": "Coordonateur",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Teacher",
    "share": 1
   }
  ],

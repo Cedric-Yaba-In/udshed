@@ -3,75 +3,97 @@ from datetime import datetime, timedelta
 import udshed.api.planning_calendar as planning_calendar
 from frappe.utils import getdate, add_days
 from frappe.utils.pdf import get_pdf
+from frappe.utils import get_url
 
-@frappe.whitelist()
-def generate_planning_pdf():
-    filters = json.loads(frappe.form_dict.filters) if frappe.form_dict.filters else {}
-    print_week_planning(
-        filiere=filters.get("filiere"),
-        niveau=filters.get("niveau"),
-        academic_year=filters.get("academic_year"),
-        week_start=filters.get("week_start")
+
+@frappe.whitelist(allow_guest=False)
+def generate_planning_pdf(filters):
+    filters = json.loads(filters)
+    app_logo = get_url("/assets/udshed/images/logo-basic.png")
+    neveau_filiere = frappe.get_doc("Field of study Level",filters["niveau"])
+    filiere = frappe.get_doc("Field of study", filters["filiere"])
+
+    company_name = frappe.defaults.get_user_default("Company")
+    # company = frappe.get_doc("Company", company_name)
+    # company = frappe.defaults.get_user_default("Company")
+    # company = frappe.db.get_value("Company", frappe.defaults.get_global_default("company"))
+
+    print("Compagny ",company_name)
+    items = frappe.call(
+        "udshed.api.planning_calendar.get_week_planning",
+        academic_year=filters["academic_year"],
+        filiere=filters["filiere"],
+        niveau=filters["niveau"],
+        week_start=filters["week_start"],
     )
+    
 
-def print_week_planning(academic_year, filiere, niveau, week_start):
-
-    data = planning_calendar.get_week_planning(academic_year, filiere, niveau, week_start)
-
-    week_start_dt = datetime.fromisoformat(week_start)
-    week_end = week_start_dt + timedelta(days=6)
-
-    planning = build_planning_grid(data, week_start_dt)
-
-    context = {
-        "academic_year": academic_year,
-        "faculty": frappe.db.get_value("Field of study", filiere, "faculte"),
-        "filiere": filiere,
-        "niveau": niveau,
-        "week_start": week_start_dt.strftime("%d %B %Y"),
-        "week_end": week_end.strftime("%d %B %Y"),
-        "days": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-        "planning": planning
+    grid = {
+        "Monday": {"Morning":None,"Afternoon":None},
+        "Tuesday":{"Morning":None,"Afternoon":None},
+        "Wednesday":{"Morning":None,"Afternoon":None},
+        "Thursday":{"Morning":None,"Afternoon":None},
+        "Friday":{"Morning":None,"Afternoon":None},
+        "Saturday":{"Morning":None,"Afternoon":None}
     }
 
-    html = frappe.render_template("udshed/www/planning_pdf.html", context)
-    pdf = frappe.utils.pdf.get_pdf(html)
+    for it in items:
+        day = it["date"].strftime("%A")
+        half = it["period"]
+        css = {
+            "Cours":"cm",
+            "Traveaux Pratiques (TP)":"tp",
+            "Controlle Continue (CC)":"cc",
+            "Examen de session normal":"exam",
+            "Examen de rattrapage":"exam"
+        }.get(it["type"],"cm")
+
+        grid[day][half] = {
+            "subject": it["course"],
+            "cours_label": it["cours_label"],
+            "type": it["type"],
+            "batiment": it["batiment"],
+            "salle": it["salle"],
+            "teachers": [it["enseignant"]],
+            "css": css
+        }
+
+    start = datetime.strptime(filters["week_start"],"%Y-%m-%d")
+    end = start + timedelta(days=6)
+
+    html = frappe.render_template(
+        "udshed/www/planning_pdf.html",
+        {
+            "grid":grid,
+            "filters":filters,
+            "week_start": start.strftime("%d %B %Y"),
+            "week_end": end.strftime("%d %B %Y"),
+            # "company_name": company.company_name,
+            # "company_logo": company.logo,
+            "company_name": "Udshed",
+            "company_logo": "",
+            "coordinator": neveau_filiere.coordonateur,
+            "niveau":neveau_filiere.level,
+            "filiere":filiere.name_of_field,
+            "app_logo": app_logo,
+            "generated_on": datetime.now().strftime("%d/%m/%Y à %H:%M")
+        }
+    )
+
+    pdf = get_pdf(html,{
+    "orientation": "Landscape",
+    "page-size": "A4",
+    "margin-top": "10mm",
+    "margin-bottom": "10mm",
+    "margin-left": "12mm",
+    "margin-right": "12mm",
+})
 
     frappe.local.response.filename = "planning.pdf"
     frappe.local.response.filecontent = pdf
-    frappe.local.response.type = "download"
+    frappe.local.response.type = "pdf"
 
 
 
-DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
 
-def build_planning_grid(data, week_start):
-    grid = {
-        "morning": {d: [] for d in DAYS},
-        "afternoon": {d: [] for d in DAYS},
-    }
 
-    for item in data:
-        day_index = item["date"].weekday()
-        if day_index > 5:
-            continue
-
-        day = DAYS[day_index]
-        period = "morning" if item["period"] == "Matin" else "afternoon"
-
-        type_map = {
-            "Cours": "cours",
-            "Travaux Pratiques (TP)": "tp",
-            "Controle Continue (CC)": "cc",
-            "Examen": "exam",
-        }
-
-        grid[period][day].append({
-            "course": item["course"],
-            "label": item["type"],
-            "type": type_map.get(item["type"], "cours"),
-            "prof1": item["enseignant"],
-            "prof2": ""
-        })
-
-    return grid

@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "allow_import": 1,
  "allow_rename": 1,
  "autoname": "format: {course}-{####}",
  "creation": "2026-02-06 05:49:13.671088",
@@ -73,7 +74,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-10 14:26:59.015883",
+ "modified": "2026-02-11 23:02:06.427784",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Teaching Unit",

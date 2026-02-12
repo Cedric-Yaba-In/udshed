@@ -3,7 +3,7 @@ from datetime import date
 from datetime import datetime
 
 def get_default_academic_year():
-    default_academic_year =frappe.db.get_single_value('Academic Year', 'current_year')
+    default_academic_year =frappe.db.get_single_value('Udshed Setting', 'current_year')
     today = date.today()
     past_year = today.year
     current_year = today.year
@@ -22,5 +22,5 @@ def get_default_academic_year():
             "end_year": current_year,
 
         }).insert(ignore_permissions=True)
-    frappe.db.set_single_value('Academic Year', 'current_year', default_academic_year.name)
+    frappe.db.set_single_value('Udshed Setting', 'current_year', default_academic_year.name)
     return default_academic_year.name

@@ -6,14 +6,14 @@ def create_default_data():
     create_default_period()
 
 def create_default_period():
-    if not frappe.get_doc("Planning Period",{"heure_de_debut":"08:00","heure_de_fin":"12:00"}):
+    if not frappe.db.exists("Planning Period",{"heure_de_debut":"08:00","heure_de_fin":"12:00"}):
         frappe.get_doc({
             "doctype":"Planning Period",
             "heure_de_debut":"08:00",
             "heure_de_fin":"12:00",
             "libelle":"Matin"
         }).insert(ignore_permissions=True)
-    if not frappe.get_doc("Planning Period",{"heure_de_debut":"13:30","heure_de_fin":"16:45"}):
+    if not frappe.db.exists("Planning Period",{"heure_de_debut":"13:30","heure_de_fin":"16:45"}):
         frappe.get_doc({
             "doctype":"Planning Period",
             "heure_de_debut":"13:30",
@@ -35,17 +35,17 @@ def load_json(doctype, path):
 def load_workspace():
     path = os.path.join(
         frappe.get_app_path("udshed"),
-        "udshed", "workspaces", "udshed.json"
+        "udshed", "data", "workspaces", "udshed.json"
     )
     load_json("Workspace", path)
 
 def load_sidebar():
     path = os.path.join(
         frappe.get_app_path("udshed"),
-        "udshed", "workspace_sidebar", "udshed_sidebar.json"
+        "udshed", "data", "workspace_sidebar", "udshed_sidebar.json"
     )
     load_json("Workspace Sidebar", path)
-
+    
 def after_install():
     create_default_data()
     load_workspace()

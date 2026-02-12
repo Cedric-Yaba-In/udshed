@@ -105,7 +105,7 @@ after_install = "udshed.scripts.install.after_install"
 # Uninstallation
 # ------------
 
-# before_uninstall = "udshed.uninstall.before_uninstall"
+before_uninstall = "udshed.scripts.uninstall.before_uninstall"
 # after_uninstall = "udshed.uninstall.after_uninstall"
 
 # Integration Setup

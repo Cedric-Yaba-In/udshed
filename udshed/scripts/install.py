@@ -1,5 +1,5 @@
 import frappe
-import scripts.time_utils as time_utils
+import udshed.utils.time_utils as time_utils
 
 
 def after_install():

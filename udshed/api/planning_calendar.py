@@ -5,7 +5,7 @@ import udshed.api.course as course
 from frappe.query_builder import DocType
 from frappe.query_builder.functions import Count
 from datetime import datetime
-import utils.time_utils as time_utils
+import udshed.utils.time_utils as time_utils
 
 
 

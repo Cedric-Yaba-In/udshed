@@ -3,7 +3,7 @@ import udshed.utils.time_utils as time_utils
 
 def create_default_data():
     default_acadamic_year = time_utils.get_default_academic_year()
-    # create_default_period()
+    create_default_period()
 
 def create_default_period():
     if not frappe.db.exists("Planning Period",{"heure_de_debut":"08:00","heure_de_fin":"12:00"}):

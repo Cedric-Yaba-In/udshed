@@ -8,12 +8,12 @@
  "icon": "calendar",
  "icon_type": "Link",
  "idx": 0,
- "label": "Planning Acad\u00e9mique",
- "link_to": "Planning Acad\u00e9mique",
+ "label": "Planning Academique",
+ "link_to": "Planning Academique",
  "link_type": "Workspace Sidebar",
  "modified": "2026-02-13 06:54:41.999552",
  "modified_by": "Administrator",
- "name": "Planning Acad\u00e9mique",
+ "name": "Planning Academique",
  "owner": "Administrator",
  "restrict_removal": 0,
  "roles": [
@@ -27,6 +27,6 @@
    "role": "Enseignant"
   }
  ],
- "sidebar": "Planning Acad\u00e9mique",
+ "sidebar": "Planning Academique",
  "standard": 1
 }

@@ -46,9 +46,9 @@
   },
   {
    "fieldname": "period",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Period",
-   "options": "Morning\nAfternoon",
+   "options": "Planning Period",
    "reqd": 1
   },
   {
@@ -75,7 +75,7 @@
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2026-02-11 23:02:51.306858",
+ "modified": "2026-02-13 07:16:59.645612",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Planning Item",

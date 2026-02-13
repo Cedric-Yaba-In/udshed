@@ -61,7 +61,19 @@
    "indent": 0,
    "keep_closed": 0,
    "label": "Enseignants",
-   "link_to": "Teaching Unit",
+   "link_to": "Teacher",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "bell-electric",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "P\u00e9riode de cours",
+   "link_to": "Planning Period",
    "link_type": "DocType",
    "show_arrow": 0,
    "type": "Link"
@@ -91,7 +103,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-02-13 06:53:31.494282",
+ "modified": "2026-02-13 07:21:39.410136",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Planning Academique",

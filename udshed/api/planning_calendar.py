@@ -17,7 +17,6 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
     CourseEnseignant = DocType("Course Teacher Item")
     date_week_start = datetime.fromisoformat(week_start)
 
-    print("filiere & niveau ",academic_year,filiere, niveau,  week_start)
     query = (
         frappe.qb.from_(PlanningItem)
         .join(TeachingUnit)
@@ -54,6 +53,7 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
         doc["enseignant"] = f"{teacher.grade}. {teacher.first_name} {teacher.last_name}"
         cours  = frappe.get_doc("Course",doc.course)
         doc["cours_label"] = cours.intitule
+        # doc["period"] = frappe.get_doc("Planning Period",doc.period)
         if doc.salle:
             doc["salle"] = (frappe.get_doc("Room",doc.salle)).code
         if doc.batiment:
@@ -63,7 +63,7 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
 
 
 @frappe.whitelist()
-def create_planning(academic_year, cours, course_type,batiment,salle, day_of_week, half_day):
+def create_planning(academic_year, cours, course_type,day_of_week, half_day,batiment=None,salle=None):
     teaching_unit = course.get_single_teaching_unit(cours,academic_year)
     cours_teachers = list(map(lambda x: x.enseignant, teaching_unit.table_enseignant))
     date_week_start = datetime.fromisoformat(day_of_week)
@@ -138,3 +138,7 @@ def update_planning(planning_item_name,academic_year,cours,course_type,batiment,
 def delete_planning(planning_name):
     frappe.delete_doc("Planning Item",planning_name)
     return True
+
+@frappe.whitelist()
+def get_period():
+    return frappe.db.get_all('Planning Period', order_by='position asc',fields=["name","libelle"])

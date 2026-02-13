@@ -3,13 +3,14 @@ window.Udshed = window.Udshed || {};
 window.Udshed.Queries  = {
     fetchPlanningItems(filter,currentWeekStart,callback_function) {
         // 🔑 ICI tu fais ton appel API pour récupérer les items de la semaine
-
+        
         if(!filter.academic_year || !filter.filiere || !filter.niveau) {
-                console.warn("Missing filters, cannot fetch planning items")
-                callback_function([]);
-                return;
-            }
+            console.warn("Missing filters, cannot fetch planning items")
+            callback_function([]);
+            return;
+        }
         // ex:
+
         frappe.call({
             method: "udshed.api.planning_calendar.get_week_planning",
             args: { 
@@ -28,11 +29,18 @@ window.Udshed.Queries  = {
                         item_map.set(`${item.cours}-${item.date}-${item.period}`, {
                             ...item,
                             teachers: [item.enseignant]
-                         }
+                        }
                         );
                     }
                 }
+                console.log("item ",Array.from(item_map.values()))
                 callback_function(Array.from(item_map.values()));
+            },
+            error: (err) => {
+                console.error("❌ Erreur détaillée:", err);
+                console.error("Statut HTTP:", err.xhr?.status);
+                console.error("Réponse serveur:", err.xhr?.responseText);
+                callback_function([]);
             }
         });
     },
@@ -97,5 +105,18 @@ window.Udshed.Queries  = {
                 callback_function(r.message);                
             }
         });
+    },
+
+    loadCoursePerd()
+    {
+        return new Promise((resolve, reject) => {
+            frappe.call({
+                method: "udshed.api.planning_calendar.get_period",
+                callback: (r) => {
+                    resolve(r.message);
+                }
+            });
+        })
     }
+    
 }

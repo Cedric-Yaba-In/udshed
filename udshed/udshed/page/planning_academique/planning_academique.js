@@ -9,20 +9,21 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		'/assets/udshed/js/planning_calendar/queries.js',
 		'/assets/udshed/js/planning_calendar/ui.js',
 		'/assets/udshed/js/planning_calendar/permission.js'
-	]).then(() => {
+	]).then(async () => {
 
 		var currentWeekStart = Udshed.DateUtils.getMonday(new Date());
 
 		
-		function loadPlanning(weekSelect,monthPicker,filters,calendar_zone) {
+		async function loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods) {
 			Udshed.DateUtils.updateWeekLabel(currentWeekStart);
 			Udshed.DateUtils.syncSelectors(weekSelect,monthPicker,currentWeekStart);
+				console.log("Item to dinf")
+
 			Udshed.Queries.fetchPlanningItems(filters,currentWeekStart,(items)=>{
-				Udshed.UI.show_calendar(calendar_zone, Udshed.UI.get_grid_calendar_item(items,filters));
+				console.log("Item wfvgsdfg",item)
+				Udshed.UI.show_calendar(calendar_zone, Udshed.UI.get_grid_calendar_item(items,filters,periods),periods)
 			});
 		}
-
-
 	
 		let page = frappe.ui.make_app_page({
 			parent: wrapper,
@@ -40,6 +41,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		let levelMap = {}; // label => name
 
 
+		let periods = await Udshed.Queries.loadCoursePerd()
 
 
 		let grid_wrapper = $('<div id="planning-grid-wrapper"></div>');
@@ -48,7 +50,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		// afficher la grille vide au chargement
 		grid_wrapper.html(Udshed.UI.show_calendar_hearder());
 		calendar_zone = grid_wrapper.find("#planning_calendar .planning-grid");
-		Udshed.UI.show_calendar(calendar_zone);
+		Udshed.UI.show_calendar(calendar_zone,Udshed.Utils.initDataPeriodForUi(periods),periods);
 
 		const monthPicker = document.getElementById("month-picker");
 		const weekSelect = document.getElementById("week-select");
@@ -61,17 +63,10 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 				academic_year: page.fields_dict.academic_year.get_value()
 			};
 			// show_calendar(filters);
-			loadPlanning(grid_wrapper,weekSelect,monthPicker,filters,calendar_zone)
+			loadPlanning(grid_wrapper,weekSelect,monthPicker,filters,calendar_zone,periods)
 		});
 
 		page.set_secondary_action("Exporter en PDF", () => {
-			// let filters = {
-			// 	faculty: page.fields_dict.faculty.get_value(),
-			// 	filiere: page.fields_dict.filiere.get_value(),
-			// 	niveau: page.fields_dict.niveau.get_value(),
-			// 	week_start: currentWeekStart.toISOString().split('T')[0],
-			// 	academic_year: page.fields_dict.academic_year.get_value()
-			// };
 			if(Udshed.Utils.is_valide_filter(filters))
 			{
 				let url = `/api/method/udshed.www.planning_pdf.generate_planning_pdf?filters=${encodeURIComponent(JSON.stringify({...filters,week_start:currentWeekStart.toISOString().split('T')[0]}))}`;
@@ -143,23 +138,23 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			fieldname: 'niveau',
 			change() {
 				filters.niveau = levelMap[this.get_value()];
-				loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+				loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
 			}
 		});
 
 		document.getElementById("prev-week").onclick = () => {
 			currentWeekStart.setDate(currentWeekStart.getDate() - 7);
-			loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+			loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
 		};
 
 		document.getElementById("next-week").onclick = () => {
 			currentWeekStart.setDate(currentWeekStart.getDate() + 7);
-			loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+			loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
 		};
 
 		document.getElementById("today-week").onclick = () => {
 			currentWeekStart = Udshed.DateUtils.getMonday(new Date());
-			loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+			loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
 		};
 
 	
@@ -170,19 +165,19 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			// 🔑 On force la 1ère semaine visible du mois
 			const weeks = Udshed.DateUtils.getWeeksOfMonth(year, month);
 			currentWeekStart = Udshed.DateUtils.getFirstWeekInsideMonth(weeks, year, month);
-			loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+			loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
 		});
 
 		weekSelect.addEventListener("change", (e) => {
 			currentWeekStart = new Date(Number(e.currentTarget.value));
-			loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+			loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
 		});
 
 
 		Udshed.DateUtils.initMonthPicker(monthPicker);
 		Udshed.DateUtils.updateWeekSelect(new Date().getFullYear(), new Date().getMonth(),weekSelect);
 		
-		loadPlanning(weekSelect,monthPicker,filters,calendar_zone);
+		loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
 		Udshed.Utils.refresh_filter(filters,null,page,levelMap);
 
 		let userContext = null;
@@ -262,11 +257,11 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			// console.log("User Context ",userContext)
 			if (courseData) {
 				Udshed.Dialogs.openEditPlanningDialog(filters,currentDay,half,courseData,userContext,() => {
-					loadPlanning(weekSelect,monthPicker,filters,calendar_zone)
+					loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods)
 				});
 			} else {
 				Udshed.Dialogs.openCreatePlanningDialog(filters,currentDay,half,userContext, () => {
-					loadPlanning(weekSelect,monthPicker,filters,calendar_zone)
+					loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods)
 				});
 			}
 		});	

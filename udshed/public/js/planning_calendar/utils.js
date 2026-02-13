@@ -56,5 +56,20 @@ window.Udshed.Utils = {
     is_valide_filter(filter)
     {
         return filter.academic_year && filter.faculty && filter.filiere && filter.niveau;
+    },
+
+    initDataPeriodForUi(coursePeriod)
+    {
+        let grid = {};
+
+        for(let day of ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"])
+        {
+            let mapDay = new Map()
+            coursePeriod.forEach((period)=>{
+                mapDay.set(period.name,null)
+            })
+            grid[day] = mapDay;
+        }
+        return grid;
     }
 }

@@ -143,7 +143,7 @@ th { background:#f2f2f2; }
 </head>
 
 <body>
-<img src="{{ app_logo }}" class="watermark">
+<img src="{{ app_logo | safe }}" class="watermark">
 <!-- EN-TÊTE -->
 <div class="header">
   <div>
@@ -154,7 +154,7 @@ th { background:#f2f2f2; }
     <p><b>Niveau :</b> {{ niveau }}</p>
   </div>
   <div>
-    <img src="{{ school_logo }}" alt="{{school_name}}">
+    <img src="{{ school_logo | safe }}" alt="{{school_name}}">
   </div>
 </div>
 
@@ -228,10 +228,10 @@ th { background:#f2f2f2; }
 </div>
 
 <div class="footer-bar">
-  <div>
+  <div>    
     Généré le {{ generated_on }} |
     Fait avec <b>Udshed</b> — Système intelligent de gestion des emplois du temps</div>
-  <img src="{{ app_logo }}">
+  <img src="{{ app_logo | safe }}">
 </div>
 
 </body>

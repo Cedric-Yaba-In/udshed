@@ -17,10 +17,8 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		async function loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods) {
 			Udshed.DateUtils.updateWeekLabel(currentWeekStart);
 			Udshed.DateUtils.syncSelectors(weekSelect,monthPicker,currentWeekStart);
-				console.log("Item to dinf")
 			
 			Udshed.Queries.fetchPlanningItems(filters,currentWeekStart,function (items){
-				console.log("Item wfvgsdfg",items)
 				Udshed.UI.show_calendar(calendar_zone, Udshed.UI.get_grid_calendar_item(items,filters,periods),periods)
 			});
 		}

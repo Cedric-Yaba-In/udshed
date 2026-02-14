@@ -9,12 +9,7 @@
   "current_year",
   "column_break_lpdk",
   "school_name",
-  "plage_horaire_section",
-  "start_hours_morning",
-  "end_hours_morning",
-  "column_break_eqll",
-  "start_hours_evening",
-  "end_hours_evening",
+  "school_logo",
   "tab_2_tab"
  ],
  "fields": [
@@ -37,58 +32,25 @@
   {
    "fieldname": "school_name",
    "fieldtype": "Data",
-   "label": "Nom de l'\u00e9tablissement"
+   "in_list_view": 1,
+   "label": "Nom de l'\u00e9tablissement",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_lpdk",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "plage_horaire_section",
-   "fieldtype": "Section Break",
-   "label": "Plage horaire"
-  },
-  {
-   "fieldname": "column_break_eqll",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "2",
-   "fieldname": "start_hours_morning",
-   "fieldtype": "Time",
-   "in_list_view": 1,
-   "label": "Heure de debut (matin\u00e9e)",
-   "reqd": 1
-  },
-  {
-   "fieldname": "end_hours_morning",
-   "fieldtype": "Time",
-   "hide_days": 1,
-   "hide_seconds": 1,
-   "in_list_view": 1,
-   "label": "Heure de fin (matin\u00e9e)",
-   "reqd": 1
-  },
-  {
-   "fieldname": "start_hours_evening",
-   "fieldtype": "Time",
-   "in_list_view": 1,
-   "label": "Heure de d\u00e9but (soir\u00e9e)",
-   "reqd": 1
-  },
-  {
-   "fieldname": "end_hours_evening",
-   "fieldtype": "Time",
-   "in_list_view": 1,
-   "label": "Heure de fin (soir\u00e9e)",
-   "reqd": 1
+   "fieldname": "school_logo",
+   "fieldtype": "Attach Image",
+   "label": "Logo"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-02-08 06:14:03.496183",
+ "modified": "2026-02-14 12:05:18.132237",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Udshed Setting",

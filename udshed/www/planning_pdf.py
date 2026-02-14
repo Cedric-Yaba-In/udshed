@@ -6,19 +6,24 @@ from frappe.utils.pdf import get_pdf
 from frappe.utils import get_url
 
 
+
 @frappe.whitelist(allow_guest=False)
 def generate_planning_pdf(filters):
     filters = json.loads(filters)
-    app_logo = get_url("/assets/udshed/images/logo-basic.png")
+    app_logo = get_url("/assets/udshed/images/logo.png")
     neveau_filiere = frappe.get_doc("Field of study Level",filters["niveau"])
     filiere = frappe.get_doc("Field of study", filters["filiere"])
+    period = planning_calendar.get_period()
+    setting= frappe.get_single("Udshed Setting")
+    school_name = ""
+    school_logo =""
+    if setting.school_name:
+        school_name = setting.school_name
+    
+    if setting.school_logo:
+        school_logo = setting.school_logo
 
-    company_name = frappe.defaults.get_user_default("Company")
-    # company = frappe.get_doc("Company", company_name)
-    # company = frappe.defaults.get_user_default("Company")
-    # company = frappe.db.get_value("Company", frappe.defaults.get_global_default("company"))
 
-    print("Compagny ",company_name)
     items = frappe.call(
         "udshed.api.planning_calendar.get_week_planning",
         academic_year=filters["academic_year"],
@@ -29,12 +34,12 @@ def generate_planning_pdf(filters):
     
 
     grid = {
-        "Monday": {"Morning":None,"Afternoon":None},
-        "Tuesday":{"Morning":None,"Afternoon":None},
-        "Wednesday":{"Morning":None,"Afternoon":None},
-        "Thursday":{"Morning":None,"Afternoon":None},
-        "Friday":{"Morning":None,"Afternoon":None},
-        "Saturday":{"Morning":None,"Afternoon":None}
+        "Monday": {},
+        "Tuesday":{},
+        "Wednesday":{},
+        "Thursday":{},
+        "Friday":{},
+        "Saturday":{}
     }
 
     for it in items:
@@ -68,15 +73,14 @@ def generate_planning_pdf(filters):
             "filters":filters,
             "week_start": start.strftime("%d %B %Y"),
             "week_end": end.strftime("%d %B %Y"),
-            # "company_name": company.company_name,
-            # "company_logo": company.logo,
-            "company_name": "Udshed",
-            "company_logo": "",
+            "school_name": school_name,
+            "school_logo": school_logo,
             "coordinator": neveau_filiere.coordonateur,
             "niveau":neveau_filiere.level,
             "filiere":filiere.name_of_field,
             "app_logo": app_logo,
-            "generated_on": datetime.now().strftime("%d/%m/%Y à %H:%M")
+            "generated_on": datetime.now().strftime("%d/%m/%Y à %H:%M"),
+            "period":period
         }
     )
 

@@ -34,7 +34,6 @@ window.Udshed.Queries  = {
                         );
                     }
                 }
-                console.log("item ",Array.from(item_map.values()))
                 return callback_function(Array.from(item_map.values()));
             }
         });

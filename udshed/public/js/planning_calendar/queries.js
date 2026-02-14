@@ -20,6 +20,7 @@ window.Udshed.Queries  = {
                 week_start: currentWeekStart.toISOString().split('T')[0]// format YYYY-MM-DD
             },
             callback: (res) => {
+                if(!res.message) return callback_function([])
                 const items = res.message; // supposons que l'API retourne une liste d'items
                 let item_map = new Map()
                 for(let item of items) {
@@ -34,13 +35,7 @@ window.Udshed.Queries  = {
                     }
                 }
                 console.log("item ",Array.from(item_map.values()))
-                callback_function(Array.from(item_map.values()));
-            },
-            error: (err) => {
-                console.error("❌ Erreur détaillée:", err);
-                console.error("Statut HTTP:", err.xhr?.status);
-                console.error("Réponse serveur:", err.xhr?.responseText);
-                callback_function([]);
+                return callback_function(Array.from(item_map.values()));
             }
         });
     },

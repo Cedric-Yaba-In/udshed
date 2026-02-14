@@ -59,7 +59,7 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
         if doc.batiment:
             doc["batiment"] = (frappe.get_doc("Building", doc.batiment)).code
 
-    return data
+    return  data
 
 
 @frappe.whitelist()

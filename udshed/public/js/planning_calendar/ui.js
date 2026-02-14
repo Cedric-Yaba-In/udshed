@@ -4,7 +4,7 @@ window.Udshed.UI = {
     
     get_grid_calendar_item(items,filter,coursePeriod) {
         
-        let grid = Udshed.Utils.initDataPeriodForUi(coursePeriod)
+        let grid = Udshed.Utils.initDataPeriodForUi(coursePeriod) 
         
         console.log("item grid",items,grid)
         

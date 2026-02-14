@@ -11,6 +11,7 @@ from frappe.utils import get_url
 def generate_planning_pdf(filters):
     filters = json.loads(filters)
     app_logo = get_url("/assets/udshed/images/logo.png")
+    print("app_lien ",app_logo)
     neveau_filiere = frappe.get_doc("Field of study Level",filters["niveau"])
     filiere = frappe.get_doc("Field of study", filters["filiere"])
     period = planning_calendar.get_period()
@@ -21,7 +22,7 @@ def generate_planning_pdf(filters):
         school_name = setting.school_name
     
     if setting.school_logo:
-        school_logo = setting.school_logo
+        school_logo = get_url(setting.school_logo)
 
 
     items = frappe.call(

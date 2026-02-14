@@ -50,7 +50,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-02-14 12:05:18.132237",
+ "modified": "2026-02-14 12:22:45.658489",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Udshed Setting",
@@ -75,6 +75,13 @@
    "role": "Coordonateur",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Teacher",
+   "share": 1
   }
  ],
  "row_format": "Dynamic",

@@ -14,6 +14,7 @@
   "column_break_askz",
   "nombre_dheure_cm",
   "nombre_dheure_tp",
+  "nombre_dheure_td",
   "nombre_dheure_total"
  ],
  "fields": [
@@ -27,14 +28,14 @@
   },
   {
    "fieldname": "nombre_dheure_cm",
-   "fieldtype": "Float",
+   "fieldtype": "Int",
    "label": "Nombre d'heure (CM)",
    "non_negative": 1,
    "reqd": 1
   },
   {
    "fieldname": "nombre_dheure_tp",
-   "fieldtype": "Float",
+   "fieldtype": "Int",
    "label": "Nombre d'heure (TP)",
    "non_negative": 1,
    "precision": "0"
@@ -68,16 +69,23 @@
   },
   {
    "fieldname": "nombre_dheure_total",
-   "fieldtype": "Float",
-   "is_virtual": 1,
+   "fieldtype": "Int",
    "label": "Total",
+   "non_negative": 1,
+   "options": "nombre_dheure_td + nombre_dheure_tp + nombre_dheure_cm",
    "read_only": 1
+  },
+  {
+   "fieldname": "nombre_dheure_td",
+   "fieldtype": "Int",
+   "label": "Nombre d'heure (TD)",
+   "non_negative": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-11 23:03:22.567746",
+ "modified": "2026-02-15 17:11:37.090452",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Course",

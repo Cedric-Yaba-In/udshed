@@ -14,7 +14,6 @@ window.Udshed.UI = {
             // let halfDay = item.period === "Morning" ? "Morning" : "Afternoon"; // ou selon comment tu définis ça dans ton backend
 
             if (grid[dayOfWeek]) {
-                let periodDay = grid[dayOfWeek].get(item.period)
 
                 if(grid[dayOfWeek].get(item.period)== null) {
                     grid[dayOfWeek].set(item.period, {
@@ -147,10 +146,14 @@ window.Udshed.UI = {
         for(let period of plan.keys())
         {
             periodItem = period.split("-")
-            calendarHTML += `
-                <div class="planning-time-label">
-                    <span>${plan.get(period).libelle}</span>
-                    <div class="planning-time-range">${periodItem[0]} - ${periodItem[1]}</div>
+            calendarHTML += `<div class="planning-time-label">`
+            if(plan.get(period).libelle)
+            {
+                calendarHTML+= `<span>${plan.get(period).libelle}</span>`
+            }
+            let startPeriod = periodItem[0].split(":"), endPeriod = periodItem[1].split(":");
+            calendarHTML +=`                    
+                    <div class="planning-time-range">${startPeriod[0]}:${startPeriod[1]} - ${endPeriod[0]}:${endPeriod[1]}</div>
                 </div>
                 ${plan.get(period).items.join('')}
             `

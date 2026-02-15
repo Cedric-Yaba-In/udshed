@@ -69,11 +69,11 @@
   {
    "child": 0,
    "collapsible": 1,
-   "icon": "bell-electric",
+   "icon": "calendar-plus",
    "indent": 0,
    "keep_closed": 0,
-   "label": "P\u00e9riode de cours",
-   "link_to": "Planning Period",
+   "label": "Gestion de Planning",
+   "link_to": "Calendar Planing",
    "link_type": "DocType",
    "show_arrow": 0,
    "type": "Link"
@@ -103,7 +103,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-02-13 07:21:39.410136",
+ "modified": "2026-02-15 05:13:31.809846",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Planning Academique",

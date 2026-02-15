@@ -11,10 +11,9 @@ from frappe.utils import get_url
 def generate_planning_pdf(filters):
     filters = json.loads(filters)
     app_logo = get_url("/assets/udshed/images/logo.png")
-    print("app_lien ",app_logo)
     neveau_filiere = frappe.get_doc("Field of study Level",filters["niveau"])
     filiere = frappe.get_doc("Field of study", filters["filiere"])
-    period = planning_calendar.get_period()
+    period = planning_calendar.get_period(filters["niveau"])
     setting= frappe.get_single("Udshed Setting")
     school_name = ""
     school_logo =""
@@ -94,7 +93,7 @@ def generate_planning_pdf(filters):
     "margin-right": "12mm",
 })
 
-    frappe.local.response.filename = "planning.pdf"
+    frappe.local.response.filename = f"planning {filiere.field_of_study_code}  {neveau_filiere.level} du {start.strftime("%d %B")}  au {end.strftime("%d %B")} {filters['academic_year']}.pdf"
     frappe.local.response.filecontent = pdf
     frappe.local.response.type = "pdf"
 

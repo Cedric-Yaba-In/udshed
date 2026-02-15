@@ -39,7 +39,8 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		let levelMap = {}; // label => name
 
 
-		let periods = await Udshed.Queries.loadCoursePerd()
+		let defaultPeriods = await Udshed.Queries.loadCourseDefaultPeriod()
+		let periods = [...defaultPeriods]
 
 
 		let grid_wrapper = $('<div id="planning-grid-wrapper"></div>');
@@ -83,6 +84,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			change() {
 				filters.academic_year = this.get_value();
 				Udshed.Utils.refresh_filter(filters,"academic_year",page,levelMap);
+				periods = [...defaultPeriods]
 				// show_calendar(filters);
 
 			}
@@ -96,6 +98,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			change() {
 				filters.faculty = this.get_value();
 				Udshed.Utils.refresh_filter(filters,"faculty",page,levelMap);
+				periods = [...defaultPeriods]
 			}
 		});
 
@@ -127,6 +130,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 					niveau_field.df.options = levels ? levels.map((value)=>({value:value.level,name:value.name})) || [] : [];
 					niveau_field.refresh();
 				});
+				periods = [...defaultPeriods]
 			}
 		});
 
@@ -134,8 +138,10 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			fieldtype: 'Select',
 			label: 'Niveau',
 			fieldname: 'niveau',
-			change() {
+			async change() {
 				filters.niveau = levelMap[this.get_value()];
+				console.log("Load cours period",this.get_value())
+				periods = this.get_value()==null ? [...defaultPeriods]: await Udshed.Queries.loadCoursePeriod(filters.niveau)
 				loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
 			}
 		});

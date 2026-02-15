@@ -3,25 +3,29 @@ import udshed.utils.time_utils as time_utils
 
 def create_default_data():
     default_acadamic_year = time_utils.get_default_academic_year()
-    create_default_period()
+    create_default_calendar_period()
 
-def create_default_period():
-    if not frappe.db.exists("Planning Period",{"heure_de_debut":"08:00","heure_de_fin":"12:00"}):
-        frappe.get_doc({
+def create_default_calendar_period():
+    if not frappe.db.exists("Calendar Planing","Default"):
+        default_calendar = frappe.get_doc({
+            "doctype":"Calendar Planing",
+            "nom_du_planing":"Defaut"
+        })
+        default_calendar.append("heure_planification",{
             "doctype":"Planning Period",
             "heure_de_debut":"08:00",
             "heure_de_fin":"12:00",
             "libelle":"Matin",
-            "position":0
-        }).insert(ignore_permissions=True)
-    if not frappe.db.exists("Planning Period",{"heure_de_debut":"13:30","heure_de_fin":"16:45"}):
-        frappe.get_doc({
+        })
+        default_calendar.append("heure_planification",{
             "doctype":"Planning Period",
             "heure_de_debut":"13:30",
             "heure_de_fin":"16:45",
             "libelle":"Soir",
-            "position":1
-        }).insert(ignore_permissions=True)
+        })
+
+        default_calendar.insert()
+        frappe.db.commit()
 
 def load_json(doctype, path):
     if not os.path.exists(path):

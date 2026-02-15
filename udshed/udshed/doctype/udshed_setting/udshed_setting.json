@@ -43,14 +43,15 @@
   {
    "fieldname": "school_logo",
    "fieldtype": "Attach Image",
-   "label": "Logo"
+   "label": "Logo",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-02-14 12:22:45.658489",
+ "modified": "2026-02-15 04:30:37.528733",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Udshed Setting",

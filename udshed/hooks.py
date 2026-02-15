@@ -14,7 +14,7 @@ app_license = "mit"
 add_to_apps_screen = [
 	{
 		"name": "udshed",
-		"logo": "/assets/udshed/logo-basic.png",
+		"logo": "/assets/udshed/logo.png",
 		"title": "Udshed",
 		"route": "/udshed",
 		"has_permission": "udshed.api.permission.has_app_permission"

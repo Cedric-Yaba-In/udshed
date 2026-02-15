@@ -101,11 +101,24 @@ window.Udshed.Queries  = {
         });
     },
 
-    loadCoursePerd()
+    loadCoursePeriod(level)
     {
         return new Promise((resolve, reject) => {
             frappe.call({
                 method: "udshed.api.planning_calendar.get_period",
+                args: { field_of_study_level: level },
+                callback: (r) => {
+                    resolve(r.message);
+                }
+            });
+        })
+    },
+
+    loadCourseDefaultPeriod()
+    {
+        return new Promise((resolve, reject) => {
+            frappe.call({
+                method: "udshed.api.planning_calendar.get_default_period",
                 callback: (r) => {
                     resolve(r.message);
                 }

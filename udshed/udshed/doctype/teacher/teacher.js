@@ -3,7 +3,7 @@
 
 frappe.ui.form.on("Teacher", {
 	refresh(frm) {
-        if( frappe.user.has_role('System Manager'))
+        if( frappe.user.has_role('System Manager') || frappe.user.has_role("Administrator"))
         {
             if( frm.doc.user) {
                 frm.add_custom_button(__('Compte utilisateur'), () => {

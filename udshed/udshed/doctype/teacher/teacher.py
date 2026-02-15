@@ -39,8 +39,10 @@ class Teacher(Document):
 			user.insert(
 				ignore_permissions=True, # ignore write permissions during insert
 			)
-			self.user = user.name
-			self.save(ignore_permissions = True)
+		else:
+			user = frappe.get_doc('User', self.email)
+		self.user = user.name
+		self.save(ignore_permissions = True)
 
 	def after_delete(self):
 		if self.user and frappe.db.exists('User', self.user):

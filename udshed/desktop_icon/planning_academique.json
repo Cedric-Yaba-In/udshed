@@ -6,12 +6,13 @@
  "doctype": "Desktop Icon",
  "hidden": 0,
  "icon": "calendar",
+ "icon_image": "/files/logo.png",
  "icon_type": "Link",
  "idx": 0,
  "label": "Planning Academique",
  "link_to": "Planning Academique",
  "link_type": "Workspace Sidebar",
- "modified": "2026-02-13 06:54:41.999552",
+ "modified": "2026-02-15 07:04:40.693342",
  "modified_by": "Administrator",
  "name": "Planning Academique",
  "owner": "Administrator",
@@ -25,6 +26,9 @@
   },
   {
    "role": "Enseignant"
+  },
+  {
+   "role": "System Manager"
   }
  ],
  "sidebar": "Planning Academique",

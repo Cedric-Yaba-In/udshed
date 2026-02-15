@@ -112,7 +112,7 @@
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Facult\u00e9",
-   "options": "Field of study"
+   "options": "Faculty"
   },
   {
    "fieldname": "grade",
@@ -125,7 +125,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-11 23:03:10.231895",
+ "modified": "2026-02-15 06:39:28.969509",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Teacher",

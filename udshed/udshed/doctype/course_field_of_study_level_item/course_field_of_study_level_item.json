@@ -8,7 +8,8 @@
  "field_order": [
   "filiere",
   "column_break_rnnn",
-  "niveau"
+  "niveau",
+  "course_poid"
  ],
  "fields": [
   {
@@ -31,13 +32,20 @@
    "in_list_view": 1,
    "label": "Fili\u00e9re",
    "options": "Field of study"
+  },
+  {
+   "fieldname": "course_poid",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Cr\u00e9dit",
+   "non_negative": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-02-09 15:37:10.950001",
+ "modified": "2026-02-15 17:29:38.753461",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Course Field of study level item",

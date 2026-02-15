@@ -14,13 +14,15 @@
   "last_name",
   "phone",
   "user",
+  "ville_de_residence",
   "informations_professionel_section",
   "tittre",
   "universite_rattache",
   "grade",
   "column_break_cpvj",
   "status",
-  "facult\u00e9"
+  "facult\u00e9",
+  "cout_unitaire"
  ],
  "fields": [
   {
@@ -78,7 +80,7 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Titre",
-   "options": "Ing\u00e9nieur\nAssistant\nCharg\u00e9 de cours\nDocteur\nMaitre de conf\u00e9rence\nProfesseur"
+   "options": "Professionnel de Classe A\nProfessionnel de Classe B\nProfessionnel de Classe C\nProfessionnel de Classe D\nAssistant\nCharg\u00e9 de cours\nDocteur\nMaitre de conf\u00e9rence\nProfesseur"
   },
   {
    "fieldname": "column_break_cpvj",
@@ -120,12 +122,22 @@
    "label": "Grade",
    "options": "Pr\nDr\nIng\nM.",
    "reqd": 1
+  },
+  {
+   "fieldname": "ville_de_residence",
+   "fieldtype": "Data",
+   "label": "Ville de r\u00e9sidence"
+  },
+  {
+   "fieldname": "cout_unitaire",
+   "fieldtype": "Int",
+   "label": "C\u00f4ut Unitaire"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-15 06:39:28.969509",
+ "modified": "2026-02-15 18:51:37.283110",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Teacher",

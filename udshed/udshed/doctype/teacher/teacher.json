@@ -80,7 +80,7 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Titre",
-   "options": "Professionnel de Classe A\nProfessionnel de Classe B\nProfessionnel de Classe C\nProfessionnel de Classe D\nAssistant\nCharg\u00e9 de cours\nDocteur\nMaitre de conf\u00e9rence\nProfesseur"
+   "options": "Professionnel de Classe A\nProfessionnel de Classe B\nProfessionnel de Classe C\nProfessionnel de Classe D\nATER\nAssistant\nCharg\u00e9 de Cours\nDocteur\nMaitre de Conf\u00e9rences\nProfesseur"
   },
   {
    "fieldname": "column_break_cpvj",
@@ -137,7 +137,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-15 18:51:37.283110",
+ "modified": "2026-02-15 22:18:06.342639",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Teacher",

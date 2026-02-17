@@ -78,6 +78,8 @@ def get_teaching_units(
 			# for c in doc.course_levels
 		]
 		for c in doc.course_levels:
+			if not c.filiere or not c.niveau:
+				continue
 			level = frappe.get_doc("Field of study Level", c.niveau)
 			classes.append(f"{c.filiere} {level.level}")
 		

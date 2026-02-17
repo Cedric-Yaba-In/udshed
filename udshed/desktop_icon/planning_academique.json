@@ -6,7 +6,7 @@
  "doctype": "Desktop Icon",
  "hidden": 0,
  "icon": "calendar",
- "icon_image": "/files/logo.png",
+ "icon_image": "/assets/udshed/images/logo.png",
  "icon_type": "Link",
  "idx": 0,
  "label": "Planning Academique",

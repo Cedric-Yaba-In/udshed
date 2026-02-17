@@ -14,9 +14,9 @@ app_license = "mit"
 add_to_apps_screen = [
 	{
 		"name": "udshed",
-		"logo": "/assets/udshed/logo.png",
+		"logo": "/assets/udshed/images/logo.png",
 		"title": "Udshed",
-		"route": "/udshed",
+		"route": "/desk/planning-academique",
 		"has_permission": "udshed.api.permission.has_app_permission"
 	}
 ]
@@ -29,9 +29,10 @@ fixtures = [
     {
         "dt" : "Role",
         "filters": [
-            ["name","in",["Teacher","Coordonateur"]]
+            ["name","in",["Teacher","Coordonateur","Udshed Financial Admin"]]
         ]
-    }
+    },
+    
 ]
 
 

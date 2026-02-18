@@ -95,6 +95,7 @@
   min-height: 110px;
   background: var(--card-bg);
   position: relative;
+  text-align: center;
   transition: background 0.15s ease, box-shadow 0.15s ease;
 }
 

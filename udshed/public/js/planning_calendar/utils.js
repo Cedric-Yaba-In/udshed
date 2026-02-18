@@ -52,6 +52,10 @@ window.Udshed.Utils = {
             map.set(item[key], {...map.get(item[key]),...item})
         })
     },
+    isValidFecthDataFilter(filter)
+    {
+        return ((filter.academic_year && filter.teacher) || (filter.academic_year && filter.filiere && filter.niveau))
+    },
     
     is_valide_filter(filter)
     {

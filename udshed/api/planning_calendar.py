@@ -7,10 +7,8 @@ from frappe.query_builder.functions import Count
 from datetime import datetime
 import udshed.utils.time_utils as time_utils
 
-
-
 @frappe.whitelist()
-def get_week_planning(academic_year,filiere, niveau,  week_start):
+def get_week_planning(academic_year,week_start,filiere=None, niveau=None,teacher=None):
     PlanningItem = DocType("Planning Item")
     TeachingUnit = DocType("Teaching Unit")
     CourseNiveauFiliere = DocType("Course Field of study level item")
@@ -40,20 +38,36 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
             CourseEnseignant.enseignant,
         )
         .where(
-            (CourseNiveauFiliere.filiere == filiere) &
-            (CourseNiveauFiliere.niveau == niveau) &
-            (PlanningItem.academic_year == academic_year) #&
-            # (PlanningItem.date >= date_week_start) &
-            # (PlanningItem.date < frappe.utils.add_days(date_week_start, 7))
+            (PlanningItem.academic_year == academic_year) &
+            (PlanningItem.date >= date_week_start) &
+            (PlanningItem.date <= frappe.utils.add_days(date_week_start, 7))
         )
     )
+    if filiere:
+        query = query.where(CourseNiveauFiliere.filiere == filiere)
+    if niveau:
+        query = query.where(CourseNiveauFiliere.niveau == niveau)
+    
+    if teacher:
+        query = query.where(CourseEnseignant.enseignant == teacher)
+
     data =  query.run(as_dict=True)
-    data = [item for item in data if item.date >= date_week_start and item.date <= frappe.utils.add_days(date_week_start, 7)]
+    # data = [item for item in data if item.date >= date_week_start and item.date <= frappe.utils.add_days(date_week_start, 7)]
+    teacher_doc = None
+    if teacher:
+        teacher_doc = frappe.get_doc("Teacher",{"name":teacher})
+
     for doc in data:
-        teacher = frappe.get_doc("Teacher",{"name":doc.enseignant})
-        doc["enseignant"] = f"{teacher.grade}. {teacher.first_name} {teacher.last_name}"
+        if not teacher:
+            teacher_doc = frappe.get_doc("Teacher", {"name":doc.enseignant})
+        doc["enseignant"] = f"{teacher_doc.grade}. {teacher_doc.first_name} {teacher_doc.last_name}"
+
         cours  = frappe.get_doc("Course",doc.course)
         doc["cours_label"] = cours.intitule
+
+        niveau_doc = frappe.get_doc("Field of study Level",doc.niveau)
+        doc["niveau_label"] = niveau_doc.level
+
         # doc["period"] = frappe.get_doc("Planning Period",doc.period)
         if doc.salle:
             doc["salle"] = (frappe.get_doc("Room",doc.salle)).code
@@ -147,6 +161,10 @@ def get_period(field_of_study_level):
     calendar = frappe.get_doc("Field of study Level",field_of_study_level).calendrier
 
     return frappe.db.get_all('Planning Period', filters={"parent":calendar},fields=["name","libelle"])
+
+@frappe.whitelist()
+def get_all_periods():
+    return frappe.db.get_all('Planning Period',fields=["name","libelle"])
 
 @frappe.whitelist()
 def get_default_period():

@@ -82,6 +82,7 @@ th { background:#f2f2f2; }
   padding:4px 6px;
   border-radius:4px;
   font-size:12px;
+  text-align: center;
 }
 
 .cm { background:#e9f1ff; border-color:#2f6fed; }
@@ -89,6 +90,10 @@ th { background:#f2f2f2; }
 .cc { background:#fff3e0; border-color:#f57c00; }
 .exam { background:#fdecea; border-color:#d32f2f; }
 
+.type_cours 
+{
+  font-style: italic;
+}
 .empty { text-align:center; font-style:italic; color:#777; margin-top:30px; }
 
 .legend {
@@ -142,16 +147,28 @@ th { background:#f2f2f2; }
 </style>
 </head>
 
-<body>
+<body> 
 <img src="{{ app_logo  }}" class="watermark">
 <!-- EN-TÊTE -->
 <div class="header">
   <div>
     <h2>{{ school_name }}</h2>
     <p><b>Année académique :</b> {{ filters.academic_year }}</p>
-    <p><b>Faculté :</b> {{ filters.faculty }}</p>
-    <p><b>Filière :</b> {{ filiere }}</p>
-    <p><b>Niveau :</b> {{ niveau }}</p>
+    {% if filters.faculty %}
+      <p><b>Faculté :</b> {{ filters.faculty }}</p>
+    {% endif %}
+
+    {% if filters.filiere %}
+      <p><b>Filière :</b> {{ filiere }}</p>
+    {% endif %}
+
+    {% if filters.niveau %}
+      <p><b>Niveau :</b> {{ niveau }}</p>
+    {% endif %}
+    {% if filters.teacher %}
+      <p><b>Enseignant :</b> {{ teacher }}</p>
+    {% endif %}
+    
   </div>
   <div>
     <img src="{{ school_logo }}" alt="{{school_name}}">
@@ -203,16 +220,25 @@ th { background:#f2f2f2; }
   {% for day in ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"] %}
   {% set item = grid[day][half.name] %}
   <td class="cell">
+    <!-- {{item}} -->
     {% if item %}
       <div class="event {{ item.css }}">
-        <b>{{ item.subject }}</b><br>
-        {{ item.cours_label }}<br>
-        {{ item.type }}<br>--------------------------------------<br/>
-        Batiment: {{ item.batiment or "-" }}<br>
-        Salle: {{ item.salle or "-" }}<br>--------------------------------------<br/>
-        {% for t in item.teachers %}
-          <b>{{ t }}</b><br>
-        {% endfor %}
+        <b>{{ item.subject }}</b><br/><br/>
+        {{ item.cours_label }}<br/><br/>
+        <span class="type_cours">{{ item.type }}</span><br>--------------------------------------<br/><br/>
+        {% if item.mode == "En ligne" %}
+          En ligne
+        {% else %}
+          Batiment: {{ item.batiment or "-" }}<br> Salle: {{ item.salle or "-" }}
+        {% endif %}
+        <br>--------------------------------------<br/><br/>
+        {% if filters.teacher %}
+          <b>{{item.filiere}} {{item.niveau_label}}</b><br/><br/>
+        {% else %}
+          {% for t in item.teachers %}
+            <b>{{ t }}</b><br>
+          {% endfor %}
+        {% endif %}        
       </div>
     {% else %}
       <div class="empty">Pas cours</div>
@@ -227,10 +253,12 @@ th { background:#f2f2f2; }
 
 
 <!-- SIGNATURE -->
-<div class="footer">
-  <p><b>Coordonnateur du niveau </b><br/><br/> {{ coordinator }}</p>
-  <!-- <p>Signature & cachet</p> -->
-</div>
+{% if coordinator %}
+  <div class="footer">
+    <p><b>Coordonnateur du niveau </b><br/><br/> {{ coordinator }}</p>
+    <!-- <p>Signature & cachet</p> -->
+  </div>
+{% endif %}
 
 <div class="footer-bar">
   <div>    

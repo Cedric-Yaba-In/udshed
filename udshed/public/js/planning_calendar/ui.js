@@ -73,7 +73,7 @@ window.Udshed.UI = {
 
     },
 
-    show_calendar(calendar_zone,grid_data,coursePeriod)
+    show_calendar(calendar_zone,grid_data,coursePeriod,forTeacher=false)
     {
         calendar_zone.empty();
 
@@ -109,6 +109,7 @@ window.Udshed.UI = {
                 }
                 if(periodItem)
                 {
+                    let periodTeacherOrRoomInfos = forTeacher ? `<b>${periodItem.item.filiere} ${periodItem.item.niveau_label}</b>` : periodItem.teachers.map(t => `<b>${t}</b>`).join('<br/> ');
                     periodCellCourseMode = periodItem.item.mode=="En ligne"? "En ligne <br/> - <br/>":
                         `Batiment: ${periodItem.item.batiment?periodItem.item.batiment:""}  <br/> Salle: ${periodItem.item.salle?periodItem.item.salle:""}<br/> - <br/>`
                     periodCell = `
@@ -124,7 +125,7 @@ window.Udshed.UI = {
                                     ${periodCellCourseMode}
                                 </div>
                                 <div class="planning-item-meta">
-                                    ${periodItem.teachers.map(t => `<b>${t}</b>`).join('<br/> ')}
+                                    ${periodTeacherOrRoomInfos}
                                 </div>
                             </div>
                         </div>`
@@ -168,5 +169,16 @@ window.Udshed.UI = {
         }
         calendar_zone.html(calendarHTML);
         
-    } 
+    } ,
+    update_page_actions(filter,btnEporterPDF,btnEnvoiMail) 
+    {
+        if(Udshed.Utils.isValidFecthDataFilter(filter))
+        {
+            btnEporterPDF.show();
+            btnEnvoiMail.show();
+        } else {
+            btnEporterPDF.hide();
+            btnEnvoiMail.hide();
+        }
+    }
 };

@@ -19,7 +19,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			Udshed.DateUtils.syncSelectors(weekSelect,monthPicker,currentWeekStart);
 			
 			Udshed.Queries.fetchPlanningItems(filters,currentWeekStart,function (items){
-				Udshed.UI.show_calendar(calendar_zone, Udshed.UI.get_grid_calendar_item(items,filters,periods),periods)
+				Udshed.UI.show_calendar(calendar_zone, Udshed.UI.get_grid_calendar_item(items,filters,periods),periods,filters.teacher?true:false)
 			});
 		}
 	
@@ -33,7 +33,8 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			academic_year: null,
 			faculty: null,
 			filiere: null,
-			niveau: null
+			niveau: null,
+			teacher: null
 		};
 
 		let levelMap = {}; // label => name
@@ -55,22 +56,24 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		const weekSelect = document.getElementById("week-select");
 
 		
-		page.set_primary_action('Actualiser', () => {
-			let filters = {
-				filiere: page.fields_dict.filiere.get_value(),
-				niveau: page.fields_dict.niveau.get_value(),
-				academic_year: page.fields_dict.academic_year.get_value()
-			};
+		let btnEporterPDF =  page.set_primary_action('Exporter en PDF', () => {
+			// let filters = {
+			// 	filiere: page.fields_dict.filiere.get_value(),
+			// 	niveau: page.fields_dict.niveau.get_value(),
+			// 	academic_year: page.fields_dict.academic_year.get_value()
+			// };
 			// show_calendar(filters);
-			loadPlanning(grid_wrapper,weekSelect,monthPicker,filters,calendar_zone,periods)
-		});
-
-		page.set_secondary_action("Exporter en PDF", () => {
-			if(Udshed.Utils.is_valide_filter(filters))
+			// loadPlanning(grid_wrapper,weekSelect,monthPicker,filters,calendar_zone,periods)
+			console.log("data",filters)
+			if(Udshed.Utils.isValidFecthDataFilter(filters))
 			{
 				let url = `/api/method/udshed.www.planning_pdf.generate_planning_pdf?filters=${encodeURIComponent(JSON.stringify({...filters,week_start:currentWeekStart.toISOString().split('T')[0]}))}`;
 				window.open(url);
 			}
+		});
+
+		let btnEnvoiMail =  page.set_secondary_action("Envoyer par mail", () => {
+			console.log("Envoi par mail")
 			
 		});
 
@@ -84,6 +87,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			change() {
 				filters.academic_year = this.get_value();
 				Udshed.Utils.refresh_filter(filters,"academic_year",page,levelMap);
+				Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)
 				periods = [...defaultPeriods]
 				// show_calendar(filters);
 
@@ -99,6 +103,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 				filters.faculty = this.get_value();
 				Udshed.Utils.refresh_filter(filters,"faculty",page,levelMap);
 				periods = [...defaultPeriods]
+				Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)
 			}
 		});
 
@@ -131,6 +136,8 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 					niveau_field.refresh();
 				});
 				periods = [...defaultPeriods]
+				Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)
+				
 			}
 		});
 
@@ -140,9 +147,20 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			fieldname: 'niveau',
 			async change() {
 				filters.niveau = levelMap[this.get_value()];
-				console.log("Load cours period",this.get_value())
 				periods = this.get_value()==null ? [...defaultPeriods]: await Udshed.Queries.loadCoursePeriod(filters.niveau)
 				loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
+				Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)
+			}
+		});
+		const teacher_field = page.add_field({
+			fieldtype: 'Link',
+			label: 'Teacher',
+			fieldname: 'teacher',
+			options: 'Teacher',
+			change() {
+				filters.teacher = this.get_value()
+				loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
+				Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)
 			}
 		});
 
@@ -183,6 +201,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		
 		loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
 		Udshed.Utils.refresh_filter(filters,null,page,levelMap);
+		Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)
 
 		let userContext = null;
 		Udshed.Queries.get_data_of_user((data) => {

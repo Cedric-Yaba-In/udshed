@@ -2,21 +2,21 @@ window.Udshed = window.Udshed || {};
 
 window.Udshed.Queries  = {
     fetchPlanningItems(filter,currentWeekStart,callback_function) {
-        // 🔑 ICI tu fais ton appel API pour récupérer les items de la semaine
-        
-        if(!filter.academic_year || !filter.filiere || !filter.niveau) {
-            console.warn("Missing filters, cannot fetch planning items")
+        if(!Udshed.Utils.isValidFecthDataFilter(filter))
+        {
+           console.warn("Missing filters, cannot fetch planning items")
             callback_function([]);
-            return;
+            return; 
         }
         // ex:
 
         frappe.call({
             method: "udshed.api.planning_calendar.get_week_planning",
             args: { 
-                academic_year: filter.academic_year,
-                filiere: filter.filiere,
-                niveau: filter.niveau,
+                // academic_year: filter.academic_year,
+                // filiere: filter.filiere,
+                // niveau: filter.niveau,
+                ...filter,
                 week_start: currentWeekStart.toISOString().split('T')[0]// format YYYY-MM-DD
             },
             callback: (res) => {

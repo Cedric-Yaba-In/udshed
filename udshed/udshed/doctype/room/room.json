@@ -9,7 +9,8 @@
  "field_order": [
   "code",
   "column_break_elta",
-  "etage"
+  "etage",
+  "type_de_salle"
  ],
  "fields": [
   {
@@ -31,13 +32,22 @@
    "label": "Etage",
    "options": "Rez-de-chauss\u00e9\n1er Etage\n2nd Etage\n3ieme Etage\n4ieme Etage\n5ieme Etag",
    "reqd": 1
+  },
+  {
+   "default": "Salle de cours",
+   "fieldname": "type_de_salle",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Type de salle",
+   "options": "Salle de cours\nLaboratoire",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-02-11 06:30:24.552981",
+ "modified": "2026-02-18 09:57:23.718767",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Room",

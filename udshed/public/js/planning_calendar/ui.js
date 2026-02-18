@@ -6,7 +6,6 @@ window.Udshed.UI = {
         
         let grid = Udshed.Utils.initDataPeriodForUi(coursePeriod) 
         
-        console.log("item grid",items,grid)
         
         items.forEach(item => {
 
@@ -76,7 +75,6 @@ window.Udshed.UI = {
 
     show_calendar(calendar_zone,grid_data,coursePeriod)
     {
-        console.log("here coaldanaera",grid_data,coursePeriod)
         calendar_zone.empty();
 
         let plan = new Map();
@@ -88,6 +86,7 @@ window.Udshed.UI = {
         for (let day of ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]) {
             for(let period of coursePeriod)
             {
+                // console.log("Period Ite ",period)
                 periodItem = grid_data[day].get(period.name)
 
                 let period_cours_type_class = "cm";
@@ -108,31 +107,40 @@ window.Udshed.UI = {
                         period_cours_type_class = "exam";
                         break;
                 }
+                if(periodItem)
+                {
+                    periodCellCourseMode = periodItem.item.mode=="En ligne"? "En ligne <br/> - <br/>":
+                        `Batiment: ${periodItem.item.batiment?periodItem.item.batiment:""}  <br/> Salle: ${periodItem.item.salle?periodItem.item.salle:""}<br/> - <br/>`
+                    periodCell = `
+                        <div class="planning-cell" data-day="${day}" data-half-libelle="${period.libelle}" data-half="${periodItem.half_day}" data-course='${JSON.stringify(periodItem)}'>
+                            <div class="planning-item ${period_cours_type_class}">
+                                <div class="planning-item-title">
+                                    <span style="font-style:italic">${periodItem.subject}</span><br/>${periodItem.item.cours_label}
+                                </div>
+                                <div class="planning-item-meta">
+                                    ${periodItem.item.type} <br/> - <br/> ${periodItem.room?periodItem.room:""}
+                                </div>
+                                <div class="planning-item-meta">
+                                    ${periodCellCourseMode}
+                                </div>
+                                <div class="planning-item-meta">
+                                    ${periodItem.teachers.map(t => `<b>${t}</b>`).join('<br/> ')}
+                                </div>
+                            </div>
+                        </div>`
+                }
+                else 
+                {
+                    periodCell = `
+                        <div class="planning-cell empty" data-day="${day}" data-half="${period.name}">
+                            <div class="no-course">Pas cours</div>
+                        </div>`
+                }
 
-                plan.get(period.name).items.push(periodItem ? `
-                <div class="planning-cell" data-day="${day}" data-half="${periodItem.half_day}" data-course='${JSON.stringify(periodItem)}'>
-                    <div class="planning-item ${period_cours_type_class}">
-                        <div class="planning-item-title">
-                            <span style="font-style:italic">${periodItem.subject}</span><br/>${periodItem.item.cours_label}
-                        </div>
-                        <div class="planning-item-meta">
-                            ${periodItem.item.type} <br/> - <br/> ${periodItem.room?periodItem.room:""}
-                        </div>
-                        <div class="planning-item-meta">
-                            Batiment: ${periodItem.item.batiment?periodItem.item.batiment:""}  <br/> Salle: ${periodItem.item.salle?periodItem.item.salle:""}<br/> - <br/>
-                        </div>
-                        <div class="planning-item-meta">
-                            ${periodItem.teachers.map(t => `<b>${t}</b>`).join('<br/> ')}
-                        </div>
-                    </div>
-                </div>` : 
-                `<div class="planning-cell empty" data-day="${day}" data-half="${period.name}">
-                    <div class="no-course">Pas cours</div>
-                </div>`);
+                plan.get(period.name).items.push(periodCell);
             }
 
         }
-                console.log("Period, ",plan)
 
         let calendarHTML = `
             <div></div>

@@ -2,39 +2,39 @@ window.Udshed = window.Udshed || {};
 
 window.Udshed.Dialogs = {
 
-    openCreatePlanningDialog(filter,day, halfDay,userContext,callbak) {
+    openCreatePlanningDialog(filter,day,halfDay,halfLibelle,userContext,callbak) {
         if(!filter.academic_year) {
             frappe.msgprint({
-                title: "Année académique requise",
+                title: __("Année académique requise"),
                 indicator: "red",
-                message: "Veuillez sélectionner une année académique avant de créer une planification."
+                message: __("Veuillez sélectionner une année académique avant de créer une planification.")
             });
             return;
         }
 
         if(!filter.faculty) {
         	frappe.msgprint({
-        		title: "Faculté requise",
+        		title: __("Faculté requise"),
         		indicator: "red",
-        		message: "Veuillez sélectionner une faculté avant de créer une planification."
+        		message: __("Veuillez sélectionner une faculté avant de créer une planification.")
         	});
         	return;
         }
         if(!filter.filiere)
         {
         	frappe.msgprint({
-        		title: "Filière requise",
+        		title: __("Filière requise"),
         		indicator: "red",
-        		message: "Veuillez sélectionner une filière avant de créer une planification."
+        		message: __("Veuillez sélectionner une filière avant de créer une planification.")
         	});
             return;
         }
         
         if(!filter.niveau) {
         	frappe.msgprint({
-        		title: "Niveau requis",
+        		title: __("Niveau requis"),
         		indicator: "red",
-        		message: "Veuillez sélectionner un niveau avant de créer une planification."
+        		message: __("Veuillez sélectionner un niveau avant de créer une planification.")
         	});
         	return;
         }       
@@ -42,14 +42,14 @@ window.Udshed.Dialogs = {
 
         // TODO check user context role
         // if(!Udshed.Perms.user_can_edit_planning_cell(filter,userContext)) return;
+        hafPeriod = halfLibelle?`(${halfLibelle})`:'';
 
-        let translateValue = {"Morning":"Matin","Afternoon":"Après-midi"};
         const dialog = new frappe.ui.Dialog({
-            title: `Nouvelle planification du ${day.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'long' })} (${translateValue[halfDay]})`,
+            title: __(`Nouvelle planification du ${day.toLocaleDateString('fr-FR', { weekday: 'long', day: '2-digit', month: 'long' })} ${hafPeriod}`),
             fields: [
                 {
                     fieldtype: "Link",
-                    label: "Cours",
+                    label: __("Cours"),
                     fieldname: "cours",
                     options: "Teaching Unit",
                     get_query() {
@@ -60,20 +60,36 @@ window.Udshed.Dialogs = {
                             }
                         };
                     },
+                    reqd: 1,
+                    change() {
+                        // console.log("Value ",this.get_value())
+                    //    cur_dialog.fields_dict.mode.set_value(this.get_value())
+                    }
+                },
+                { 
+                    fieldtype: "Select",
+                    label: __("Type"),
+                    fieldname: "course_type",
+                    options: [ __("Cours"), __("Traveaux Pratiques (TP)"), __("Controlle Continue (CC)"), __("Examen de session normal"), __("Examen de rattrapage")],
                     reqd: 1
                 },
                 { 
                     fieldtype: "Select",
-                    label: "Type",
-                    fieldname: "course_type",
-                    options: [ "Cours", "Traveaux Pratiques (TP)", "Controlle Continue (CC)", "Examen de session normal", "Examen de rattrapage"],
-                    reqd: 1
+                    label: __("Mode"),
+                    fieldname: "mode",
+                    options: [ "En présentiel", "En ligne"],
+                    default:"En présentiel",
+                    reqd: 1,
+                    change:function (){
+                        dialog.refresh()
+                    }
                 },
                 {
                     fieldtype: "Link",
-                    label: "Batiment",
+                    label: __("Batiment"),
                     fieldname: "batiment",
                     options: "Building",
+                    depends_on:'eval:doc.mode=="En présentiel"',
                     change() {
 
                         Udshed.Queries.loadRooms(this.get_value(),cur_dialog.fields_dict.salle,(data)=>{
@@ -84,11 +100,12 @@ window.Udshed.Dialogs = {
                 },
                 {
                     fieldtype: "Select",
-                    label: "Salle",
+                    label: __("Salle"),
                     fieldname: "salle",
+                    depends_on:'eval:doc.mode=="En présentiel"',
                 },                
             ],
-            primary_action_label: "Créer",
+            primary_action_label: __("Créer"),
             primary_action(values) {
                 frappe.call({
                     method: "udshed.api.planning_calendar.create_planning",
@@ -130,16 +147,17 @@ window.Udshed.Dialogs = {
     },
 
 
-    openEditPlanningDialog(filter,day, halfDay,course,userContext,callback) {
+    openEditPlanningDialog(filter,day, halfDay,halfLibelle,course,userContext,callback) {
         console.log("Cours ",course)
+
         // TODO check user context role
         // if(!Udshed.Perms.user_can_edit_planning_cell(filter,userContext)) return;
         const dialog = new frappe.ui.Dialog({
-            title: "Modifier la planification",
+            title: __("Modifier la planification"),
             fields: [
                 {
                     fieldtype: "Link",
-                    label: "Cours",
+                    label: __("Cours"),
                     fieldname: "cours",
                     options: "Teaching Unit",
                     get_query() {
@@ -155,18 +173,38 @@ window.Udshed.Dialogs = {
                 },
                 { 
                     fieldtype: "Select",
+                    label: __("Mode"),
+                    fieldname: "mode",
+                    options: [ "En présentiel", "En ligne"],
+                    default:"En présentiel",
+                    reqd: 1
+                },
+                { 
+                    fieldtype: "Select",
                     label: "Type",
                     default: course.item.type,
                     fieldname: "course_type",
-                    options: [ "Cours", "Traveaux Pratiques (TP)", "Controlle Continue (CC)", "Examen de session normal", "Examen de rattrapage"],
+                    options: [  __("Cours"), __("Traveaux Pratiques (TP)"), __("Controlle Continue (CC)"), __("Examen de session normal"), __("Examen de rattrapage")],
                     reqd: 1
+                },
+                { 
+                    fieldtype: "Select",
+                    label: __("Mode"),
+                    fieldname: "mode",
+                    options: [ "En présentiel", "En ligne"],
+                    default:course.item.mode,
+                    reqd: 1,
+                    change:function (){
+                        dialog.refresh()
+                    }
                 },
                 {
                     fieldtype: "Link",
-                    label: "Batiment",
+                    label: __("Batiment"),
                     fieldname: "batiment",
                     options: "Building",
                     default: course.item.batiment,
+                    depends_on:'eval:doc.mode=="En présentiel"',
                     change() {
 
                         Udshed.Queries.loadRooms(this.get_value(),cur_dialog.fields_dict.salle,(data)=>{
@@ -177,9 +215,10 @@ window.Udshed.Dialogs = {
                 },
                 {
                     fieldtype: "Select",
-                    label: "Salle",
+                    label: __("Salle"),
                     fieldname: "salle",
-                    default: course.item.room
+                    default: course.item.room,
+                    depends_on:'eval:doc.mode=="En présentiel"',
                 },                
             ],
             primary_action_label: "Mettre à jour",

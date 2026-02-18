@@ -256,15 +256,16 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			let day ={ "Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3, "Friday": 4,"Saturday": 5}
 			currentDay.setDate(currentDay.getDate() + day[($(this).data("day"))]);
 			const half = $(this).data("half");
+			const halfLibelle = $(this).data("half-libelle");
 			const courseData = $(this).data("course");
 
 			// console.log("User Context ",userContext)
 			if (courseData) {
-				Udshed.Dialogs.openEditPlanningDialog(filters,currentDay,half,courseData,userContext,() => {
+				Udshed.Dialogs.openEditPlanningDialog(filters,currentDay,half,halfLibelle,courseData,userContext,() => {
 					loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods)
 				});
 			} else {
-				Udshed.Dialogs.openCreatePlanningDialog(filters,currentDay,half,userContext, () => {
+				Udshed.Dialogs.openCreatePlanningDialog(filters,currentDay,half,halfLibelle,userContext, () => {
 					loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods)
 				});
 			}

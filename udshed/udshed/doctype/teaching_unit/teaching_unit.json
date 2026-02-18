@@ -12,6 +12,7 @@
   "intitule_cours",
   "column_break_askz",
   "academic_year",
+  "mode",
   "enseignant_section",
   "table_enseignant",
   "classes_concern\u00e9es_section",
@@ -69,12 +70,20 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "cours intutile"
+  },
+  {
+   "default": "En pr\u00e9sentiel",
+   "fieldname": "mode",
+   "fieldtype": "Select",
+   "label": "Mode",
+   "options": "En pr\u00e9sentiel\nEn ligne\nHybride",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-11 23:02:06.427784",
+ "modified": "2026-02-18 06:51:07.198143",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Teaching Unit",

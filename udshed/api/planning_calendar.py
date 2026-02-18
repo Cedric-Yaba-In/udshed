@@ -34,6 +34,7 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
             PlanningItem.cours,
             PlanningItem.date,
             PlanningItem.period,
+            PlanningItem.mode,
             CourseNiveauFiliere.niveau,
             CourseNiveauFiliere.filiere,
             CourseEnseignant.enseignant,
@@ -63,7 +64,7 @@ def get_week_planning(academic_year,filiere, niveau,  week_start):
 
 
 @frappe.whitelist()
-def create_planning(academic_year, cours, course_type,day_of_week, half_day,batiment=None,salle=None):
+def create_planning(academic_year, cours, course_type,day_of_week, half_day,batiment=None,salle=None,mode="En présentiel"):
     teaching_unit = course.get_single_teaching_unit(cours,academic_year)
     cours_teachers = list(map(lambda x: x.enseignant, teaching_unit.table_enseignant))
     date_week_start = datetime.fromisoformat(day_of_week)
@@ -87,7 +88,8 @@ def create_planning(academic_year, cours, course_type,day_of_week, half_day,bati
         "type":course_type,
         "date":date_week_start,
         "period":half_day,
-        "academic_year":academic_year
+        "academic_year":academic_year,
+        "mode":mode
     }
 
     if salle:
@@ -102,12 +104,13 @@ def create_planning(academic_year, cours, course_type,day_of_week, half_day,bati
 
 
 @frappe.whitelist()
-def update_planning(planning_item_name,academic_year,cours,course_type,batiment,salle, day_of_week, half_day):
+def update_planning(planning_item_name,academic_year,cours,course_type, day_of_week, half_day,batiment=None,salle=None,mode="En présentiel"):
     planning_item = frappe.get_doc("Planning Item", planning_item_name)
     teaching_unit = course.get_single_teaching_unit(cours,academic_year)
 
     planning_item.cours = teaching_unit.name
     planning_item.type = course_type
+    planning_item.mode = mode
 
     cours_teachers = list(map(lambda x: x.enseignant, teaching_unit.table_enseignant))
     date_week_start = datetime.fromisoformat(day_of_week)

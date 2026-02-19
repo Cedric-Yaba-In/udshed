@@ -260,6 +260,63 @@ window.Udshed.Dialogs = {
         });
         dialog.show();
        
-    }
+    },
+
+    openSendPlanningDialog(filter,course,userContext,callbak) {
+       
+        // hafPeriod = halfLibelle?`(${halfLibelle})`:'';
+
+        const dialog = new frappe.ui.Dialog({
+            title: __(`Nouvel envoi de planning par mail`),
+            fields: [
+                {
+                    fieldtype: "Check",
+                    label: __("Envoyer à tous les enseingnats"),
+                    fieldname: "to_all_teacher",
+                    default:true
+                },
+                { 
+                    fieldtype: "Check",
+                    label: __("Envoyer à l'enseingnant"),
+                    fieldname: "to_teacher",
+                    default:true
+                },
+                { 
+                    fieldtype: "Check",
+                    label: __("Envoyer a tous les coordonateurs"),
+                    fieldname: "to_all_coordo",
+                    default:true
+                },                
+                {
+                    fieldtype: "Check",
+                    label: __("Envoyer a tous les coordonateurs"),
+                    fieldname: "to_me",
+                    default:true
+                },                
+            ],
+            primary_action_label: __("Envoyer le planning"),
+            primary_action(values) {
+                console.log("Values",values)
+                // frappe.call({
+                //     method: "udshed.api.planning_calendar.create_planning",
+                //     args: {
+                //         academic_year:filter.academic_year,
+                //     ...values,
+                //     day_of_week: day.toISOString().split('T')[0],
+                //     half_day: halfDay,
+                //     },
+                //     callback: (e) => {
+                //         dialog.hide();
+                //         frappe.show_alert({ message:__('Planning crée.'), indicator:'green' });
+                //         callbak();
+                //     },
+                //     error: (err) => {
+                //         }
+                // });
+            }
+        });
+
+        dialog.show();
+    },
 };
 /**End Dialog */

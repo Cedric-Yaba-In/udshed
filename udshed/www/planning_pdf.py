@@ -39,13 +39,13 @@ def generate_planning_pdf(filters):
     Teacher = None
 
     if filters["filiere"]:
-        filiere = frappe.get_doc("Field of study", filters["filiere"])
         filiere_filter = filters["filiere"]
+        filiere = frappe.get_doc("Field of study", filiere_filter)
     else:
         filiere_filter = None
 
     if "niveau" in filters and  filters["niveau"]:
-        niveau_filter = filters["filiere"]
+        niveau_filter = filters["niveau"]
         niveau_filiere = frappe.get_doc("Field of study Level",filters["niveau"])
     else:
         niveau_filter = None
@@ -76,6 +76,7 @@ def generate_planning_pdf(filters):
         week_start=filters["week_start"],
     )
 
+    print("items ",items)
     if "niveau" in filters and  filters["niveau"]:
         period = get_valid_period(get_unique_sorted_period(planning_calendar.get_period(niveau_filiere.name)), items)
         if len(period)==0:
@@ -136,11 +137,11 @@ def generate_planning_pdf(filters):
     if Teacher:
         data_to_print["teacher"] = f"{Teacher.grade}. {Teacher.first_name} {Teacher.last_name}"
     if filiere:
-        data_to_print["filiere"]=filiere.name_of_field,
+        data_to_print["filiere"]=filiere.name_of_field
         
     if  niveau_filiere:
-        data_to_print["coordinator"] =  niveau_filiere.coordonateur,
-        data_to_print["niveau"]=niveau_filiere.level,
+        data_to_print["coordinator"] =  niveau_filiere.coordonateur
+        data_to_print["niveau"]=niveau_filiere.level
     print("Data to print ",data_to_print)
     html = frappe.render_template(
         "udshed/www/planning_pdf.html",

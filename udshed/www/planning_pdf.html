@@ -264,7 +264,9 @@ th { background:#f2f2f2; }
   <div>    
     Généré le {{ generated_on }} |
     Fait avec <b>Udshed</b> — Système intelligent de gestion des emplois du temps</div>
-  <img src="{{ app_logo }}" alt="logo">
+  {% if app_logo %}
+    <img src="{{ app_logo }}" alt="logo" >
+   {% endif %}
 </div>
 
 </body>

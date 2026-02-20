@@ -127,7 +127,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			// },
 			change() {
 				filters.filiere = this.get_value();
-				Udshed.Utils.refresh_filter(filters,"filiere",page,levelMap);
+				// Udshed.Utils.refresh_filter(filters,"filiere",page,levelMap);
 
 				Udshed.Queries.loadLevels(this.get_value(),niveau_field,(levels)=>{
 					levelMap = levels ? levels.reduce((acc, curr) => {

@@ -114,17 +114,17 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			label: 'Filière',
 			fieldname: 'filiere',
 			options: 'Field of study',
-			get_query() {
-				if (!faculty_field.get_value()) {
-					return {};
-				}
+			// get_query() {
+			// 	if (!faculty_field.get_value()) {
+			// 		return {};
+			// 	}
 
-				return {
-					filters: {
-						faculte: faculty_field.get_value()
-					}
-				};
-			},
+			// 	return {
+			// 		filters: {
+			// 			faculte: faculty_field.get_value()
+			// 		}
+			// 	};
+			// },
 			change() {
 				filters.filiere = this.get_value();
 				Udshed.Utils.refresh_filter(filters,"filiere",page,levelMap);

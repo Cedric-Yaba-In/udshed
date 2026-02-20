@@ -53,6 +53,20 @@ window.Udshed.Queries  = {
                 console.error("Error fetching user session data:", err);
             }
         });
+
+        frappe.call({
+            method: "udshed.api.course.get_teaching_unit_by_year",
+            args: { 
+                academic_year: "2025-2026",
+                faculty:"FST"
+            },
+            callback: (e) => {
+                console.log("Udata selected:", e.message);
+            },
+            error: (err) => {
+                console.error("Error fetching udata session data:", err);
+            }
+        });
     },
 
     loadLevels(filiere,niveau_field,callback_function) {

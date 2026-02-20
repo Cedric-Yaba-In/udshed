@@ -11,7 +11,8 @@
   "heure_de_fin",
   "column_break_shhg",
   "libelle",
-  "period"
+  "period",
+  "status"
  ],
  "fields": [
   {
@@ -48,13 +49,20 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Libell\u00e9"
+  },
+  {
+   "default": "A faire",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "A faire\nNon fait\nFait"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-02-15 05:02:34.969745",
+ "modified": "2026-02-20 12:57:29.813157",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Planning Period",

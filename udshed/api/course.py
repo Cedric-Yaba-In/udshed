@@ -107,6 +107,91 @@ def get_teaching_units(
 
 	return results
 
+@frappe.whitelist()
+def get_teaching_unit_by_year(academic_year,faculty=None, semestre=None):
+	TeachingUnit = DocType("Teaching Unit")
+	Course = DocType("Course")
+	CourseTeacherItem = DocType("Course Teacher Item")
+	CourseFieldOfStudyLevelItem = DocType("Course Field of study level item")
+
+	query = (
+		frappe.qb.from_(TeachingUnit)
+		.join(Course)
+		.on(TeachingUnit.course==Course.name)
+		.join(CourseTeacherItem)
+		.on(CourseTeacherItem.parent == TeachingUnit.name)
+		.join(CourseFieldOfStudyLevelItem)
+		.on(CourseFieldOfStudyLevelItem.parent == TeachingUnit.name)
+		.select(
+			TeachingUnit.name,
+			Course.nombre_dheure_cm,
+			Course.nombre_dheure_tp,
+			Course.intitule,
+			Course.nombre_dheure_td,
+			Course.name.as_("course_name"),
+			Course.semestre,
+			CourseTeacherItem.enseignant,
+			CourseTeacherItem.type_de_cours,
+			CourseFieldOfStudyLevelItem.filiere,
+			CourseFieldOfStudyLevelItem.niveau,
+			CourseFieldOfStudyLevelItem.course_poid		
+		)
+		.where(
+			(TeachingUnit.academic_year == academic_year)
+		)	
+	)
+	if faculty:
+		field_of_studies = [row.name for row in frappe.get_all("Field of study",filters={"faculte":faculty})]
+	if semestre:
+		query = query.where( Course.semester == semestre )
+	
+	data = query.run(as_dict = True)
+	process_data = {}
+	result = []
+
+	#Pour regrouper les enseignants et les niveau en fonction du cours
+	for d in data:
+		niveau_key = f"{d.filiere}-{d.niveau}"
+		if faculty and (d.filiere not in field_of_studies):
+			continue
+		if d.name in process_data:
+			if d.enseignant not in process_data[d.name]["enseignant_key"]:
+				process_data[d.name]["enseignant"].append({"enseignant":d.enseignant,"type_cours":d.type_de_cours})
+				process_data[d.name]["enseignant_key"].append(d.enseignant)
+			
+			if niveau_key not in process_data[d.name]["niveau_key"]:
+				process_data[d.name]["niveau"].append({"filiere":d.filiere,"niveau":d.niveau,"course_poid":d.course_poid})
+				process_data[d.name]["niveau_key"].append(niveau_key)
+		else:
+			process_data[d.name]={
+				"enseignant":[{"enseignant":d.enseignant, "type_cours":d.type_de_cours}],
+				"enseignant_key":[d.enseignant],
+				"niveau":[{"filiere":d.filiere, "niveau":d.niveau, "course_poid":d.course_poid}],
+				"niveau_key":[niveau_key],
+				"course_name":d.course_name,
+				"intitule":d.intitule,
+				"nombre_dheure_cm":d.nombre_dheure_cm,
+				"nombre_dheure_td":d.nombre_dheure_td,
+				"nombre_dheure_tp":d.nombre_dheure_tp,
+				"semestre":d.semestre,
+				"name":d.name
+			}
+			
+	#On supprime les élements qui ont aidé au traitement
+	for key, value in process_data.items():
+		value.pop("niveau_key")
+		value.pop("enseignant_key")
+		result.append(value)
+
+	return result
+
+	# result = {}
+
+	# for d in data:
+	# 	if d["name"] in result:
+
+	
+
 def get_single_teaching_unit(cours,academic_year):
 	if not frappe.db.exists('Teaching Unit', { 'name': cours,"academic_year":academic_year }):
 		frappe.throw("Unité d'enseignement introuvable")

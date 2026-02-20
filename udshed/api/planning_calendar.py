@@ -60,7 +60,7 @@ def get_week_planning(academic_year,week_start,filiere=None, niveau=None,teacher
     for doc in data:
         if not teacher:
             teacher_doc = frappe.get_doc("Teacher", {"name":doc.enseignant})
-        doc["enseignant"] = f"{teacher_doc.grade}. {teacher_doc.first_name} {teacher_doc.last_name}"
+        doc["enseignant"] = f"{teacher_doc.grade} {teacher_doc.first_name} {teacher_doc.last_name}"
 
         cours  = frappe.get_doc("Course",doc.course)
         doc["cours_label"] = cours.intitule
@@ -170,3 +170,5 @@ def get_all_periods():
 def get_default_period():
     calendar = frappe.get_doc("Calendar Planing", "Defaut")
     return frappe.get_all('Planning Period', filters={"parent":calendar.name},fields=["name","libelle"])
+
+

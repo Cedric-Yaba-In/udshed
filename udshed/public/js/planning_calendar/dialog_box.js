@@ -55,6 +55,8 @@ window.Udshed.Dialogs = {
                     get_query() {
                         return {
                             query:"udshed.api.course.get_teaching_unit_by_level",
+                            freeze: true,
+                            freeze_message: __("Chargement des cours..."),
                             filters: {
                                 ...filter
                             }
@@ -111,16 +113,20 @@ window.Udshed.Dialogs = {
                     method: "udshed.api.planning_calendar.create_planning",
                     args: {
                         academic_year:filter.academic_year,
-                    ...values,
-                    day_of_week: day.toISOString().split('T')[0],
-                    half_day: halfDay,
+                        freeze: true,
+                        freeze_message: __("Nouvelle plannification en cours..."),
+                        ...values,
+                        day_of_week: day.toISOString().split('T')[0],
+                        half_day: halfDay,
                     },
                     callback: (e) => {
+                        frappe.utils.play_sound("submit");
                         dialog.hide();
                         frappe.show_alert({ message:__('Planning crée.'), indicator:'green' });
                         callbak();
                     },
                     error: (err) => {
+                        frappe.utils.play_sound("error");
                         // ici on reçoit l'exception Python
                         // if (err.exc_type === "ValidationError") {
                         //     frappe.msgprint({
@@ -148,7 +154,6 @@ window.Udshed.Dialogs = {
 
 
     openEditPlanningDialog(filter,day, halfDay,halfLibelle,course,userContext,callback) {
-        console.log("Cours ",course)
 
         // TODO check user context role
         // if(!Udshed.Perms.user_can_edit_planning_cell(filter,userContext)) return;
@@ -163,6 +168,8 @@ window.Udshed.Dialogs = {
                     get_query() {
                         return {
                             query:"udshed.api.course.get_teaching_unit_by_level",
+                            freeze: true,
+                            freeze_message: __("Chargement des cours..."),
                             filters: {
                                 ...filter
                             }
@@ -226,6 +233,8 @@ window.Udshed.Dialogs = {
             primary_action(values) {
                 frappe.call({
                     method: "udshed.api.planning_calendar.update_planning",
+                    freeze: true,
+                    freeze_message: __("Mise à jour du planning en cours..."),
                     args: {
                         planning_item_name: course.item.name, // ID DocType
                         academic_year:filter.academic_year,
@@ -234,9 +243,14 @@ window.Udshed.Dialogs = {
                         half_day: halfDay,
                     },
                     callback: () => {
-                    dialog.hide();
-                    callback();
-                    frappe.show_alert({ message:__('Planning mis à jour.'), indicator:'green' });
+                        dialog.hide();
+                        frappe.utils.play_sound("submit");
+                        callback();
+                        frappe.show_alert({ message:__('Planning mis à jour.'), indicator:'green' });
+                    },
+                    error: (err) => {
+                        console.error(err);
+                        frappe.utils.play_sound("error");
                     }
                 });
             }
@@ -262,7 +276,7 @@ window.Udshed.Dialogs = {
        
     },
 
-    openSendPlanningDialog(filter,course,userContext,callbak) {
+    openSendPlanningDialog(filter,userContext,callbak) {
        
         // hafPeriod = halfLibelle?`(${halfLibelle})`:'';
 
@@ -273,46 +287,43 @@ window.Udshed.Dialogs = {
                     fieldtype: "Check",
                     label: __("Envoyer à tous les enseingnats"),
                     fieldname: "to_all_teacher",
-                    default:true
+                    depends_on:() => filter.niveau?true:false,
+                    default:false
                 },
                 { 
                     fieldtype: "Check",
                     label: __("Envoyer à l'enseingnant"),
+                    depends_on:() => filter.teacher?true:false,
                     fieldname: "to_teacher",
-                    default:true
-                },
-                { 
-                    fieldtype: "Check",
-                    label: __("Envoyer a tous les coordonateurs"),
-                    fieldname: "to_all_coordo",
-                    default:true
+                    default:false
                 },                
                 {
                     fieldtype: "Check",
-                    label: __("Envoyer a tous les coordonateurs"),
+                    label: __("Recevoir le planning"),
                     fieldname: "to_me",
-                    default:true
+                    default:false
                 },                
             ],
             primary_action_label: __("Envoyer le planning"),
             primary_action(values) {
-                console.log("Values",values)
-                // frappe.call({
-                //     method: "udshed.api.planning_calendar.create_planning",
-                //     args: {
-                //         academic_year:filter.academic_year,
-                //     ...values,
-                //     day_of_week: day.toISOString().split('T')[0],
-                //     half_day: halfDay,
-                //     },
-                //     callback: (e) => {
-                //         dialog.hide();
-                //         frappe.show_alert({ message:__('Planning crée.'), indicator:'green' });
-                //         callbak();
-                //     },
-                //     error: (err) => {
-                //         }
-                // });
+                frappe.call({
+                    method: "udshed.api.planning_calendar_email.send_planning_to_mail",
+                    freeze: true,
+                    freeze_message: "Envoi du planning en cours...",
+                    args: {
+                        filters:{...filter},
+                        ...values,
+                    },
+                    callback: (e) => {
+                        dialog.hide();
+                        frappe.show_alert({ message:__('Planning envoyé.'), indicator:'green' });
+                        frappe.utils.play_sound("submit");
+                        callbak();
+                    },
+                    error: (err) => {
+                        frappe.utils.play_sound("error");
+                    }
+                });
             }
         });
 

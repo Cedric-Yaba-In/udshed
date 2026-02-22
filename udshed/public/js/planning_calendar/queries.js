@@ -61,7 +61,7 @@ window.Udshed.Queries  = {
                 faculty:"FST"
             },
             callback: (e) => {
-                console.log("Udata selected:", e.message);
+                // console.log("Udata selected:", e.message);
             },
             error: (err) => {
                 console.error("Error fetching udata session data:", err);
@@ -95,7 +95,6 @@ window.Udshed.Queries  = {
             callback_function(null);
             return;
         }
-        console.log("Batimer",batiment)
 
 
         frappe.call({

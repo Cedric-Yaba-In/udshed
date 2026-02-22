@@ -114,20 +114,20 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			label: 'Filière',
 			fieldname: 'filiere',
 			options: 'Field of study',
-			// get_query() {
-			// 	if (!faculty_field.get_value()) {
-			// 		return {};
-			// 	}
+			get_query() {
+				if (!faculty_field.get_value()) {
+					return {};
+				}
 
-			// 	return {
-			// 		filters: {
-			// 			faculte: faculty_field.get_value()
-			// 		}
-			// 	};
-			// },
+				return {
+					filters: {
+						faculte: faculty_field.get_value()
+					}
+				};
+			}, 
 			change() {
 				filters.filiere = this.get_value();
-				// Udshed.Utils.refresh_filter(filters,"filiere",page,levelMap);
+				Udshed.Utils.refresh_filter(filters,"filiere",page,levelMap);
 
 				Udshed.Queries.loadLevels(this.get_value(),niveau_field,(levels)=>{
 					levelMap = levels ? levels.reduce((acc, curr) => {
@@ -221,30 +221,30 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 				
 				
 				//faculty
-				page.fields_dict.faculty.get_query = () => ({
-					filters: {
-						name: ["in", userContext.faculty]
-					}
-				});
+				// page.fields_dict.faculty.get_query = () => ({
+				// 	filters: {
+				// 		name: ["in", userContext.faculty]
+				// 	}
+				// });
 
 				//filiere
-				page.fields_dict.filiere.get_query = () => {
-					let f = faculty_field.get_value();
-					return {
-						filters: {
-							name: ["in", userContext.filiere],
-							...(f ? { faculte: f } : {})
-						}
-					};
-				};
+				// page.fields_dict.filiere.get_query = () => {
+				// 	let f = faculty_field.get_value();
+				// 	return {
+				// 		filters: {
+				// 			name: ["in", userContext.filiere],
+				// 			...(f ? { faculte: f } : {})
+				// 		}
+				// 	};
+				// };
 
 
-				const allowedNiveau = new Set(userContext.niveau);
+				// const allowedNiveau = new Set(userContext.niveau);
 
-				niveau_field.df.options = niveau_field.df.options.filter(o =>
-					allowedNiveau.has(levelMap[o.value])
-				);
-				niveau_field.refresh();
+				// niveau_field.df.options = niveau_field.df.options.filter(o =>
+				// 	allowedNiveau.has(levelMap[o.value])
+				// );
+				// niveau_field.refresh();
 			}
 			
 			//Apply default value
@@ -273,6 +273,9 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		
 
 		$(document).on("click", ".planning-cell", function () {
+			//on se rassure qu'il a les droits de motifications
+			if(!Udshed.Perms.user_can_edit_planning_cell(filters,userContext)) return;
+
 			currentDay = new Date(parseInt(weekSelect.value)); // Récupérer la date de la semaine sélectionnée
 			let day ={ "Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3, "Friday": 4,"Saturday": 5}
 			currentDay.setDate(currentDay.getDate() + day[($(this).data("day"))]);

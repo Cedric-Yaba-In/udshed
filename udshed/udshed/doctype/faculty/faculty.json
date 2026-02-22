@@ -46,8 +46,8 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-11 23:04:11.399908",
- "modified_by": "Administrator",
+ "modified": "2026-02-21 06:32:59.489030",
+ "modified_by": "admin@udshed.com",
  "module": "Udshed",
  "name": "Faculty",
  "naming_rule": "By fieldname",
@@ -72,6 +72,15 @@
    "read": 1,
    "report": 1,
    "role": "Coordonateur",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Teacher",
    "share": 1
   }
  ],

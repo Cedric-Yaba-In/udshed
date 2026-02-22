@@ -3,6 +3,7 @@
 
 frappe.ui.form.on("Teacher", {
 	refresh(frm) {
+        console.log("USer ",frappe.user,frm.doc)
         if( frappe.user.has_role('System Manager') || frappe.user.has_role("Administrator"))
         {
             if( frm.doc.user) {

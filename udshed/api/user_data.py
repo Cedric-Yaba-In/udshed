@@ -67,11 +67,10 @@ def get_user_context():
 				filiere = frappe.get_doc("Field of study", {"name_of_field": c.name_of_field})
 				faculte = frappe.get_doc("Faculty", {"name": filiere.faculte})
 
-				coordo_data["filiere"].append({"name": c.name_of_field, "filiere": filiere.name_of_field, "faculte": filiere.faculte})
+				coordo_data["filiere"].append({"name": c.name, "filiere": filiere.name_of_field, "code":filiere.field_of_study_code, "faculte": filiere.faculte})
 				coordo_data["faculty"].append({"name": faculte.name, "faculte": faculte.faculty_name})
 				coordo_data["niveau"].append({"name": c.name, "level": c.level})
 			
-			print("Coordo data ", coordo_data)
 			data_result.append(coordo_data.copy())
 
 	if "Enseignant" in roles or "Teacher" in roles:

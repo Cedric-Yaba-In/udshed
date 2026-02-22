@@ -125,7 +125,7 @@ window.Udshed.Queries  = {
     {
         return new Promise((resolve, reject) => {
             frappe.call({
-                method: "udshed.api.planning_calendar.get_period",
+                method: "udshed.api.planning_period.get_period",
                 freeze: true,
                 freeze_message: __("Chargement des périodes de cours..."),
                 args: { field_of_study_level: level },
@@ -140,7 +140,7 @@ window.Udshed.Queries  = {
     {
         return new Promise((resolve, reject) => {
             frappe.call({
-                method: "udshed.api.planning_calendar.get_default_period",
+                method: "udshed.api.planning_period.get_default_period",
                 freeze: true,
                 freeze_message: __("Chargement de la période de cours par défaut..."),
                 callback: (r) => {

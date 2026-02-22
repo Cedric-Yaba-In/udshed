@@ -14,6 +14,7 @@ window.Udshed.Perms = {
     user_can_edit_planning_cell(cellFilter,userContext) {
         if(this.is_admin(userContext)) return true;
         let permsContext = userContext.perms.filter((p)=>{
+            if(!p.academic_year_list || !p.filiere || !p.niveau ) return false;
             let acad_found = p.academic_year_list.find((acad)=>acad.name==cellFilter.academic_year)
             let filiere_found = p.filiere.find((fil)=>fil.code==cellFilter.filiere)
             let niveau_found = p.niveau.find((niv)=>niv.name==cellFilter.niveau)

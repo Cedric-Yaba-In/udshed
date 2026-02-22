@@ -73,7 +73,7 @@ def get_user_context():
 			
 			data_result.append(coordo_data.copy())
 
-	if "Enseignant" in roles or "Teacher" in roles:
+	if "Teacher" in roles:
 		# ENSEIGNANT
 		Teacher = DocType("Teacher")
 		TeachingUnit = DocType("Teaching Unit")
@@ -126,15 +126,15 @@ def get_user_context():
 
 		
 
-	if not data_result:
+	if not data_result or "Guest" in roles:
 			# AUTRES UTILISATEURS
-		return [{
+		data_result.append({
 			"role": "Guest",
 			"can_create_course": False,
 			"can_edit_course": False,
 			"default_academic_year": default_academic_year,
 			"academic_year_list": academic_year_list
-		}]
+		})
 	
 	return data_result
 

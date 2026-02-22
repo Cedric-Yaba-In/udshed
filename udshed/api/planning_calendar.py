@@ -156,19 +156,3 @@ def delete_planning(planning_name):
     frappe.delete_doc("Planning Item",planning_name)
     return True
 
-@frappe.whitelist()
-def get_period(field_of_study_level):
-    calendar = frappe.get_doc("Field of study Level",field_of_study_level).calendrier
-
-    return frappe.db.get_all('Planning Period', filters={"parent":calendar},fields=["name","libelle"])
-
-@frappe.whitelist()
-def get_all_periods():
-    return frappe.db.get_all('Planning Period',fields=["name","libelle"])
-
-@frappe.whitelist()
-def get_default_period():
-    calendar = frappe.get_doc("Calendar Planing", "Defaut")
-    return frappe.get_all('Planning Period', filters={"parent":calendar.name},fields=["name","libelle"])
-
-

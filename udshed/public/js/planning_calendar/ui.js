@@ -76,10 +76,9 @@ window.Udshed.UI = {
     show_calendar(calendar_zone,grid_data,coursePeriod,forTeacher=false)
     {
         calendar_zone.empty();
-
         let plan = new Map();
         coursePeriod.forEach((period)=>{
-            plan.set(period.name,{libelle:period.libelle,items:[]})
+            plan.set(period.name,{libelle:period.libelle,items:[],fuseauHoraire : period.fuseau_horaire})
         })
 
         // Construire les lignes du matin et de l'après-midi
@@ -154,6 +153,7 @@ window.Udshed.UI = {
 
         for(let period of plan.keys())
         {
+            console.log("period fund ",plan.get(period))
             periodItem = period.split("-")
             calendarHTML += `<div class="planning-time-label">`
             if(plan.get(period).libelle)
@@ -163,6 +163,7 @@ window.Udshed.UI = {
             let startPeriod = periodItem[0].split(":"), endPeriod = periodItem[1].split(":");
             calendarHTML +=`                    
                     <div class="planning-time-range">${startPeriod[0]}:${startPeriod[1]} - ${endPeriod[0]}:${endPeriod[1]}</div>
+                    <div class="planning-time-fuseau">${plan.get(period).fuseauHoraire}</div>
                 </div>
                 ${plan.get(period).items.join('')}
             `

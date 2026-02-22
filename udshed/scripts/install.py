@@ -9,7 +9,8 @@ def create_default_calendar_period():
     if not frappe.db.exists("Calendar Planing","Default"):
         default_calendar = frappe.get_doc({
             "doctype":"Calendar Planing",
-            "nom_du_planing":"Defaut"
+            "nom_du_planing":"Defaut",
+            "fuseau_horaire":"GMT +1"
         })
         default_calendar.append("heure_planification",{
             "doctype":"Planning Period",

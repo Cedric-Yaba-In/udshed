@@ -8,6 +8,8 @@
  "engine": "InnoDB",
  "field_order": [
   "nom_du_planing",
+  "column_break_mtwe",
+  "fuseau_horaire",
   "heure_de_planification_section",
   "heure_planification"
  ],
@@ -29,12 +31,24 @@
    "fieldname": "heure_planification",
    "fieldtype": "Table",
    "options": "Planning Period"
+  },
+  {
+   "fieldname": "column_break_mtwe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "GMT +1",
+   "fieldname": "fuseau_horaire",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Fuseau horaire",
+   "options": "GMT -12\nGMT -11\nGMT -10\nGMT -9\nGMT -8\nGMT -7\nGMT -6\nGMT -5\nGMT -4\nGMT -3\nGMT -2\nGMT -1\nGMT +0\nGMT +1\nGMT +2\nGMT +3\nGMT +4\nGMT +5\nGMT +6\nGMT +7\nGMT +8\nGMT +9\nGMT +10\nGMT +11\nGMT +12\nGMT +13\nGMT +14"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-15 06:52:07.554971",
+ "modified": "2026-02-22 07:44:08.120199",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Calendar Planing",

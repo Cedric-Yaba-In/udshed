@@ -10,7 +10,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		'/assets/udshed/js/planning_calendar/ui.js',
 		'/assets/udshed/js/planning_calendar/permission.js'
 	]).then(async () => {
-
+		
 		var currentWeekStart = Udshed.DateUtils.getMonday(new Date());
 
 		

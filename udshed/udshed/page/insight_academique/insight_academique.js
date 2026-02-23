@@ -4,4 +4,6 @@ frappe.pages['insight-academique'].on_page_load = function(wrapper) {
 		title: 'Insight Académique',
 		single_column: true
 	});
+
+	
 }

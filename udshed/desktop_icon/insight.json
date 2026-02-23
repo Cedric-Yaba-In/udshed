@@ -1,0 +1,36 @@
+{
+ "app": "udshed",
+ "bg_color": "blue",
+ "creation": "2026-02-22 08:59:10.792381",
+ "docstatus": 0,
+ "doctype": "Desktop Icon",
+ "hidden": 0,
+ "icon_image": "/files/logo-insight-mini.png",
+ "icon_type": "Link",
+ "idx": 0,
+ "label": "Insight",
+ "link_to": "Insight",
+ "link_type": "Workspace Sidebar",
+ "modified": "2026-02-23 03:36:09.084720",
+ "modified_by": "Administrator",
+ "name": "Insight",
+ "owner": "Administrator",
+ "parent_icon": "",
+ "restrict_removal": 0,
+ "roles": [
+  {
+   "role": "Coordonateur"
+  },
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Udshed Financial Admin"
+  },
+  {
+   "role": "Teacher"
+  }
+ ],
+ "sidebar": "Insight",
+ "standard": 1
+}

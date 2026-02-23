@@ -1,0 +1,30 @@
+{
+ "content": null,
+ "creation": "2026-02-23 04:51:41.388821",
+ "docstatus": 0,
+ "doctype": "Page",
+ "icon": "book-user",
+ "idx": 0,
+ "modified": "2026-02-23 04:53:15.590090",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "insight-enseignant",
+ "owner": "Administrator",
+ "page_name": "insight-enseignant",
+ "roles": [
+  {
+   "role": "Teacher"
+  },
+  {
+   "role": "Coordonateur"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Insight Enseignant"
+}

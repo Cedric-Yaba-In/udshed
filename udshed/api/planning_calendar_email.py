@@ -15,7 +15,7 @@ def send_planning_to_teacher_email(filters,teacher,school_name,school_logo):
             "fname": planning_name + ".pdf",
             "fcontent": pdf
         }],
-        delayed=True,
+        delayed=False,
         sender = email_utils.get_formatted_sender()
     )
 
@@ -39,7 +39,7 @@ def send_planning_to_mail(filters,to_all_teacher=None,to_teacher=None,to_me=None
                 "fname": planning_name + ".pdf",
                 "fcontent": pdf
             }],
-            delayed=True,
+            delayed=False,
         )   
     if to_all_teacher:
         teachers = []
@@ -76,7 +76,7 @@ def send_planning_to_mail(filters,to_all_teacher=None,to_teacher=None,to_me=None
                 "fname": planning_name + ".pdf",
                 "fcontent": pdf
             }],
-            delayed=True,
+            delayed=False,
         )   
 
                 

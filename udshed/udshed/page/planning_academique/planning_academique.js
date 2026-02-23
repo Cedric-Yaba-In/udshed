@@ -10,7 +10,12 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		'/assets/udshed/js/planning_calendar/ui.js',
 		'/assets/udshed/js/planning_calendar/permission.js'
 	]).then(async () => {
-		
+		console.log("Frappe worksapce ",frappe.desk)
+		// frappe.workspace.route_page(this.page, "Planning Academique");
+	
+		// frappe.desk.sidebar.set_item_active("Planning Academique");
+
+
 		var currentWeekStart = Udshed.DateUtils.getMonday(new Date());
 
 		
@@ -37,6 +42,9 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			title: 'Planning',
 			single_column: true
 		});
+
+		
+
 
 		let filters = {
 			academic_year: null,

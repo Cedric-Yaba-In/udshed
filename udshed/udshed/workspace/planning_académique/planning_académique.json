@@ -1,5 +1,5 @@
 {
- "app": "udshed",
+ "app": "Udshed",
  "charts": [],
  "content": "[{\"type\":\"header\",\"data\":{\"text\":\"Planning Acad\u00e9mique\"}}]",
  "creation": "2026-02-05 19:14:44.514970",
@@ -15,13 +15,13 @@
  "label": "Planning Acad\u00e9mique",
  "link_type": "DocType",
  "links": [],
- "modified": "2026-02-23 07:26:47.407311",
+ "modified": "2026-02-23 18:03:31.094701",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Planning Acad\u00e9mique",
  "number_cards": [],
  "owner": "Administrator",
- "parent_page": "Planning Acad\u00e9mique",
+ "parent_page": "",
  "public": 1,
  "quick_lists": [],
  "roles": [

@@ -29,10 +29,6 @@ window.Udshed.UI = {
                 console.warn(`Jour de la semaine non reconnu: ${dayOfWeek}`);
             }
         });
-        console.log("item grid",items,grid)
-
-
-
         return grid;
     },
 

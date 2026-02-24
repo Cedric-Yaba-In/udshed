@@ -1,0 +1,109 @@
+/* Container principal */
+.insight-wrapper {
+    padding: 20px;
+    font-family: var(--font-body);
+    color: var(--text-color);
+}
+
+/* Header */
+.insight-header {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* KPI Row */
+.insight-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.insight-kpi-card {
+    background-color: var(--bg-primary);
+    color: var(--text-white);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.insight-kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+.kpi-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.kpi-value {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+/* Section cards (Graph / Table) */
+.card {
+    background-color: var(--bg-primary);
+    color: var(--text-color);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+
+/* Graph container */
+.chart-container {
+    width: 100%;
+    min-height: 300px;
+}
+
+/* Table */
+.insight-table-section table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.insight-table-section th,
+.insight-table-section td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.insight-table-section thead {
+    background-color: var(--bg-primary);
+    color: var(--text-white);
+}
+
+.insight-table-section tbody tr:nth-child(even) {
+    background-color: var(--bg-secondary);
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .insight-wrapper {
+        padding: 10px;
+    }
+}

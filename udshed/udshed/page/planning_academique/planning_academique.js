@@ -5,15 +5,12 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		'/assets/udshed/css/planning_academique.css',
 		'/assets/udshed/js/planning_calendar/dialog_box.js',
 		'/assets/udshed/js/planning_calendar/date_utils.js',
-		'/assets/udshed/js/planning_calendar/utils.js',
-		'/assets/udshed/js/planning_calendar/queries.js',
+		'/assets/udshed/js/utils/utils.js', 
+		'/assets/udshed/js/planning_calendar/planning_queries.js',
+		'/assets/udshed/js/utils/utils_queries.js',
 		'/assets/udshed/js/planning_calendar/ui.js',
-		'/assets/udshed/js/planning_calendar/permission.js'
+		'/assets/udshed/js/utils/permission.js'
 	]).then(async () => {
-		console.log("Frappe worksapce ",frappe.desk)
-		// frappe.workspace.route_page(this.page, "Planning Academique");
-	
-		// frappe.desk.sidebar.set_item_active("Planning Academique");
 
 
 		var currentWeekStart = Udshed.DateUtils.getMonday(new Date());
@@ -32,7 +29,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			Udshed.DateUtils.updateWeekLabel(currentWeekStart);
 			Udshed.DateUtils.syncSelectors(weekSelect,monthPicker,currentWeekStart);
 			
-			Udshed.Queries.fetchPlanningItems(filters,currentWeekStart,function (items){
+			Udshed.PlanningQueries.fetchPlanningItems(filters,currentWeekStart,function (items){
 				Udshed.UI.show_calendar(calendar_zone, Udshed.UI.get_grid_calendar_item(items,filters,periods),periods,filters.teacher?true:false)
 			});
 		}
@@ -57,7 +54,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		let levelMap = {}; // label => name
 
 
-		let defaultPeriods = await Udshed.Queries.loadCourseDefaultPeriod()
+		let defaultPeriods = await Udshed.PlanningQueries.loadCourseDefaultPeriod()
 		let periods = [...defaultPeriods]
 
 
@@ -137,7 +134,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 				filters.filiere = this.get_value();
 				Udshed.Utils.refresh_filter(filters,"filiere",page,levelMap);
 
-				Udshed.Queries.loadLevels(this.get_value(),niveau_field,(levels)=>{
+				Udshed.UtilsQueries.loadLevels(this.get_value(),niveau_field,(levels)=>{
 					levelMap = levels ? levels.reduce((acc, curr) => {
 						acc[curr.level] = curr.name;
 						return acc;
@@ -157,7 +154,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			fieldname: 'niveau',
 			async change() {
 				filters.niveau = levelMap[this.get_value()];
-				periods = this.get_value()==null ? [...defaultPeriods]: await Udshed.Queries.loadCoursePeriod(filters.niveau)
+				periods = this.get_value()==null ? [...defaultPeriods]: await Udshed.PlanningQueries.loadCoursePeriod(filters.niveau)
 				loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
 				Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)
 			}
@@ -214,7 +211,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)
 
 		let userContext = null;
-		Udshed.Queries.get_data_of_user((data) => {
+		Udshed.UtilsQueries.get_data_of_user((data) => {
 			userContext = Udshed.Perms.normalizeUserContext(data);
 			
 			if(Udshed.Perms.should_apply_filter(userContext))

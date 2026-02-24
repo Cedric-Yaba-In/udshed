@@ -94,7 +94,7 @@ window.Udshed.Dialogs = {
                     depends_on:'eval:doc.mode=="En présentiel"',
                     change() {
 
-                        Udshed.Queries.loadRooms(this.get_value(),cur_dialog.fields_dict.salle,(data)=>{
+                        Udshed.UtilsQueries.loadRooms(this.get_value(),cur_dialog.fields_dict.salle,(data)=>{
                             cur_dialog.fields_dict.salle.df.options = data;
                             cur_dialog.fields_dict.salle.refresh();
                         });
@@ -214,7 +214,7 @@ window.Udshed.Dialogs = {
                     depends_on:'eval:doc.mode=="En présentiel"',
                     change() {
 
-                        Udshed.Queries.loadRooms(this.get_value(),cur_dialog.fields_dict.salle,(data)=>{
+                        Udshed.UtilsQueries.loadRooms(this.get_value(),cur_dialog.fields_dict.salle,(data)=>{
                             cur_dialog.fields_dict.salle.df.options = data;
                             cur_dialog.fields_dict.salle.refresh();
                         });
@@ -264,7 +264,7 @@ window.Udshed.Dialogs = {
                 frappe.confirm(
                     __("Voulez-vous vraiment supprimer ce planning ?"),
                     () => {
-                        Udshed.Queries.deletePlanning(course.item.name,()=>{
+                        Udshed.PlanningQueries.deletePlanning(course.item.name,()=>{
                             dialog.hide();
                             callback();
                         });

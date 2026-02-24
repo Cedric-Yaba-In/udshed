@@ -2,62 +2,38 @@ import frappe
 from frappe import _
 
 @frappe.whitelist()
-def get_academic_dashboard(academic_year=None, faculty=None, filiere=None, niveau=None):
+def get_dashboard_stats(academic_year, week_start, filiere=None):
 
-    # -----------------------------
-    # STATIC MOCK DATA
-    # -----------------------------
-
-    total_courses = 320
-    completed_courses = 250
-    pending_courses = total_courses - completed_courses
-
-    total_cc = 60
-    completed_cc = 45
-    pending_cc = total_cc - completed_cc
-
-    execution_rate = round((completed_courses / total_courses) * 100, 2)
-
-    monthly_evolution = {
-        "labels": ["Oct", "Nov", "Dec", "Jan", "Feb", "Mar"],
-        "datasets": [
-            {
-                "name": "Cours réalisés",
-                "values": [30, 45, 40, 50, 55, 30]
-            }
-        ]
-    }
-
-    by_filiere = {
-        "labels": ["Informatique", "Gestion", "Droit"],
-        "datasets": [
-            {
-                "values": [85, 60, 92]
-            }
-        ]
-    }
-
-    alerts = [
-        {
-            "type": "warning",
-            "message": "Filière Gestion en dessous de 65% d'exécution"
+    # Exemple simplifié
+    planning = frappe.get_all(
+        "Planning Item",
+        filters={
+            "academic_year": academic_year
         },
-        {
-            "type": "danger",
-            "message": "15 CC non programmés"
-        }
-    ]
+        fields=["cours", "date", "salle"]
+    )
+
+    total_courses = len(planning)
+    total_teachers = 0
+    rooms_used = len(set(p["salle"] for p in planning if p["salle"]))
+    total_hours = total_courses * 2  # exemple
+
+    chart_data = {}
+    for p in planning:
+        day = str(p["date"])
+        chart_data.setdefault(day, 0)
+        chart_data[day] += 2
 
     return {
-        "kpis": {
+        "kpi": {
             "total_courses": total_courses,
-            "completed_courses": completed_courses,
-            "pending_courses": pending_courses,
-            "total_cc": total_cc,
-            "completed_cc": completed_cc,
-            "execution_rate": execution_rate
+            "total_hours": total_hours,
+            "total_teachers": total_teachers,
+            "rooms_used": rooms_used
         },
-        "monthly_evolution": monthly_evolution,
-        "by_filiere": by_filiere,
-        "alerts": alerts
+        "chart": {
+            "labels": list(chart_data.keys()),
+            "values": list(chart_data.values())
+        },
+        "table": planning
     }

@@ -2,7 +2,6 @@ window.Udshed = window.Udshed || {};
 window.Udshed.Insight = window.Udshed.Insight || {};
 window.Udshed.Insight.UI = {
     render_kpis(kpiRow,data ) {
-        kpiRow.empty();
 
         data.forEach(item => {
             const card = $(`
@@ -16,8 +15,6 @@ window.Udshed.Insight.UI = {
         });
     },
     render_chart(label,typeChart, chartSection,data,color='#3498db') {
-        chartSection.empty();
-
         chartSection.append(`<div class="section-title">${label}</div>`);
 
 
@@ -44,33 +41,39 @@ window.Udshed.Insight.UI = {
     },
 
     render_table(data,tableSection, label) {
-        tableSection.empty();
-
+    
         tableSection.append(`<div class="section-title">${label}</div>`);
-
-        const table = $(`
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Niveau</th>
-                        <th>Statut</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        `);
-
-        data.forEach(row => {
-            table.find("tbody").append(`
-                <tr>
-                    <td>${row.name}</td>
-                    <td>${row.level}</td>
-                    <td>${row.status}</td>
-                </tr>
-            `);
-        });
-
+        const table = $(`<div class="table-container"></div>`)
         tableSection.append(table);
+
+        let column = []
+        let value = []
+        data.columns.forEach((elt)=>{
+            column.push({
+                name:elt.label,
+                id:elt.field,
+                editable:elt.editable || false,
+                focusable:elt.focusable || false,
+                dropdown:elt.dropdown || false,
+                width: elt.width || "auto",
+                fieldname:elt.fieldname || "",
+                fieldtype:elt.fieldtype || "Data",
+                format: (value) => {
+                    let v = value;
+                    if(elt.toBold) v = value.bold();
+                    return v
+                }
+            })            
+        })
+        value = data.values.map((v)=> Array.from(Object.values(v)))
+        const datatable = new frappe.DataTable(table[0], {
+                columns: [...column],
+                data: [...value],
+                layout:"fluid",
+                noDataMessage: "Aucune données à afficher",
+                inlineFilters :true
+            }
+        );
+        
     }
 }

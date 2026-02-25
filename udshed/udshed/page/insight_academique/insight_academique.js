@@ -162,17 +162,22 @@ frappe.pages['insight-academique'].on_page_load = function(wrapper) {
 	})
 }
 
-function initUI(page)
+function initUI(page_section)
 {
-	page.body.find(".insight-header").empty()
-	page.body.find(".insight-kpi-row").empty()
-	page.body.find(".insight-chart-section").empty()
-	page.body.find(".insight-table-section").empty()
+	// page.body.find(".insight-header").empty()
+	// page.body.find(".insight-kpi-row").empty()
+	// page.body.find(".insight-chart-section").empty()
+	// page.body.find(".insight-table-section").empty()
+	console.log("PAge Section ",page_section.tableSection)
+	page_section.tableSection.empty()
+	page_section.chartSection.empty()
+	page_section.header.empty()
+	page_section.kpiRow.empty()
 }
 
 function showDashboard(page,filters,page_section)
 {
-	initUI(page)
+	initUI(page_section)
 	if(filters.academic_year && !filters.faculty && !filters.filiere && !filters.niveau)
 	{
 		//show for year
@@ -184,13 +189,16 @@ function showDashboard(page,filters,page_section)
 		Udshed.Insight.Academic.Faculty.showAcadmicFacultyInsights(page,filters,page_section)
 		
 	}
-	else if(filters.academic_year && filters.faculty &&!filters.filiere && !filters.niveau)
+	else if(filters.academic_year && filters.faculty && filters.filiere && !filters.niveau)
 	{
 		//show for filiere
+		Udshed.Insight.Academic.FieldOfStudy.showAcadmicFieldOfStudyInsights(page,filters,page_section)
+
 	}
-	else if(filters.academic_year && !filters.faculty && !filters.filiere && !filters.niveau)
+	else if(filters.academic_year && filters.faculty && filters.filiere && filters.niveau)
 	{
 		//show niveau
+		Udshed.Insight.Academic.FieldOfStudyLevel.showAcadmicFieldOfStudyLevelInsights(page,filters,page_section)
 	}
 	
 }

@@ -113,6 +113,7 @@ def get_teaching_unit_by_year(academic_year,faculty=None, semestre=None):
 	Course = DocType("Course")
 	CourseTeacherItem = DocType("Course Teacher Item")
 	CourseFieldOfStudyLevelItem = DocType("Course Field of study level item")
+	CourseFieldOfStudy = DocType("Field of study")
 
 	query = (
 		frappe.qb.from_(TeachingUnit)
@@ -122,6 +123,8 @@ def get_teaching_unit_by_year(academic_year,faculty=None, semestre=None):
 		.on(CourseTeacherItem.parent == TeachingUnit.name)
 		.join(CourseFieldOfStudyLevelItem)
 		.on(CourseFieldOfStudyLevelItem.parent == TeachingUnit.name)
+		.join(CourseFieldOfStudy)
+		.on(CourseFieldOfStudy.name==CourseFieldOfStudyLevelItem.filiere)
 		.select(
 			TeachingUnit.name,
 			Course.nombre_dheure_cm,
@@ -134,14 +137,15 @@ def get_teaching_unit_by_year(academic_year,faculty=None, semestre=None):
 			CourseTeacherItem.type_de_cours,
 			CourseFieldOfStudyLevelItem.filiere,
 			CourseFieldOfStudyLevelItem.niveau,
-			CourseFieldOfStudyLevelItem.course_poid		
+			CourseFieldOfStudyLevelItem.course_poid,
+			CourseFieldOfStudy.faculte	
 		)
 		.where(
 			(TeachingUnit.academic_year == academic_year)
 		)	
 	)
 	if faculty:
-		field_of_studies = [row.name for row in frappe.get_all("Field of study",filters={"faculte":faculty})]
+		query = query.where(CourseFieldOfStudy.faculte == faculty)
 	if semestre:
 		query = query.where( Course.semester == semestre )
 	
@@ -152,21 +156,20 @@ def get_teaching_unit_by_year(academic_year,faculty=None, semestre=None):
 	#Pour regrouper les enseignants et les niveau en fonction du cours
 	for d in data:
 		niveau_key = f"{d.filiere}-{d.niveau}"
-		if faculty and (d.filiere not in field_of_studies):
-			continue
 		if d.name in process_data:
 			if d.enseignant not in process_data[d.name]["enseignant_key"]:
 				process_data[d.name]["enseignant"].append({"enseignant":d.enseignant,"type_cours":d.type_de_cours})
 				process_data[d.name]["enseignant_key"].append(d.enseignant)
 			
 			if niveau_key not in process_data[d.name]["niveau_key"]:
+
 				process_data[d.name]["niveau"].append({"filiere":d.filiere,"niveau":d.niveau,"course_poid":d.course_poid})
 				process_data[d.name]["niveau_key"].append(niveau_key)
 		else:
 			process_data[d.name]={
 				"enseignant":[{"enseignant":d.enseignant, "type_cours":d.type_de_cours}],
 				"enseignant_key":[d.enseignant],
-				"niveau":[{"filiere":d.filiere, "niveau":d.niveau, "course_poid":d.course_poid}],
+				"niveau":[{"filiere":d.filiere, "niveau":d.niveau, "course_poid":d.course_poid,"faculty":d.faculte}],
 				"niveau_key":[niveau_key],
 				"course_name":d.course_name,
 				"intitule":d.intitule,
@@ -174,16 +177,16 @@ def get_teaching_unit_by_year(academic_year,faculty=None, semestre=None):
 				"nombre_dheure_td":d.nombre_dheure_td,
 				"nombre_dheure_tp":d.nombre_dheure_tp,
 				"semestre":d.semestre,
+				"faculte":d.faculte,
 				"name":d.name
 			}
 			
 	#On supprime les élements qui ont aidé au traitement
-	for key, value in process_data.items():
-		value.pop("niveau_key")
-		value.pop("enseignant_key")
-		result.append(value)
+	for key in process_data.keys():
+		process_data[key].pop("niveau_key")
+		process_data[key].pop("enseignant_key")
 
-	return result
+	return process_data
 
 	# result = {}
 

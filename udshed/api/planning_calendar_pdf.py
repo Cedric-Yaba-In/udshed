@@ -107,6 +107,7 @@ def generate_planning_pdf(filters):
         css = {
             "Cours":"cm",
             "Traveaux Pratiques (TP)":"tp",
+            "Traveaux Dirigés (TD)":"td",
             "Controlle Continue (CC)":"cc",
             "Examen de session normal":"exam",
             "Examen de rattrapage":"exam"

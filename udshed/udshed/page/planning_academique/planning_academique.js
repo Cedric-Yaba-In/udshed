@@ -106,7 +106,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			label: 'Faculté',
 			fieldname: 'faculty',
 			options: 'Faculty',
-			change() {
+			change() {				
 				filters.faculty = this.get_value();
 				Udshed.Utils.refresh_filter(filters,"faculty",page,levelMap);
 				periods = [...defaultPeriods]
@@ -165,6 +165,9 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			fieldname: 'teacher',
 			options: 'Teacher',
 			change() {
+				console.log("Teacher changed", this.get_value())
+				if(!this.get_value()) return
+
 				filters.teacher = this.get_value()
 				loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
 				Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)

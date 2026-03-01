@@ -14,6 +14,24 @@ window.Udshed.Insight.UI = {
             kpiRow.append(card);
         });
     },
+    render_kpi_with_icon(dataItem ) {
+        const card = `
+            <div class="stat-card frappe-card" style="border-left-color: ${dataItem.bgColor}">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon me-3" >
+                        <i class="${dataItem.icon}" style="color:${dataItem.bgColor}"></i>
+                    </div>
+                    <div>
+                        <div class="stat-label text-muted small">${dataItem.label}</div>
+                        <div class="stat-value h3 mb-0">${dataItem.value}</div>
+                        <small class="text-muted">${dataItem.comment?dataItem.comment:''}</small>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        return card;
+    },
     render_chart(label,typeChart, chartSection,data,color='#3498db') {
         chartSection.append(`<div class="section-title">${label}</div>`);
 
@@ -75,5 +93,33 @@ window.Udshed.Insight.UI = {
             }
         );
         
+    },
+
+    initLevelChart(levelData) {
+        new frappe.Chart("#level-chart", {
+            data: {
+                labels: levelData.map(l => l.level),
+                datasets: [
+                    {
+                        name: "Sessions",
+                        values: levelData.map(l => l.count),
+                        chartType: 'bar'
+                    }
+                ]
+            },
+            type: 'bar',
+            height: 250,
+            colors: ['#007bff']
+        });
+    },
+    getStatusLabel(status) {
+        const labels = {
+            'planned': 'Planifié',
+            'in_progress': 'En cours',
+            'completed': 'Terminé',
+            'cancelled': 'Annulé',
+            'rescheduled': 'Reporté'
+        };
+        return labels[status] || status;
     }
 }

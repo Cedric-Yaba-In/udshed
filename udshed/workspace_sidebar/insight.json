@@ -53,9 +53,20 @@
    "link_type": "Page",
    "show_arrow": 0,
    "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Insight Test",
+   "link_to": "test_insigh",
+   "link_type": "Page",
+   "show_arrow": 0,
+   "type": "Link"
   }
  ],
- "modified": "2026-02-23 04:58:36.644891",
+ "modified": "2026-02-27 14:46:09.548665",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Insight",

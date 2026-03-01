@@ -92,6 +92,9 @@ window.Udshed.UI = {
                     case "Traveaux Pratiques (TP)":
                         period_cours_type_class = "tp";
                         break;
+                    case "Traveaux Dirigés (TD)":
+                        period_cours_type_class = "td";
+                        break;
                     case "Controlle Continue (CC)":
                         period_cours_type_class = "cc";
                         break;

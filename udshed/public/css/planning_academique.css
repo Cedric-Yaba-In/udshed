@@ -195,6 +195,12 @@ Controle de l'état d'avancement des cours
   background: rgba(76, 175, 80, 0.15);
   border-left-color: var(--green-500);
 }
+.planning-item.td { 
+  /* background:#c4c0cf;  */
+  /* border-color:#3e0cc5;  */
+  background:#26097594; 
+  border-left-color:#3e0cc5;
+}
 
 .planning-item.cc {
   background: rgba(255, 167, 38, 0.18);

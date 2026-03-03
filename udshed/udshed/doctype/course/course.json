@@ -15,7 +15,8 @@
   "nombre_dheure_cm",
   "nombre_dheure_tp",
   "nombre_dheure_td",
-  "nombre_dheure_total"
+  "nombre_dheure_total",
+  "nombre_dheure_tpe"
  ],
  "fields": [
   {
@@ -80,12 +81,17 @@
    "fieldtype": "Int",
    "label": "Nombre d'heure (TD)",
    "non_negative": 1
+  },
+  {
+   "fieldname": "nombre_dheure_tpe",
+   "fieldtype": "Int",
+   "label": "Nombre d'heure (TPE)"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-15 17:11:37.090452",
+ "modified": "2026-03-02 13:06:28.157537",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Course",

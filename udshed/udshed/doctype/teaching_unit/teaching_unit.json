@@ -10,9 +10,17 @@
   "nouveau_cours_section",
   "course",
   "intitule_cours",
+  "unite_de_valeur",
   "column_break_askz",
   "academic_year",
   "mode",
+  "semestre",
+  "section_break_mvno",
+  "nombre_dheure_cm",
+  "nombre_dheure_td",
+  "column_break_wada",
+  "nombre_dheure_tp",
+  "nombre_dheure_tpe",
   "enseignant_section",
   "table_enseignant",
   "classes_concern\u00e9es_section",
@@ -78,12 +86,59 @@
    "label": "Mode",
    "options": "En pr\u00e9sentiel\nEn ligne\nHybride",
    "reqd": 1
+  },
+  {
+   "fieldname": "unite_de_valeur",
+   "fieldtype": "Link",
+   "label": "Unit\u00e9 de valeur",
+   "options": "Teaching Unit Value"
+  },
+  {
+   "default": "Semestre 1",
+   "fetch_from": "course.semestre",
+   "fieldname": "semestre",
+   "fieldtype": "Select",
+   "label": "Semestre",
+   "options": "Semestre 1\nSemestre 2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_mvno",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fetch_from": "course.nombre_dheure_cm",
+   "fieldname": "nombre_dheure_cm",
+   "fieldtype": "Int",
+   "label": "Nombre d'heure (CM)"
+  },
+  {
+   "fetch_from": "course.nombre_dheure_td",
+   "fieldname": "nombre_dheure_td",
+   "fieldtype": "Int",
+   "label": "Nombre d'heure (TD)"
+  },
+  {
+   "fieldname": "column_break_wada",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "course.nombre_dheure_tp",
+   "fieldname": "nombre_dheure_tp",
+   "fieldtype": "Int",
+   "label": "Nombre d'heure (TP)"
+  },
+  {
+   "fetch_from": "course.nombre_dheure_tpe",
+   "fieldname": "nombre_dheure_tpe",
+   "fieldtype": "Int",
+   "label": "Nombre d'heure (TPE)"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-18 06:51:07.198143",
+ "modified": "2026-03-02 15:21:37.004243",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Teaching Unit",

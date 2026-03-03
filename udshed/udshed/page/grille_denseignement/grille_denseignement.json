@@ -1,0 +1,23 @@
+{
+ "content": null,
+ "creation": "2026-03-01 09:46:56.016305",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2026-03-01 09:46:56.016305",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "grille-denseignement",
+ "owner": "Administrator",
+ "page_name": "grille-denseignement",
+ "roles": [
+  {
+   "role": "All"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Grilles d'enseignements"
+}

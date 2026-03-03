@@ -57,6 +57,18 @@
   {
    "child": 0,
    "collapsible": 1,
+   "icon": "image-view",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Grille d'enseignements",
+   "link_to": "grille-denseignement",
+   "link_type": "Page",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
    "icon": "users",
    "indent": 0,
    "keep_closed": 0,
@@ -103,7 +115,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-02-23 18:06:47.920572",
+ "modified": "2026-03-01 09:47:44.868404",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Planning Academique",

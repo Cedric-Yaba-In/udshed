@@ -82,7 +82,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		let btnEnvoiMail =  page.set_secondary_action("Envoyer par mail", () => {
 			Udshed.Dialogs.openSendPlanningDialog({...filters,week_start:currentWeekStart.toISOString().split('T')[0]},null,()=>{})
 			
-		});
+		}); 
 
 		// get_data_of_user();
 

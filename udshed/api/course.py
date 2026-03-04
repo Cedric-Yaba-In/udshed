@@ -98,7 +98,8 @@ def get_teaching_units(
 		results.append({
 			"name": doc.name,
 			"course": doc.course,
-			"course_title": course.intitule,
+			"course_title": doc.intitule_cours,
+			"ue_code":doc.unite_de_valeur,
 			"course_code": course.code if hasattr(course, "code") else "",
 			# "is_common": cint(doc.is_common),
 			"classes": classes,
@@ -248,3 +249,19 @@ def get_teaching_unit_by_level(doctype, txt, searchfield, start, page_len, filte
 
 	data =  query.run()
 	return data
+
+def clean_course_and_ue_by_acaemic_year(academic_year,faculty,filiere,niveau,semestre,proced_cours,proced_ue):
+	teachings = get_teaching_units(academic_year,faculty,filiere,niveau)
+	on_delete_ue = []
+	for t in teachings:
+		if t['course'] not in proced_cours:
+			print("Deleting ",t['course'])
+			on_delete_ue.append(t["ue_code"])
+			frappe.delete_doc("Teaching Unit", t['name'])
+	for ue_del in on_delete_ue:
+		if ue_del not in proced_ue:
+			print("Delete UV",ue_del)
+			frappe.delete_doc("Teaching Unit Value",ue_del)
+
+	print("Teachings",teachings)
+	print("UV",on_delete_ue)

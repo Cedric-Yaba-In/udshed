@@ -1,6 +1,7 @@
 - Terminer le filtre sur les teaching unit pour avoir la liste des niveaux par rapport aux filiére (OK)
-- Terminer le filtre sur planing
-- Se rassurer la planification fonctionne normalement
-- Imprimer un planning
-- Gérer les droits
-- Faire le logo de l'application
+
+- Se rassurer la planification fonctionne normalement (OK)
+- Imprimer un planning (OK)
+- Gérer les droits (OK)
+- Faire le logo de l'application (OK)
+- La modification de la grille (enseigant, intiluté, ajouter ou supprimer un élement de la grille)

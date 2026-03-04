@@ -125,9 +125,9 @@ window.Udshed.Dialogs = {
                         half_day: halfDay,
                     },
                     callback: (e) => {
-                        frappe.utils.play_sound("submit");
                         dialog.hide();
                         frappe.show_alert({ message:__('Planning crée.'), indicator:'green' });
+                        frappe.utils.play_sound("submit");
                         callbak();
                     },
                     error: (err) => {
@@ -249,9 +249,9 @@ window.Udshed.Dialogs = {
                     },
                     callback: () => {
                         dialog.hide();
-                        frappe.utils.play_sound("submit");
                         callback();
                         frappe.show_alert({ message:__('Planning mis à jour.'), indicator:'green' });
+                        frappe.utils.play_sound("submit");
                     },
                     error: (err) => {
                         console.error(err);

@@ -39,9 +39,10 @@ def read_frappe_excel(file_url):
 
         # Use pandas.read_excel to load the data
         df = pd.read_excel(file_path,sheet_name=sheet_name)
+        df = df.fillna('')
         data = df.to_numpy().tolist()
         print("data to list ",data)
         print("Excel file successfully read into a pandas DataFrame.")
-        return df
+        return data
     except Exception as e:
         frappe.throw( f'Erreur de lecture du fichier. fichier non conforme: {file_path}')

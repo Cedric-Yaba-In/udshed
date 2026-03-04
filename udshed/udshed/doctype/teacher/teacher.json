@@ -10,19 +10,25 @@
   "first_name",
   "email",
   "full_name",
+  "sexe",
+  "autres_emails",
   "column_break_orpe",
   "last_name",
   "phone",
   "user",
   "ville_de_residence",
+  "autres_telephones",
   "informations_professionel_section",
   "tittre",
   "universite_rattache",
   "grade",
+  "diplome",
+  "code_grade",
   "column_break_cpvj",
   "status",
-  "facult\u00e9",
-  "cout_unitaire"
+  "faculte",
+  "cout_unitaire",
+  "specialite"
  ],
  "fields": [
   {
@@ -105,16 +111,9 @@
   },
   {
    "fieldname": "universite_rattache",
-   "fieldtype": "Select",
+   "fieldtype": "Data",
    "label": "Universit\u00e9 de rattache",
    "options": "Non d\u00e9finis\nDshang\nYaound\u00e9\nBandjoun\nBuea\nGaroua\nDouala"
-  },
-  {
-   "fieldname": "facult\u00e9",
-   "fieldtype": "Link",
-   "in_standard_filter": 1,
-   "label": "Facult\u00e9",
-   "options": "Faculty"
   },
   {
    "fieldname": "grade",
@@ -132,12 +131,51 @@
    "fieldname": "cout_unitaire",
    "fieldtype": "Int",
    "label": "C\u00f4ut Unitaire"
+  },
+  {
+   "fieldname": "diplome",
+   "fieldtype": "Data",
+   "label": "Dipl\u00f4me"
+  },
+  {
+   "fieldname": "sexe",
+   "fieldtype": "Select",
+   "label": "Sexe",
+   "options": "Homme\nFemme"
+  },
+  {
+   "fieldname": "autres_emails",
+   "fieldtype": "Data",
+   "label": "Autres Emails"
+  },
+  {
+   "fieldname": "specialite",
+   "fieldtype": "Data",
+   "label": "Sp\u00e9cialit\u00e9"
+  },
+  {
+   "fieldname": "faculte",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Facult\u00e9",
+   "options": "Faculty"
+  },
+  {
+   "fieldname": "autres_telephones",
+   "fieldtype": "Data",
+   "label": "Autres T\u00e9l\u00e9phones"
+  },
+  {
+   "fieldname": "code_grade",
+   "fieldtype": "Int",
+   "label": "Code Grade",
+   "non_negative": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-15 22:18:06.342639",
+ "modified": "2026-03-04 14:13:01.777166",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Teacher",

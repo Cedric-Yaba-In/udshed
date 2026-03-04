@@ -53,7 +53,6 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 
 		let levelMap = {}; // label => name
 
-
 		let defaultPeriods = await Udshed.PlanningQueries.loadCourseDefaultPeriod()
 		let periods = [...defaultPeriods]
 

@@ -185,13 +185,13 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                     worked_ue.insert( ignore_permissions=True)
             else:
                 if not worked_ue:
-                    frappe.throw("Veuillez d'abord spécifier une UE")
                     frappe.msgprint(
                         f"Veuillez d'abord spécifier une UE ",
                         title="Erreur d'importation",
                         indicator="red",
                         raise_exception=False  # N'envoie pas d'exception
                     )
+                    frappe.throw("Veuillez d'abord spécifier une UE")                    
                 proceed_ens.append(data[1])
                 if frappe.db.exists({'doctype':"Teaching Unit","course":data[1],"academic_year":academic_year}):
                     #si le cours existe deja on le met à jour
@@ -246,7 +246,6 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                     teachers_email = data[9].split(", ")
                     for teacher_email in teachers_email:
                         if not frappe.db.exists({"doctype":"User", "email":teacher_email}):
-                            frappe.throw(f"Erreur l'ors de l'importation. \n\n L'enseignant {teacher_email} introuvable. Renseignez l'addresse email correspondat et réessayez")
                             frappe.msgprint(
                                 f"L'enseignant {teacher_email} est introuvable. "
                                 f"Veuillez renseigner l'adresse email correspondante et réessayer.",
@@ -254,6 +253,7 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                                 indicator="red",
                                 raise_exception=False  # N'envoie pas d'exception
                             )
+                            frappe.throw(f"Erreur l'ors de l'importation. \n\n L'enseignant {teacher_email} introuvable. Renseignez l'addresse email correspondat et réessayez")
                         teacher = frappe.get_doc("Teacher", {"email":teacher_email})
                         teachingUnit.append("table_enseignant", {
                             "enseignant":teacher.name,
@@ -263,7 +263,6 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                     teachers_email = data[10].split(", ")
                     for teacher_email in teachers_email:
                         if not frappe.db.exists({"doctype":"User", "email":teacher_email}):
-                            frappe.throw(f"Erreur l'ors de l'importation. \n\n L'enseignant {teacher_email} introuvable. Renseignez l'addresse email correspondat et réessayez")
                             frappe.msgprint(
                                 f"L'enseignant {teacher_email} est introuvable. "
                                 f"Veuillez renseigner l'adresse email correspondante et réessayer.",
@@ -271,6 +270,7 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                                 indicator="red",
                                 raise_exception=False  # N'envoie pas d'exception
                             )
+                            frappe.throw(f"Erreur l'ors de l'importation. \n\n L'enseignant {teacher_email} introuvable. Renseignez l'addresse email correspondat et réessayez")
                         teacher = frappe.get_doc("Teacher", {"email":teacher_email})
                         teachingUnit.append("table_enseignant", {
                             "enseignant":teacher.name,
@@ -280,7 +280,6 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                     teachers_email = data[11].split(", ")
                     for teacher_email in teachers_email:
                         if not frappe.db.exists({"doctype":"User", "email":teacher_email}):
-                            frappe.throw(f"Erreur l'ors de l'importation. \n\n L'enseignant {teacher_email} introuvable. Renseignez l'addresse email correspondat et réessayez")
                             frappe.msgprint(
                                 f"L'enseignant {teacher_email} est introuvable. "
                                 f"Veuillez renseigner l'adresse email correspondante et réessayer.",
@@ -288,6 +287,7 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                                 indicator="red",
                                 raise_exception=False  # N'envoie pas d'exception
                             )
+                            frappe.throw(f"Erreur l'ors de l'importation. \n\n L'enseignant {teacher_email} introuvable. Renseignez l'addresse email correspondat et réessayez")
                         teacher = frappe.get_doc("Teacher", {"email":teacher_email})
                         teachingUnit.append("table_enseignant", {
                             "enseignant":teacher.name,

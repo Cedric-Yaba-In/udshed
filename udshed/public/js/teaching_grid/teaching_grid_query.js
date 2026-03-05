@@ -27,6 +27,14 @@ window.Udshed.TeachingGrid.UtilsQueries = {
             freeze: false,
             freeze_message: __("Importation de la grille..."),
             args: {...args},
+            error:(error)=>{
+                frappe.msgprint({
+                        title: __('Erreur'),
+                        message: error,
+                        indicator: 'red'
+                    });
+                callbackFunction(null)
+            },
             callback: function(r) {
                 if (r.message) {
                     callbackFunction(r.message)

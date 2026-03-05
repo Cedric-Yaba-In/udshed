@@ -98,6 +98,7 @@ def get_teaching_units(
 		results.append({
 			"name": doc.name,
 			"course": doc.course,
+			"semestre":doc.semestre,
 			"course_title": doc.intitule_cours,
 			"ue_code":doc.unite_de_valeur,
 			"course_code": course.code if hasattr(course, "code") else "",
@@ -254,14 +255,11 @@ def clean_course_and_ue_by_acaemic_year(academic_year,faculty,filiere,niveau,sem
 	teachings = get_teaching_units(academic_year,faculty,filiere,niveau)
 	on_delete_ue = []
 	for t in teachings:
-		if t['course'] not in proced_cours:
-			print("Deleting ",t['course'])
+		if t['course'] not in proced_cours and t["semestre"]!=semestre:
 			on_delete_ue.append(t["ue_code"])
 			frappe.delete_doc("Teaching Unit", t['name'])
 	for ue_del in on_delete_ue:
 		if ue_del not in proced_ue:
-			print("Delete UV",ue_del)
 			frappe.delete_doc("Teaching Unit Value",ue_del)
 
-	print("Teachings",teachings)
-	print("UV",on_delete_ue)
+

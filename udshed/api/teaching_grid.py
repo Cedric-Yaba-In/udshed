@@ -236,7 +236,7 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                     is_new = True
                     
                 #les enseignants
-                if data[9]:
+                if len(data)>=10 and data[9]:
                     teachers_email = data[9].split(", ")
                     for teacher_email in teachers_email:
                         if not frappe.db.exists({"doctype":"User", "email":teacher_email}):
@@ -246,7 +246,7 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                             "enseignant":teacher.name,
                             "type_de_cours":"Cours Magistral (CM)"
                         })
-                if data[10]:
+                if len(data)>=11 and data[10]:
                     print("Data 10",data[10])
                     teachers_email = data[10].split(", ")
                     for teacher_email in teachers_email:
@@ -257,7 +257,7 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                             "enseignant":teacher.name,
                             "type_de_cours":"Travaux Dirigés (TD)"
                         })
-                if data[11]:
+                if len(data)>=12 and data[11]:
                     teachers_email = data[11].split(", ")
                     for teacher_email in teachers_email:
                         if not frappe.db.exists({"doctype":"User", "email":teacher_email}):

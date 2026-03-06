@@ -59,7 +59,6 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
     )
     result = {}
     filiere = frappe.get_doc("Field of study",filiere)
-    print("filiere ",filiere,filiere.has_uv_in_grid)
     if not filiere.has_uv_in_grid:
         result = {
             "UNKNOW":{
@@ -79,7 +78,6 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
     data = query.run(as_dict=True)
     for doc in data:
         ue_code = doc.ue_code if filiere.has_uv_in_grid else "UNKNOW"
-        print("UE_doc ",ue_code)
 
         if doc.ue_code in result:
             found_course = False
@@ -109,7 +107,7 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
                     "teacher":[]
                 })
                 if doc.enseignant:
-                    result[ue_code]["courses"]["teacher"].append({
+                    result[ue_code]["courses"][len(result[ue_code]["courses"])-1]["teacher"].append({
                         "teacher":doc.enseignant,
                         "type_cours":doc.type_de_cours
                     })
@@ -137,15 +135,16 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
                         "filiere": doc.filiere,
                         "niveau": doc.niveau,
                         "ue_intitule": doc.ue_intitule,
-                        "teacher":[
-                            {
-                                "teacher":doc.enseignant,
-                                "type_cours":doc.type_de_cours
-                            }
-                        ]
+                        "teacher":[]
                     }
                 ],
             }
+
+            if doc.enseignant:
+                result[ue_code]["courses"][len(result[ue_code]["courses"])-1]["teacher"].append({
+                    "teacher":doc.enseignant,
+                    "type_cours":doc.type_de_cours
+                })
             stat_result["ue_count"] +=1
             stat_result["course_count"] +=1
             stat_result["total_credits"] +=int(doc.course_poid) 

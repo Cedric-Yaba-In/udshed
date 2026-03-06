@@ -173,7 +173,10 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                 FieldOfStudyLevelItem.name
             )
             .where( 
-                (TeachingUnit.semestre == semestre)
+                (TeachingUnit.semestre == semestre) &
+                (FieldOfStudyLevelItem.filiere == filiere) &
+                (FieldOfStudyLevelItem.niveau == niveau) &
+                (TeachingUnit.academic_year == academic_year)
             )
         )
         data_to_delete = query_delete.run(as_dict = True)

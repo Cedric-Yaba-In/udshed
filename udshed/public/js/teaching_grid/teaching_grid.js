@@ -105,19 +105,22 @@ window.Udshed.TeachingGrid.DataGrid = class TeachingGrid {
         // Construire les lignes
         data.forEach(function(ue) {
             // Ligne UE
-            rows.push([
-                ue.ue_code,
-                '',
-                ue.ue_title,
-                {content:ue.ue_credits,editable:false},
-                'UE',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-            ]);
+            if(ue.ue_code!="UNKNOW")
+            {
+                rows.push([
+                    ue.ue_code,
+                    '',
+                    ue.ue_title,
+                    {content:ue.ue_credits,editable:false},
+                    'UE',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                ]);
+            }
             
             // Lignes cours
             ue.courses.forEach(function(course) {

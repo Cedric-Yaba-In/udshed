@@ -11,6 +11,7 @@
   "name_of_field",
   "faculte",
   "department_coordinator",
+  "has_uv_in_grid",
   "column_break_fzsk",
   "field_of_study_code",
   "description",
@@ -71,13 +72,19 @@
    "label": "Facult\u00e9",
    "options": "Faculty",
    "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "has_uv_in_grid",
+   "fieldtype": "Check",
+   "label": "Possede des UV sur la grille ?"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-02-21 06:35:19.749559",
- "modified_by": "admin@udshed.com",
+ "modified": "2026-03-06 03:36:09.843184",
+ "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Field of study",
  "naming_rule": "By fieldname",

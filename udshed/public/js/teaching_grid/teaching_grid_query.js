@@ -24,7 +24,7 @@ window.Udshed.TeachingGrid.UtilsQueries = {
     {
         frappe.call({
             method: 'udshed.api.teaching_grid.import_grid',
-            freeze: false,
+            freeze: true,
             freeze_message: __("Importation de la grille..."),
             args: {...args},
             error:(error)=>{

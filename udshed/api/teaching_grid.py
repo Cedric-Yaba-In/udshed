@@ -18,17 +18,18 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
     CourseFieldOfStudyLevelItem = DocType("Course Field of study level item")
     CourseFieldOfStudy = DocType("Field of study")
 
+
     query = (
         frappe.qb.from_(TeachingUnit)
         .join(Course)
         .on(TeachingUnit.course==Course.name)
-        .join(CourseTeacherItem)
+        .left_join(CourseTeacherItem)
         .on(CourseTeacherItem.parent == TeachingUnit.name)
         .join(CourseFieldOfStudyLevelItem)
         .on(CourseFieldOfStudyLevelItem.parent == TeachingUnit.name)
         .join(CourseFieldOfStudy)
         .on(CourseFieldOfStudy.name==CourseFieldOfStudyLevelItem.filiere)
-        .join(TeachingUnitValue)
+        .left_join(TeachingUnitValue)
         .on(TeachingUnitValue.name == TeachingUnit.unite_de_valeur)
         .select(
             TeachingUnit.name,
@@ -57,6 +58,18 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
         )	
     )
     result = {}
+    filiere = frappe.get_doc("Field of study",filiere)
+    print("filiere ",filiere,filiere.has_uv_in_grid)
+    if not filiere.has_uv_in_grid:
+        result = {
+            "UNKNOW":{
+                "ue_code":"UNKNOW",
+                "ue_title":"",
+                "ue_credits":0,
+                "courses":[]
+            },
+            
+        }
     stat_result = {
         'ue_count': 0,
         'course_count': 0,
@@ -65,17 +78,21 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
     }
     data = query.run(as_dict=True)
     for doc in data:
+        ue_code = doc.ue_code if filiere.has_uv_in_grid else "UNKNOW"
+        print("UE_doc ",ue_code)
+
         if doc.ue_code in result:
             found_course = False
-            for cours in result[doc.ue_code]["courses"]:
+            for cours in result[ue_code]["courses"]:
                 if cours["code"] == doc.course_name:
                     found_course=True
-                    cours["teacher"].append({
-                        "teacher":doc.enseignant,
-                        "type_cours":doc.type_de_cours
-                    })                
+                    if doc.enseignant:
+                        cours["teacher"].append({
+                            "teacher":doc.enseignant,
+                            "type_cours":doc.type_de_cours
+                        })                
             if not found_course:
-                result[doc.ue_code]["courses"].append({
+                result[ue_code]["courses"].append({
                     "code":doc.course_name,
                     "title": doc.intitule_cours,
                     "credits": doc.course_poid,
@@ -89,12 +106,14 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
                     "filiere": doc.filiere,
                     "niveau": doc.niveau,
                     "ue_intitule": doc.ue_intitule,
-                    "teacher":[{
-                         "teacher":doc.enseignant,
-                            "type_cours":doc.type_de_cours
-                    }]
+                    "teacher":[]
                 })
-                result[doc.ue_code]["ue_credits"] += int(doc.course_poid) 
+                if doc.enseignant:
+                    result[ue_code]["courses"]["teacher"].append({
+                        "teacher":doc.enseignant,
+                        "type_cours":doc.type_de_cours
+                    })
+                result[ue_code]["ue_credits"] += int(doc.course_poid) 
                 stat_result["course_count"] +=1
                 stat_result["total_credits"] +=int(doc.course_poid) 
                 stat_result["total_hours"] +=int(doc.nombre_dheure_cm) + int(doc.nombre_dheure_td) + int(doc.nombre_dheure_tp) + int(doc.nombre_dheure_tpe)
@@ -143,9 +162,26 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
     try:
         frappe.db.begin()
         
-        print("Data grid ", data_grid)
         #Rétirer tous cours à cette salle de classe
-        frappe.db.delete("Course Field of study level item",filters={"filiere":filiere, "niveau":niveau})
+        TeachingUnit = DocType("Teaching Unit")
+        FieldOfStudyLevelItem = DocType("Course Field of study level item")
+
+        query_delete = (
+            frappe.qb.from_(FieldOfStudyLevelItem)
+            .join(TeachingUnit)
+            .on(TeachingUnit.name == FieldOfStudyLevelItem.parent)
+            .select(
+                FieldOfStudyLevelItem.name
+            )
+            .where( 
+                (TeachingUnit.semestre == semestre)
+            )
+        )
+        data_to_delete = query_delete.run(as_dict = True)
+        for d_del in data_to_delete:
+            frappe.delete_doc("Course Field of study level item",d_del.name)
+
+        # frappe.db.delete("Course Field of study level item",filters={"filiere":filiere, "niveau":niveau})
 
         record_stat = {
             "ues_created":0,

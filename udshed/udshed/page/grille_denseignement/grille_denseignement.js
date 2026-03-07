@@ -111,7 +111,7 @@ frappe.pages['grille-denseignement'].on_page_load = function(wrapper) {
             fieldname: 'niveau',
             change() {
                 filters.niveau = levelMap[this.get_value()];
-                Udshed.Utils.refresh_filter(filters,"level",page,levelMap);
+                Udshed.Utils.refresh_filter(filters,"niveau",page,levelMap);
                 teaching_grid.initData()
                 teaching_grid.render_datatable()
             }

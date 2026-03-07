@@ -252,19 +252,23 @@ def get_teaching_unit_by_level(doctype, txt, searchfield, start, page_len, filte
 	return data
 
 def clean_course_and_ue_by_acaemic_year(academic_year,faculty,filiere,niveau,semestre,proced_cours,proced_ue):
-	teachings = get_teaching_units(academic_year,faculty,filiere,niveau)
-	# print("ue_proceed",proced_ue)
+	# teachings = get_teaching_units(academic_year,faculty,filiere,niveau)
+	# # print("ue_proceed",proced_ue)
 	# print("proceed_cours",proced_cours)
 	# print("Teaching value ",teachings)
 	# print("Semestre ",semestre)
 	# on_delete_ue = []
 	# for t in teachings:
-	# 	if t['course'] not in proced_cours and t["semestre"]==semestre and t[""]:
-	# 		print("Delete UE",t["ue_code"],t['name'])
+	# 	if t['course'] not in proced_cours and t["semestre"]==semestre:
+	# 		print("Course to delete ",t)
 	# 		on_delete_ue.append(t["ue_code"])
 	# 		frappe.delete_doc("Teaching Unit", t['name'])
+	# print("ue to delete ",on_delete_ue)
 	# for ue_del in on_delete_ue:
 	# 	if ue_del not in proced_ue:
 	# 		frappe.delete_doc("Teaching Unit Value",ue_del)
+
+	#Todo
+	pass
 
 

@@ -40,11 +40,6 @@ window.Udshed.TeachingGrid.UtilsQueries = {
                     callbackFunction(r.message)
                 } else {
                     callbackFunction(null)
-                    frappe.msgprint({
-                        title: __('Erreur'),
-                        message: r.message,
-                        indicator: 'red'
-                    });
                 }
             }
         });

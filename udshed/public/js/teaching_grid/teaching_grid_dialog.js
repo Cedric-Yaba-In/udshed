@@ -258,18 +258,33 @@ show_import_dialog(filters,onAfterImported= (data)=>{}) {
                 },
             (data)=>{
                 if(!data) return;
-                frappe.msgprint({
-                    title: __('Import réussi'),
-                    message: `
-                        <p>UE créées: ${data.ues_created }</p>
-                        <p>Cours créés: ${data.courses_created }</p>
-                        <p>Cours mis à jour: ${data.courses_updated }</p>
-                    `,
-                    indicator: 'green'
-                });
-                frappe.utils.play_sound("submit");
+                console.log("Data import",data)
+                if(data.status)
+                {
+                    frappe.utils.play_sound("submit");
 
-                onAfterImported(data);
+                    frappe.msgprint({
+                        title: __('Import réussi'),
+                        message: `
+                            <p>UE créées: ${data.data.ues_created }</p>
+                            <p>Cours créés: ${data.data.courses_created }</p>
+                            <p>Cours mis à jour: ${data.data.courses_updated }</p>
+                        `,
+                        indicator: 'green'
+                    });
+
+                    onAfterImported(data);
+                }
+                else
+                {
+                    frappe.msgprint({
+                        title: __('Echec d\'importation'),
+                        message: data.message.replace("\n","<br\>"),
+                        indicator: 'red'
+                    });
+                    frappe.utils.play_sound("error")
+                }
+                
             })
         }
     });

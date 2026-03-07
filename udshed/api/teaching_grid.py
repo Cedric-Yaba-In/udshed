@@ -151,7 +151,10 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
             stat_result["total_hours"] +=int(doc.nombre_dheure_cm) + int(doc.nombre_dheure_td) + int(doc.nombre_dheure_tp) + int(doc.nombre_dheure_tpe)
 
     
-    return {"stats":stat_result,"grid":result.values()}
+    for ue in result.keys():
+        result[ue]["courses"] = sorted(result[ue]["courses"],key = lambda course: course["code"])
+
+    return {"stats":stat_result,"grid":dict(sorted(result.items())).values()}
 
 @frappe.whitelist()
 def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
@@ -223,12 +226,6 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                     worked_ue.insert( ignore_permissions=True)
             else:
                 if not worked_ue:
-                    frappe.msgprint(
-                        f"Veuillez d'abord spécifier une UE ",
-                        title="Erreur d'importation",
-                        indicator="red",
-                        raise_exception=False  # N'envoie pas d'exception
-                    )
                     frappe.throw("Veuillez d'abord spécifier une UE")                    
                 proceed_ens.append(data[1])
                 if frappe.db.exists({'doctype':"Teaching Unit","course":data[1],"academic_year":academic_year}):
@@ -279,18 +276,14 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                     record_stat["courses_created"] +=1
                     is_new = True
                     
+                print("Teachers ",data[9],data)
+                
                 #les enseignants
                 if len(data)>=10 and data[9]:
                     teachers_email = data[9].split(",")
                     for teacher_email in teachers_email:
                         if not frappe.db.exists({"doctype":"User", "email":teacher_email}):
-                            frappe.msgprint(
-                                f"L'enseignant {teacher_email} est introuvable. "
-                                f"Veuillez renseigner l'adresse email correspondante et réessayer.",
-                                title="Erreur d'importation",
-                                indicator="red",
-                                raise_exception=False  # N'envoie pas d'exception
-                            )
+                            print("Enseigant innexistant")
                             frappe.throw(f"Erreur l'ors de l'importation. \n\n L'enseignant {teacher_email} introuvable. Renseignez l'addresse email correspondat et réessayez")
                         teacher = frappe.get_doc("Teacher", {"email":teacher_email})
                         teachingUnit.append("table_enseignant", {
@@ -301,13 +294,6 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                     teachers_email = data[10].split(",")
                     for teacher_email in teachers_email:
                         if not frappe.db.exists({"doctype":"User", "email":teacher_email}):
-                            frappe.msgprint(
-                                f"L'enseignant {teacher_email} est introuvable. "
-                                f"Veuillez renseigner l'adresse email correspondante et réessayer.",
-                                title="Erreur d'importation",
-                                indicator="red",
-                                raise_exception=False  # N'envoie pas d'exception
-                            )
                             frappe.throw(f"Erreur l'ors de l'importation. \n\n L'enseignant {teacher_email} introuvable. Renseignez l'addresse email correspondat et réessayez")
                         teacher = frappe.get_doc("Teacher", {"email":teacher_email})
                         teachingUnit.append("table_enseignant", {
@@ -318,13 +304,6 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
                     teachers_email = data[11].split(",")
                     for teacher_email in teachers_email:
                         if not frappe.db.exists({"doctype":"User", "email":teacher_email}):
-                            frappe.msgprint(
-                                f"L'enseignant {teacher_email} est introuvable. "
-                                f"Veuillez renseigner l'adresse email correspondante et réessayer.",
-                                title="Erreur d'importation",
-                                indicator="red",
-                                raise_exception=False  # N'envoie pas d'exception
-                            )
                             frappe.throw(f"Erreur l'ors de l'importation. \n\n L'enseignant {teacher_email} introuvable. Renseignez l'addresse email correspondat et réessayez")
                         teacher = frappe.get_doc("Teacher", {"email":teacher_email})
                         teachingUnit.append("table_enseignant", {
@@ -350,10 +329,19 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
         frappe.db.commit()
         # frappe.db.rollback()
 
-        return record_stat
+        return {
+            "status":True,
+            "data":record_stat
+        }
     except Exception as e:
         frappe.db.rollback()
-        frappe.throw(e)
+        frappe.log_error(f"{str(e)}")
+        return {
+            "status":False,
+            "message":str(e)
+        }
+        # frappe.throw(e)
+
         # frappe.throw("Erreur d'importation. Réessayez plus tard!")
         
         
@@ -419,7 +407,7 @@ def export_grid(academic_year,faculty,filiere,niveau,semestre):
         
     except Exception as e:
         frappe.log_error(f"Erreur download_template: {str(e)}")
-        frappe.throw(e)
+        # frappe.throw(e)
         return {
             'success': False,
             'error': str(e)
@@ -489,7 +477,7 @@ def download_template():
         
     except Exception as e:
         frappe.log_error(f"Erreur download_template: {str(e)}")
-        frappe.throw(e)
+        # frappe.throw(e)
         return {
             'success': False,
             'error': str(e)

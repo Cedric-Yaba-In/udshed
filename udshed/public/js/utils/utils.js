@@ -10,6 +10,10 @@ window.Udshed.Utils = {
             page.fields_dict.faculty.set_value(null);
             page.fields_dict.filiere.set_value(null);
             page.fields_dict.niveau.set_value(null);
+            if(page.fields_dict.semestre) {
+                filters.semestre=null
+                page.fields_dict.semestre.set_value(null)
+            }
             levelMap = {};
             return;
         }
@@ -20,6 +24,11 @@ window.Udshed.Utils = {
 
             page.fields_dict.filiere.set_value(null);
             page.fields_dict.niveau.set_value(null);
+
+            if(page.fields_dict.semestre) {
+                filters.semestre=null
+                page.fields_dict.semestre.set_value(null)
+            }
             levelMap = {};
             return;
         }
@@ -27,22 +36,30 @@ window.Udshed.Utils = {
         if(field === "filiere") {
             filters.niveau = null;
             page.fields_dict.niveau.set_value(null);
+            if(page.fields_dict.semestre) {
+                filters.semestre=null
+                page.fields_dict.semestre.set_value(null)
+            }
             levelMap = {};
             return;
         }
 
         if(field === "niveau") {
+             if(page.fields_dict.semestre) {
+                filters.semestre=null
+                page.fields_dict.semestre.set_value(null)
+            }
             return;
         }
 
-        filters.faculty = null;
-        filters.filiere = null;
-        filters.niveau = null;
+        // filters.faculty = null;
+        // filters.filiere = null;
+        // filters.niveau = null;
 
-        page.fields_dict.faculty.set_value(null);
-        page.fields_dict.filiere.set_value(null);
-        page.fields_dict.niveau.set_value(null);
-        levelMap = {};
+        // page.fields_dict.faculty.set_value(null);
+        // page.fields_dict.filiere.set_value(null);
+        // page.fields_dict.niveau.set_value(null);
+        // levelMap = {};
     },
     mergeDataByKey(arr1,arr2,key)
     {

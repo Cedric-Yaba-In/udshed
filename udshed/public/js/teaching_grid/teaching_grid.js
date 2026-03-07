@@ -6,17 +6,21 @@ window.Udshed.TeachingGrid.DataGrid = class TeachingGrid {
         this.wrapper = wrapper;
         this.page = wrapper.page;
         this.datatable = null;
-		this.data= []
+        this.initData()
+        this.filters = {};
+
+        this.make();        
+    }
+
+    initData(){
+        this.data = [];
+        this.data= []
         this.stat = {
             total_credits: 0,
             total_hours: 0,
             course_count: 0,
             ue_count: 0
         }
-
-        this.filters = {};
-
-        this.make();        
     }
     
     refresh() {

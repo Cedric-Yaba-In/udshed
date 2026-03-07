@@ -14,13 +14,20 @@ window.Udshed.TeachingGrid.DataGrid = class TeachingGrid {
 
     initData(){
         this.data = [];
-        this.data= []
         this.stat = {
             total_credits: 0,
             total_hours: 0,
             course_count: 0,
             ue_count: 0
         }
+        $('#stat-ue').text(0);
+        $('#stat-courses').text(0);
+        $('#stat-credits').text(0);
+        $('#stat-hours').text(0);
+        this.update_title()
+        this.update_totals([]);
+
+
     }
     
     refresh() {
@@ -53,8 +60,9 @@ window.Udshed.TeachingGrid.DataGrid = class TeachingGrid {
         });
     }
     update_title()
-    {   
-        $('.panel-title').html(`Grille d'enseignement - Semestre <span id="semester-title">${this.filters.semestre.split(" ")[1]}</span>`)
+    {  
+        if(this.filters?.semestre) 
+            $('.panel-title').html(`Grille d'enseignement - Semestre <span id="semester-title">${this.filters.semestre.split(" ")[1]}</span>`)
     }
 
     getUeByCourseCode(courseCode)

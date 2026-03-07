@@ -48,9 +48,11 @@ frappe.pages['grille-denseignement'].on_page_load = function(wrapper) {
             change(e) {
                 filters.academic_year = this.get_value();
                 Udshed.Utils.refresh_filter(filters,"academic_year",page,levelMap);
-                
-                teaching_grid.initData()
-                teaching_grid.render_datatable()
+                if(!this.get_value())
+                {
+                    teaching_grid.initData()
+                    teaching_grid.render_datatable()
+                }
                 
 
             }
@@ -64,9 +66,11 @@ frappe.pages['grille-denseignement'].on_page_load = function(wrapper) {
             change(e) {
                 filters.faculty = this.get_value();
                 Udshed.Utils.refresh_filter(filters,"faculty",page,levelMap);
-                
-                teaching_grid.initData()
-                teaching_grid.render_datatable()
+                if(!this.get_value())
+                {
+                    teaching_grid.initData()
+                    teaching_grid.render_datatable()
+                }
             }
         });
 
@@ -100,8 +104,11 @@ frappe.pages['grille-denseignement'].on_page_load = function(wrapper) {
                 });
 				Udshed.TeachingGrid.UtilsUi.update_page_actions(filters, btnExporter,btnImporter)
                 
-                teaching_grid.initData()
-                teaching_grid.render_datatable()
+                if(!this.get_value())
+                {
+                    teaching_grid.initData()
+                    teaching_grid.render_datatable()
+                }
             }
         });  
 
@@ -112,8 +119,11 @@ frappe.pages['grille-denseignement'].on_page_load = function(wrapper) {
             change() {
                 filters.niveau = levelMap[this.get_value()];
                 Udshed.Utils.refresh_filter(filters,"niveau",page,levelMap);
-                teaching_grid.initData()
-                teaching_grid.render_datatable()
+                if(!this.get_value())
+                {
+                    teaching_grid.initData()
+                    teaching_grid.render_datatable()
+                }
             }
         });
         const semestre_field = page.add_field({

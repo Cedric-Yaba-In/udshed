@@ -9,20 +9,15 @@ import frappe
 
 class Teacher(Document):
 	
-	# @property
-	# def full_name(self):
-	# 	if not self.user:
-	# 		return ""
+	def validate(self):
+		new_full_name = f"{self.grade} {self.first_name} {self.last_name}".strip()
+		if not self.is_new() and self.name!=new_full_name:
+			self.set_onload('rename_needed',self.get_unique_target_name(new_full_name))
+		
+	def on_update(self):
+		new_name = self.get_onload('rename_needed')
+		frappe.rename_doc("Teacher",self.name,new_name,force=True)
 
-	# 	first_name, last_name = frappe.db.get_value(
-	# 		"User",
-	# 		self.user,
-	# 		["first_name", "last_name"]
-	# 	) or ("", "")
-	# 	return f"{first_name or ''} {last_name or ''}".strip()
-	
-	
-	
 	def after_insert(self):
 		if not frappe.db.exists('User', self.email):
 			user = frappe.get_doc({
@@ -43,6 +38,17 @@ class Teacher(Document):
 			user = frappe.get_doc('User', self.email)
 		self.user = user.name
 		self.save(ignore_permissions = True)
+
+	def get_unique_target_name(self,name):
+		if not frappe.db.exists("Teacher",name):
+			return name
+		
+		i = 1
+
+		while frappe.db.exists("Teacher",f"{name} ({i})"):
+			i +=1
+		return f"{name} ({i})"
+
 
 	def after_delete(self):
 		if self.user and frappe.db.exists('User', self.user):

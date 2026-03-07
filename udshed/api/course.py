@@ -259,7 +259,7 @@ def clean_course_and_ue_by_acaemic_year(academic_year,faculty,filiere,niveau,sem
 	# print("Semestre ",semestre)
 	# on_delete_ue = []
 	# for t in teachings:
-	# 	if t['course'] not in proced_cours and t["semestre"]==semestre:
+	# 	if t['course'] not in proced_cours and t["semestre"]==semestre and t[""]:
 	# 		print("Delete UE",t["ue_code"],t['name'])
 	# 		on_delete_ue.append(t["ue_code"])
 	# 		frappe.delete_doc("Teaching Unit", t['name'])

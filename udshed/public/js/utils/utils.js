@@ -52,14 +52,6 @@ window.Udshed.Utils = {
             return;
         }
 
-        // filters.faculty = null;
-        // filters.filiere = null;
-        // filters.niveau = null;
-
-        // page.fields_dict.faculty.set_value(null);
-        // page.fields_dict.filiere.set_value(null);
-        // page.fields_dict.niveau.set_value(null);
-        // levelMap = {};
     },
     mergeDataByKey(arr1,arr2,key)
     {

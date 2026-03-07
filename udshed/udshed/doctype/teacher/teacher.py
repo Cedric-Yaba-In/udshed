@@ -15,7 +15,8 @@ class Teacher(Document):
 			self.set_onload('rename_needed',self.get_unique_target_name(new_full_name))
 		
 	def on_update(self):
-		if not self.is_new():
+		new_full_name = f"{self.grade} {self.first_name} {self.last_name}".strip()
+		if not self.is_new() and self.name!=new_full_name:
 			new_name = self.get_onload('rename_needed')
 			frappe.rename_doc("Teacher",self.name,new_name,force=True)
 

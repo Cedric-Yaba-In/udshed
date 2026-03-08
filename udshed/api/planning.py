@@ -1,7 +1,7 @@
 import frappe
 from frappe.query_builder import DocType
 
-def get_all_planning_item_by_year(academic_year,faculty=None,field_of_study=None,course_type=None):
+def get_all_planning_item_by_year(academic_year,faculty=None,field_of_study=None, level = None,course_type=None,semestre=None):
     PlanningItem = DocType('Planning Item')
     TeachingUnit = DocType("Teaching Unit")
     CourseFieldOfStudyLevelItem = DocType("Course Field of study level item")
@@ -42,10 +42,19 @@ def get_all_planning_item_by_year(academic_year,faculty=None,field_of_study=None
     )
     if faculty:
         query = query.where(FieldOfStudy.faculte == faculty)
+
     if course_type:
         query = query.where(PlanningItem.type == course_type)
+
     if field_of_study:
         query = query.where(FieldOfStudy.field_of_study_code==field_of_study)
+    
+    if level:
+        query = query.where(CourseFieldOfStudyLevelItem.niveau==level)
+    
+    if semestre:
+        query = query.where(TeachingUnit.semestre == semestre)
+
     data =  query.run(as_dict=True)
     result = {}
     for d in data:

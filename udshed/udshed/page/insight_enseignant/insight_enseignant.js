@@ -230,7 +230,10 @@ function show_dashboard(page,filters,page_section)
 	else if(filters.academic_year && filters.faculty && filters.filiere && filters.niveau)
 	{
 		//show niveau
-		Udshed.Insight.Academic.FieldOfStudyLevel.showAcademicFieldOfStudyLevelInsights(page,filters,page_section)
+		window.Udshed.Insight.Academic.Queries.getQueriesFieldOfStudyLevelDashbord(filters,(data)=>{
+			Udshed.Insight.Academic.FieldOfStudyLevel.showAcademicFieldOfStudyLevelInsights(page,filters,page_section,data)
+
+        })
 	}
 	
 }

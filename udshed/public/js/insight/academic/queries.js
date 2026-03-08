@@ -46,6 +46,20 @@ window.Udshed.Insight.Academic.Queries =   {
                 console.error("Error fetching user session data:", err);
             }
         });
+    },
+    getQueriesFieldOfStudyLevelDashbord(data,callback)
+    {
+        frappe.call({
+            method: "udshed.api.statistic_course.statistic_level",
+            args: data,
+            callback: (e) => {
+                console.log("User session level:", e.message);
+                callback(e.message);
+            },
+            error: (err) => {
+                console.error("Error fetching user session data:", err);
+            }
+        });
 
     },
 

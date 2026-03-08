@@ -110,7 +110,7 @@ def get_teaching_units(
 	return results
 
 @frappe.whitelist()
-def get_teaching_unit_by_year(academic_year,faculty=None,field_of_study=None, semestre=None):
+def get_teaching_unit_by_year(academic_year,faculty=None,field_of_study=None,level=None,semestre=None):
 	TeachingUnit = DocType("Teaching Unit")
 	Course = DocType("Course")
 	CourseTeacherItem = DocType("Course Teacher Item")
@@ -121,7 +121,7 @@ def get_teaching_unit_by_year(academic_year,faculty=None,field_of_study=None, se
 		frappe.qb.from_(TeachingUnit)
 		.join(Course)
 		.on(TeachingUnit.course==Course.name)
-		.join(CourseTeacherItem)
+		.left_join(CourseTeacherItem)
 		.on(CourseTeacherItem.parent == TeachingUnit.name)
 		.join(CourseFieldOfStudyLevelItem)
 		.on(CourseFieldOfStudyLevelItem.parent == TeachingUnit.name)
@@ -151,9 +151,12 @@ def get_teaching_unit_by_year(academic_year,faculty=None,field_of_study=None, se
 
 	if field_of_study:
 		query = query.where(CourseFieldOfStudy.field_of_study_code==field_of_study)
-		
+	
+	if level:
+		query = query.where(CourseFieldOfStudyLevelItem.niveau==level)
+
 	if semestre:
-		query = query.where( Course.semester == semestre )
+		query = query.where( TeachingUnit.semestre == semestre )
 	
 	data = query.run(as_dict = True)
 	process_data = {}

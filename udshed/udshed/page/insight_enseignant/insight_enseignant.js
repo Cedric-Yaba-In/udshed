@@ -135,8 +135,8 @@ frappe.pages['insight-enseignant'].on_page_load = function(wrapper) {
 			label: 'Semestre',
 			fieldname: 'semestre',
 			options: [
-				{value:'semestre1', label:'Semestre 1'},
-				{value:'semestre2', label:'Semestre 2'},
+				{value:'Semestre 1', label:'Semestre 1'},
+				{value:'Semestre 2', label:'Semestre 2'},
 			],
 			change() {
 				filters.semestre = this.get_value();

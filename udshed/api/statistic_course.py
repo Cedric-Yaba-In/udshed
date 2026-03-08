@@ -8,6 +8,7 @@ from functools import reduce
 def statistic_year(academic_year, semestre=None):
     """Statistique global de l'année"""
 
+    print("Semestre ",semestre)
     teaching_units = course.get_teaching_unit_by_year(academic_year=academic_year,semestre=None)
     teaching_units_key = teaching_units.keys()
     planning_items = planning.get_all_planning_item_by_year(academic_year,semestre=semestre)
@@ -377,10 +378,8 @@ def get_total_hours_of_teaching_unit_in_dict(teaching_units):
     return get_total_hours_of_teaching_unit_in_list(list(teaching_units.values()))
 
 def get_total_hours_of_teaching_unit_in_list(teaching_units):
-    print("Teaching unit total_hours",teaching_units)
     total_hour = 0
     for value in teaching_units:
-        print("vaule teaching ",value["nombre_dheure_cm"],value["nombre_dheure_td"],value["nombre_dheure_tp"],value["nombre_dheure_cm"] + value["nombre_dheure_td"] + value["nombre_dheure_tp"],"\n")
         if not value["nombre_dheure_cm"]:
             value["nombre_dheure_cm"] = 0
         if not value["nombre_dheure_td"]:

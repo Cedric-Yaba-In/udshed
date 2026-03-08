@@ -149,6 +149,12 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
 
     return {"stats":stat_result,"grid":dict(sorted(result.items())).values()}
 
+
+
+
+
+
+
 @frappe.whitelist()
 def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
     """Importer une grille depuis Excel"""

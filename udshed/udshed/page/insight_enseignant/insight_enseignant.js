@@ -74,7 +74,7 @@ frappe.pages['insight-enseignant'].on_page_load = function(wrapper) {
 				filters.faculty = this.get_value();
 				Udshed.Utils.refresh_filter(filters,"faculty",page,levelMap);
                 if(!this.get_value()) return;
-				show_dashboard(page,filters,content)
+				show_dashboard(page,filters,{container:content})
                 console.log("From faculty")
 
 			}
@@ -140,8 +140,9 @@ frappe.pages['insight-enseignant'].on_page_load = function(wrapper) {
 			],
 			change() {
 				filters.semestre = this.get_value();
-                console.log("From semestre")
 				if(!this.get_value()) return
+                console.log("From semestre")
+
 				// periods = this.get_value()==null ? [...defaultPeriods]: await Udshed.Queries.loadCoursePeriod(filters.niveau)
 				show_dashboard(page,filters,content)
 			}
@@ -204,22 +205,20 @@ function show_dashboard(page,filters,page_section)
 	initUI(page_section.container)
 	if(filters.academic_year && !filters.faculty && !filters.filiere && !filters.niveau)
 	{
-    console.log("Filters: with starting show dasbord", filters)
 
-        window.Udshed.Insight.Academic.Queries.getQueriesDashbord(filters,(data)=>{
+        window.Udshed.Insight.Academic.Queries.getQueriesYearDashbord(filters,(data)=>{
             //show for year
-            console.log("Show yera")
 		    Udshed.Insight.Academic.Year.showAcademicYearInsights(page,filters,page_section,data)
         })
 		
 	}
 	else if(filters.academic_year && filters.faculty && !filters.filiere && !filters.niveau)
 	{
-    console.log("Filters: with starting show dasbord", filters)
-
-		//show for faculty
-		Udshed.Insight.Academic.Faculty.showAcademicFacultyInsights(page,filters,page_section)
-		
+		console.log("Find from faculty")
+		 window.Udshed.Insight.Academic.Queries.getQueriesFacultyDashbord(filters,(data)=>{
+            //show for faculty
+			Udshed.Insight.Academic.Faculty.showAcademicFacultyInsights(page,filters,page_section,data)
+        })		
 	}
 	else if(filters.academic_year && filters.faculty && filters.filiere && !filters.niveau)
 	{

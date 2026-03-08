@@ -5,7 +5,7 @@ window.Udshed.TeachingGrid.Dialog = {
     
     
 // Ouvrir le dialogue d'assignation des enseignants
-open_teacher_assignment_dialog(courseDocName, courseCode, rowIndex, colIndex) {
+open_teacher_assignment_dialog(courseTeacherDocName, courseCode,teachingUnitName, rowIndex, colIndex) {
     
     // Créer un dialogue avec un grid lié au child table de votre doctype
     var dialog = new frappe.ui.Dialog({
@@ -44,19 +44,24 @@ open_teacher_assignment_dialog(courseDocName, courseCode, rowIndex, colIndex) {
                         fieldtype: 'Select',
                         fieldname: 'type_de_cours',
                         label: 'Type',
-                        options: ['CM', 'TD', 'TP', 'TPE'],
-                        default: 'CM',
+                        options: [
+                            "Cours Magistral (CM)",
+                            "Travaux Pratique (TP)",
+                            "Travaux Dirigés (TD)"
+                        ],
+                        default: 'Cours Magistral (CM)',
                         in_list_view: 1,
                         columns: 3
                     }
                 ],
                 get_data: function() {
                     return new Promise(resolve => {
-                        Udshed.TeachingGrid.load_doctype_list({
-                                doctype: 'Teaching Unit', // Votre doctype principal
-                                name: courseDocName
+                        Udshed.TeachingGrid.UtilsQueries.load_doctype_list({
+                                doctype: 'Course Teacher Item', // Votre doctype principal
+                                name: courseTeacherDocName
                             },
                             (data)=>{
+                                console.log("Data ",data)
                                 resolve(data)
                             }
                         )
@@ -79,12 +84,12 @@ open_teacher_assignment_dialog(courseDocName, courseCode, rowIndex, colIndex) {
     });
     
     // Charger les données du cours pour la prévisualisation
-    me.load_course_data_for_preview(courseDocName, dialog);
+    // Udshed.TeachingGrid.Dialog.load_course_data_for_preview(courseTeacherDocName, dialog);
     
     // Mettre à jour la prévisualisation quand le grid change
-    $(dialog.fields_dict.teachers.grid.wrapper).on('change', 'select, input', function() {
-        me.update_teacher_preview_from_grid(courseDocName, dialog);
-    });
+    // $(dialog.fields_dict.teachers.grid.wrapper).on('change', 'select, input', function() {
+    //     Udshed.TeachingGrid.Dialog.update_teacher_preview_from_grid(courseTeacherDocName,teachingUnitName, dialog);
+    // });
     
     dialog.show();
 },
@@ -171,8 +176,8 @@ update_teacher_preview(courseDoc, dialog) {
 },
 
 // Mettre à jour la prévisualisation à partir du grid
-update_teacher_preview_from_grid(courseDocName, dialog) {
-    var me = this;
+update_teacher_preview_from_grid(courseDocName,teachingUnitName, dialog) {
+
     
     // Récupérer les données du grid
     var gridData = dialog.fields_dict.teachers.grid.get_data();
@@ -180,14 +185,14 @@ update_teacher_preview_from_grid(courseDocName, dialog) {
     // Créer un objet cours temporaire avec les données du grid
     Udshed.TeachingGrid.UtilsQueries.load_doctype_list(
         {
-            doctype: 'Course',
-            name: courseDocName
+            doctype: 'Teaching Unit',
+            name: teachingUnitName
         },
         (data)=>{
             if(data){
                 var tempDoc = r.message;
                 tempDoc.teachers = gridData;
-                me.update_teacher_preview(tempDoc, dialog);
+                Udshed.TeachingGrid.Dialog.update_teacher_preview(tempDoc, dialog);
             }
         }
     )

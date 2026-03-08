@@ -59,16 +59,7 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
     )
     result = {}
     filiere = frappe.get_doc("Field of study",filiere)
-    if not filiere.has_uv_in_grid:
-        result = {
-            "UNKNOW":{
-                "ue_code":"UNKNOW",
-                "ue_title":"",
-                "ue_credits":0,
-                "courses":[]
-            },
-            
-        }
+
     stat_result = {
         'ue_count': 0,
         'course_count': 0,
@@ -77,7 +68,7 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
     }
     data = query.run(as_dict=True)
     for doc in data:
-        ue_code = doc.ue_code if filiere.has_uv_in_grid else "UNKNOW"
+        ue_code = doc.ue_code
 
         if doc.ue_code in result:
             found_course = False
@@ -104,6 +95,7 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
                     "filiere": doc.filiere,
                     "niveau": doc.niveau,
                     "ue_intitule": doc.ue_intitule,
+                    "teaching_unit":doc.name,
                     "teacher":[]
                 })
                 if doc.enseignant:
@@ -135,6 +127,7 @@ def get_academic_teaching_unit(academic_year,faculty,filiere,niveau,semestre):
                         "filiere": doc.filiere,
                         "niveau": doc.niveau,
                         "ue_intitule": doc.ue_intitule,
+                        "teaching_unit":doc.name,
                         "teacher":[]
                     }
                 ],
@@ -164,6 +157,7 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
     try:
         frappe.db.begin()
         
+
         #Rétirer tous cours à cette salle de classe
         TeachingUnit = DocType("Teaching Unit")
         FieldOfStudyLevelItem = DocType("Course Field of study level item")
@@ -201,8 +195,19 @@ def import_grid(file_url,academic_year,faculty,filiere,niveau,semestre):
         academic_year_obj = frappe.get_doc("Academic Year",academic_year)
         proceed_ue = []
         proceed_ens = []
+        filiere_doc = frappe.get_doc("Field of study",filiere)
 
-        worked_ue = None
+        if not filiere_doc.has_uv_in_grid:
+            if not frappe.db.exists("Teaching Unit Value","UNKNOW"):
+                worked_ue = frappe.get_doc({
+                    "doctype":"Teaching Unit Value",
+                    "code":"UNKNOW",
+                    "semestre":semestre,
+                    "academic_year":academic_year_obj.name
+                })
+                proceed_ue.append("UNKNOW")
+        else:
+            worked_ue = None
         for data in data_grid:
             if data[0] and data[4]=="UE":
                 proceed_ue.append(data[0])

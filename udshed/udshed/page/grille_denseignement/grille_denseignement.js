@@ -32,13 +32,10 @@ frappe.pages['grille-denseignement'].on_page_load = function(wrapper) {
             Udshed.TeachingGrid.UtilsQueries.export_grid(filters,()=>teaching_grid.refresh());
         }, 'download');
         Udshed.TeachingGrid.UtilsUi.update_page_actions(filters, btnExporter,btnImporter)
-
         
         // page.add_menu_item(__('Rafraîchir'), function() {
         //     teaching_grid.refresh();
         // }, 'refresh');
-
-       
 
         page.add_field({
             fieldtype: 'Link',

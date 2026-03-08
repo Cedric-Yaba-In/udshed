@@ -26,8 +26,6 @@ window.Udshed.TeachingGrid.DataGrid = class TeachingGrid {
         $('#stat-hours').text(0);
         this.update_title()
         this.update_totals([]);
-
-
     }
     
     refresh() {
@@ -45,7 +43,6 @@ window.Udshed.TeachingGrid.DataGrid = class TeachingGrid {
         
         Udshed.TeachingGrid.UtilsQueries.load_data(me.filters,(data)=>{
             if (data) {
-                console.log("Data" ,data)
                     me.data = data.grid
                     me.stat = data.stats
                     $('#stat-ue').text(data.stats.ue_count || 0);
@@ -92,7 +89,7 @@ window.Udshed.TeachingGrid.DataGrid = class TeachingGrid {
             { name: 'TP', editable: true, fieldtype: 'Int' },
             { name: 'TPE', editable: true, fieldtype: 'Int' },
             { name: 'Total', editable: false, fieldtype: 'Int' },
-            { name: 'Enseignant', editable: false, fieldtype: 'Link',options:"Teacher", with:180,
+            { name: 'Enseignant', editable: true, fieldtype: 'Link',options:"Teacher", with:180,
                 format: function(data) {
 
                     if(!data) return data
@@ -205,19 +202,25 @@ window.Udshed.TeachingGrid.DataGrid = class TeachingGrid {
             frappe.msgprint(__('Cette ligne ne correspond pas à un cours'));
             return;
         }
+
+        let {ueIndex,courseIndex } = me.getUeByCourseCode(courseCode)
+
+        let teachingUnit = me.data[ueIndex]["courses"][courseIndex]["teaching_unit"]
+        console.log("Teaching Unit ",teachingUnit)
+        
         
         // Trouver le document Course correspondant
         Udshed.TeachingGrid.UtilsQueries.load_doctype_list(
             {
                 doctype: 'Course Teacher Item', // Votre doctype existant
                 filters: {
-                    'parent': courseCode,
+                    'parent': teachingUnit,
                 },
                 fieldname: ['name']
             },(data)=>{
                 if(data && data.name)
                 {
-                    Udshed.TeachingGrid.Dialog.open_teacher_assignment_dialog(r.message.name, courseCode, rowIndex, colIndex);
+                    Udshed.TeachingGrid.Dialog.open_teacher_assignment_dialog(data.name, courseCode,teachingUnit, rowIndex, colIndex);
                 }
                 else 
                 {
@@ -253,7 +256,7 @@ window.Udshed.TeachingGrid.DataGrid = class TeachingGrid {
                     </span>`;
         }
         else {
-            displayDiv.innerHTML = value || '<span class="text-muted">Cliquez pour assigner</span>';
+            displayDiv.innerHTML ='<span class="text-muted">Cliquez pour assigner</span>';
         }
                 
         displayDiv.style.cursor = 'pointer';
@@ -272,7 +275,7 @@ window.Udshed.TeachingGrid.DataGrid = class TeachingGrid {
                     $(column).empty().append(container);
                 },
                 getValue: function() {
-                    return value;
+                    return data;
                 },
                 setValue: function(val) {
                     // Mettre à jour l'affichage
@@ -292,7 +295,7 @@ window.Udshed.TeachingGrid.DataGrid = class TeachingGrid {
                                 </span>`;
                     }
                     else {
-                        displayDiv.innerHTML = value || '<span class="text-muted">Cliquez pour assigner</span>';
+                        displayDiv.innerHTML = '<span class="text-muted">Cliquez pour assigner</span>';
                     }
                 }
             };
@@ -404,7 +407,6 @@ window.Udshed.TeachingGrid.DataGrid = class TeachingGrid {
         $('#total-hours').text(totals.total);
         $('.totals-row').show();
     }
-    
     
 
 	make() {

@@ -110,7 +110,7 @@ frappe.pages['insight-enseignant'].on_page_load = function(wrapper) {
 				});
 				// periods = [...defaultPeriods]
 				if(!this.get_value()) return
-				show_dashboard(page,filters,content)
+				show_dashboard(page,filters,{container:content})
                 console.log("From filiere")
 
 				// Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)
@@ -127,7 +127,7 @@ frappe.pages['insight-enseignant'].on_page_load = function(wrapper) {
 				if(!this.get_value()) return
                 console.log("From niveau")
 				// periods = this.get_value()==null ? [...defaultPeriods]: await Udshed.Queries.loadCoursePeriod(filters.niveau)
-				show_dashboard(page,filters,content)
+				show_dashboard(page,filters,{container:content})
 			}
 		});
 		const semestre_field = page.add_field({
@@ -144,7 +144,7 @@ frappe.pages['insight-enseignant'].on_page_load = function(wrapper) {
                 console.log("From semestre")
 
 				// periods = this.get_value()==null ? [...defaultPeriods]: await Udshed.Queries.loadCoursePeriod(filters.niveau)
-				show_dashboard(page,filters,content)
+				show_dashboard(page,filters,{container:content})
 			}
 		});
         const teacher_field = page.add_field({
@@ -155,7 +155,7 @@ frappe.pages['insight-enseignant'].on_page_load = function(wrapper) {
 			change() {
 				filters.teacher = this.get_value();
 				Udshed.Utils.refresh_filter(filters,"teacher",page,levelMap);
-				show_dashboard(page,filters,content)
+				show_dashboard(page,filters,{container:content})
                 console.log("Fron teacher")
 
 			}
@@ -222,9 +222,10 @@ function show_dashboard(page,filters,page_section)
 	}
 	else if(filters.academic_year && filters.faculty && filters.filiere && !filters.niveau)
 	{
-		//show for filiere
-		Udshed.Insight.Academic.FieldOfStudy.showAcademicFieldOfStudyInsights(page,filters,page_section)
-
+		window.Udshed.Insight.Academic.Queries.getQueriesFieldOfStudyDashbord(filters,(data)=>{
+            //show for filiere
+			Udshed.Insight.Academic.FieldOfStudy.showAcademicFieldOfStudyInsights(page,filters,page_section,data)
+        })	
 	}
 	else if(filters.academic_year && filters.faculty && filters.filiere && filters.niveau)
 	{

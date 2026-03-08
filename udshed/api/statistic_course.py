@@ -90,12 +90,12 @@ def statistic_year(academic_year, semestre=None):
 
 
 @frappe.whitelist()
-def statistic_cours_faculte(academic_year,faculte=None,course_type=None,semestre=None):
+def statistic_cours_faculte(academic_year,faculty,course_type=None,semestre=None):
     """ Statistique de la faculté pour une année"""
 
-    teaching_units = course.get_teaching_unit_by_year(academic_year,faculte,semestre)
+    teaching_units = course.get_teaching_unit_by_year(academic_year=academic_year,faculty=faculty,semestre=semestre)
     teaching_units_key = teaching_units.keys()
-    planning_items = planning.get_all_planning_item_by_year(academic_year=academic_year,faculty=faculte,course_type=course_type)
+    planning_items = planning.get_all_planning_item_by_year(academic_year=academic_year,faculty=faculty,course_type=course_type)
 
     planing_filtred_key = []
 
@@ -118,9 +118,8 @@ def statistic_cours_faculte(academic_year,faculte=None,course_type=None,semestre
         },
         "filiere":[],
     } 
-    #Preparation des kpis de filiere
 
-    
+    #Preparation des kpis de filiere
     filiere_list_dict = {}
 
     for value in teaching_units.values():
@@ -185,12 +184,12 @@ def statistic_cours_faculte(academic_year,faculte=None,course_type=None,semestre
     return result
 
 
-
-def statistic_fieldofstudy(academic_year,faculte,filiere,semestre):
+@frappe.whitelist()
+def statistic_fieldofstudy(academic_year,faculty,filiere,semestre=None,course_type=None):
     """Statistique de progression d'une filiére"""
-    teaching_units = course.get_teaching_unit_by_year(academic_year,faculte,semestre)
+    teaching_units = course.get_teaching_unit_by_year(academic_year=academic_year,faculty=faculty,field_of_study=filiere,semestre=semestre)
     teaching_units_key = teaching_units.keys()
-    planning_items = planning.get_all_planning_item_by_year(academic_year=academic_year,faculty=faculte,course_type=course_type)
+    planning_items = planning.get_all_planning_item_by_year(academic_year=academic_year,faculty=faculty,field_of_study=filiere ,course_type=course_type)
 
     planing_filtred_key = []
 
@@ -209,10 +208,76 @@ def statistic_fieldofstudy(academic_year,faculte,filiere,semestre):
             "to_start_course":0,
             "end_course":0,
             "sessions_map":get_session_map([x["planning"] for x in planning_items.values()]),
-            "programs_count":0
+            "level_count":0
         },
-        "filiere":[],
+        "level":[],
     } 
+
+    #Preparation des kpis de filiere
+    level_list_dict = {}
+
+    for value in teaching_units.values():
+        for niveau in value["niveau"]:
+            if niveau["niveau"] not in level_list_dict.keys():
+                level_list_dict[niveau["niveau"]] = {
+                    "level":frappe.get_doc("Field of study Level",niveau["niveau"]),
+                    "sessions":0,
+                    "done_hours":0,
+                    "total_hours":0,
+                    "completion":0,
+                    "count_teaching_unit":len(course.get_teaching_unit_by_level(None,None,None,None,None,{"filiere":filiere,"niveau":niveau["niveau"],"academic_year":academic_year})),
+                    "teaching_unit":[value]
+                }
+                result["global"]["level_count"] +=1
+            else:
+                level_list_dict[niveau["niveau"]]["teaching_unit"].append(value)
+
+    #Pour chaque teaching unit
+    for plan_key in planing_filtred_key:
+        planning_items_by_course = planning_items[plan_key]
+        result["global"]["sessions"]+=len(planning_items_by_course["planning"])
+        hours_done=0
+        level_found = list(set([x["niveau"] for x in planning_items_by_course["niveau"]]))
+        for plan in planning_items_by_course["planning"]:
+            period = plan["period"].split("-")
+            format_period_start = "%H:%M" if len(period[0])==5 else "%H:%M:%S"
+            format_period_end = "%H:%M" if len(period[1])==5 else "%H:%M:%S"
+            current_hours = datetime.strptime(period[1], format_period_end) - datetime.strptime(period[0], format_period_start)
+            hours_done = hours_done +  int(current_hours.total_seconds()/60)
+            for n in level_found:
+                level_list_dict[n]["sessions"] += 1
+
+        for n in level_found:
+            level_list_dict[n]["done_hours"] += hours_done
+        hours_to_done = (
+            (teaching_units[plan_key]["nombre_dheure_cm"] if teaching_units[plan_key]["nombre_dheure_cm"] else 0) +
+            (teaching_units[plan_key]["nombre_dheure_td"] if teaching_units[plan_key]["nombre_dheure_td"] else 0) + 
+            (teaching_units[plan_key]["nombre_dheure_tp"] if teaching_units[plan_key]["nombre_dheure_tp"] else 0)
+        )
+        if hours_done == hours_to_done:
+            result["global"]["end_course"] += 1
+        elif hours_done > 0:
+            result["global"]["planned_course"] += 1
+            
+        result["global"]["done_hours"] += hours_done
+
+    result["global"]["to_start_course"] = len(teaching_units) - len(planning_items)
+    result["global"]["done_hours"] =  int(result["global"]["done_hours"] / 60)
+    result["global"]["completion"] = "{:.2f}".format((result["global"]["done_hours"] / result["global"]["total_hours"]) * 100)
+    for l in level_list_dict.values():
+        total_hours = get_total_hours_of_teaching_unit_in_list(l["teaching_unit"])
+        l.pop("teaching_unit")
+
+        result["level"].append({
+            **l,
+            "total_hours":total_hours,
+            "done_hours":int(l["done_hours"] / 60),
+            "completion": "{:.2f}".format((int(l["done_hours"] / 60) / total_hours)*100), 
+            "completion_color": get_completion_color((int(l["done_hours"] / 60) / total_hours)*100),
+        })
+
+    return result
+
 
 def statistic_teacher(academic_year, teacher, semestre=None ):
     pass

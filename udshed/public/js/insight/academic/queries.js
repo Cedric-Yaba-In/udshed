@@ -33,5 +33,20 @@ window.Udshed.Insight.Academic.Queries =   {
         });
 
     },
+    getQueriesFieldOfStudyDashbord(data,callback)
+    {
+        frappe.call({
+            method: "udshed.api.statistic_course.statistic_fieldofstudy",
+            args: data,
+            callback: (e) => {
+                console.log("User session field of study:", e.message);
+                callback(e.message);
+            },
+            error: (err) => {
+                console.error("Error fetching user session data:", err);
+            }
+        });
+
+    },
 
 }

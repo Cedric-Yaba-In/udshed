@@ -367,9 +367,126 @@ def statistic_level(academic_year,faculty,filiere,niveau,semestre=None,course_ty
 
     return result
 
-
+@frappe.whitelist()
 def statistic_teacher(academic_year, teacher, semestre=None ):
-    pass
+    planning_items = planning.get_planning_items_by_teacher(academic_year=academic_year,semestre=semestre ,teacher=teacher)
+    teaching_units = course.get_teaching_unit_by_year(academic_year=academic_year,teacher=teacher,semestre=semestre)
+    teaching_units_key = teaching_units.keys()
+    planing_filtred_key = []
+    
+    for item_key in planning_items.keys():
+        if item_key in teaching_units_key:
+            planing_filtred_key.append(item_key)
+
+    result = {
+        "global":{
+            "sessions":0,
+            "done_hours":0,
+            "total_hours": get_total_hours_of_teaching_unit_in_dict(teaching_units),
+            "completion":0,
+            "planned_course":0,
+            "to_start_course":0,
+            "end_course":0,
+            "sessions_map":get_session_map([x["planning"] for x in planning_items.values()]),
+        },
+        "niveau_filiere":[],
+        "teaching_unit":[]
+    } 
+    list_niveau_filiere_dict = {}
+    list_teaching_unit_dict = {}
+    for t in teaching_units.values():
+        list_teaching_unit_dict[t["name"]] = {
+            "teaching_unit":frappe.get_doc("Teaching Unit",t["name"]),
+            "sessions":0,
+            "completion":0,
+            "done_hours":0,
+            "total_hours":0,
+            "sessions_map":{
+                "Cours":0,
+                "Traveaux Pratiques (TP)":0,
+                "Traveaux Dirigés (TD)":0,
+                "Controlle Continue (CC)":0,
+                "Examen de session normal":0,
+                "Examen de rattrapage":0
+            }
+        }
+        for n in t["niveau"]:
+            if f"{n["filiere"]}_{n["niveau"]}" in list_niveau_filiere_dict:
+                list_niveau_filiere_dict[f"{n["filiere"]}_{n["niveau"]}"]["teaching_unit"].append(t)
+            else:
+                list_niveau_filiere_dict[f"{n["filiere"]}_{n["niveau"]}"]={
+                    "filiere":frappe.get_doc("Field of study",n["filiere"]),
+                    "niveau":n["niveau"],
+                    "sessions":0,
+                    "done_hours":0,
+                    "total_hours": 0,
+                    "completion":0,
+                    "planned_course":0,
+                    "to_start_course":0,
+                    "end_course":0,
+                    "teaching_unit":[t]
+                }
+    
+    #Pour chaque teaching unit
+    for plan_key in planing_filtred_key:
+        planning_items_by_course = planning_items[plan_key]
+        result["global"]["sessions"]+=len(planning_items_by_course["planning"])
+        hours_done=0
+        filiere_found = list(set([f"{x["filiere"]}_{x["niveau"]}" for x in planning_items_by_course["niveau"]]))
+
+        for plan in planning_items_by_course["planning"]:
+            period = plan["period"].split("-")
+            format_period_start = "%H:%M" if len(period[0])==5 else "%H:%M:%S"
+            format_period_end = "%H:%M" if len(period[1])==5 else "%H:%M:%S"
+            current_hours = datetime.strptime(period[1], format_period_end) - datetime.strptime(period[0], format_period_start)
+            hours_done = hours_done +  int(current_hours.total_seconds()/60)
+            list_teaching_unit_dict[plan_key]["sessions"] += 1
+            list_teaching_unit_dict[plan_key]["sessions_map"][plan["type"]] +=1
+            for f in filiere_found:
+                list_niveau_filiere_dict[f]["sessions"] +=1
+              
+
+        list_teaching_unit_dict[plan_key]["done_hours"] += hours_done
+        for f in filiere_found:
+                list_niveau_filiere_dict[f]["done_hours"] +=hours_done
+        hours_to_done = (
+            (teaching_units[plan_key]["nombre_dheure_cm"] if teaching_units[plan_key]["nombre_dheure_cm"] else 0) +
+            (teaching_units[plan_key]["nombre_dheure_td"] if teaching_units[plan_key]["nombre_dheure_td"] else 0) + 
+            (teaching_units[plan_key]["nombre_dheure_tp"] if teaching_units[plan_key]["nombre_dheure_tp"] else 0)
+        )
+        list_teaching_unit_dict[plan_key]["total_hours"] = hours_to_done
+        if hours_done == hours_to_done:
+            result["global"]["end_course"] += 1
+        elif hours_done > 0:
+            result["global"]["planned_course"] += 1
+            
+        result["global"]["done_hours"] += hours_done
+
+    result["global"]["to_start_course"] = len(teaching_units) - len(planning_items)
+    result["global"]["done_hours"] =  int(result["global"]["done_hours"] / 60)
+    result["global"]["completion"] = "{:.2f}".format((result["global"]["done_hours"] / (result["global"]["total_hours"] if result["global"]["total_hours"] >0 else 1)) * 100)
+    for l in list_teaching_unit_dict.values():
+        total_hours = l["total_hours"] if l["total_hours"]>0 else 1
+        result["teaching_unit"].append({
+            **l,
+            "done_hours":int(l["done_hours"] / 60),
+            "completion": "{:.2f}".format((int(l["done_hours"] / 60) / total_hours)*100), 
+            "completion_color": get_completion_color((int(l["done_hours"] / 60) / total_hours)*100),
+        })
+    
+    for f in list_niveau_filiere_dict.values():
+        total_hours = get_total_hours_of_teaching_unit_in_list(f["teaching_unit"])
+        total_hours = total_hours if total_hours>0 else 1
+        # f.pop("teaching_unit")Cour
+        result["niveau_filiere"].append({
+            **f,
+            "total_hours":total_hours,
+            "done_hours":int(f["done_hours"] / 60),
+            "completion": "{:.2f}".format((int(f["done_hours"] / 60) / total_hours)*100), 
+            "completion_color": get_completion_color((int(f["done_hours"] / 60) / total_hours)*100),
+        })
+            
+    return result
 
 
 #####Fonction d'aide

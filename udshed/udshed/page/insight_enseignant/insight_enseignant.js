@@ -7,6 +7,7 @@ frappe.pages['insight-enseignant'].on_page_load = function(wrapper) {
 		'/assets/udshed/js/insight/academic/faculte_insight.js',
 		'/assets/udshed/js/insight/academic/fieldofstudy_insight.js',
 		'/assets/udshed/js/insight/academic/fieldofstudylevel_insight.js',
+		'/assets/udshed/js/insight/academic/teacher_insight.js',
 		'/assets/udshed/js/insight/academic/queries.js',
 		'/assets/udshed/js/insight/ui/ui.js',
 	]).then(async () => {
@@ -203,7 +204,7 @@ function show_dashboard(page,filters,page_section)
 {
     //{container,evolutionChart}
 	initUI(page_section.container)
-	if(filters.academic_year && !filters.faculty && !filters.filiere && !filters.niveau)
+	if(filters.academic_year && !filters.faculty && !filters.filiere && !filters.niveau && !filters.teacher)
 	{
 
         window.Udshed.Insight.Academic.Queries.getQueriesYearDashbord(filters,(data)=>{
@@ -211,6 +212,14 @@ function show_dashboard(page,filters,page_section)
 		    Udshed.Insight.Academic.Year.showAcademicYearInsights(page,filters,page_section,data)
         })
 		
+	}
+	else if(filters.academic_year && filters.teacher)
+	{
+		//show teacher
+		window.Udshed.Insight.Academic.Queries.getQueriesTeacherDashbord(filters,(data)=>{
+			Udshed.Insight.Academic.Teacher.showAcademicTeacherInsights(page,filters,page_section,data)
+
+        })
 	}
 	else if(filters.academic_year && filters.faculty && !filters.filiere && !filters.niveau)
 	{

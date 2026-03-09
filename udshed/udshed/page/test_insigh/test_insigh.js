@@ -82,9 +82,10 @@ function loadFilterOptions() {
                 populateSelect('faculty-filter', r.message.faculties);
                 populateSelect('program-filter', r.message.programs);
                 populateSelect('level-filter', r.message.levels);
-                populateCourseSelect(r.message.courses);
                 populateTeacherSelect(r.message.teachers);
-                populatePeriodSelect(r.message.periods);
+
+                // populateCourseSelect(r.message.courses);
+                // populatePeriodSelect(r.message.periods);
             }
         }
     });

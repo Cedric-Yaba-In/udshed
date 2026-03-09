@@ -177,7 +177,7 @@ function initUI(page_section)
 
 function showDashboard(page,filters,page_section)
 {
-	initUI(page_section)
+	initUI(page_section) 
 	if(filters.academic_year && !filters.faculty && !filters.filiere && !filters.niveau)
 	{
 		//show for year

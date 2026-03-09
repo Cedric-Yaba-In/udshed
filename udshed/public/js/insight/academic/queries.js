@@ -62,5 +62,19 @@ window.Udshed.Insight.Academic.Queries =   {
         });
 
     },
+    getQueriesTeacherDashbord(data,callback)
+    {
+        frappe.call({
+            method: "udshed.api.statistic_course.statistic_teacher",
+            args: data,
+            callback: (e) => {
+                console.log("User session teacher:", e.message);
+                callback(e.message);
+            },
+            error: (err) => {
+                console.error("Error fetching user session data:", err);
+            }
+        });
+    },
 
 }

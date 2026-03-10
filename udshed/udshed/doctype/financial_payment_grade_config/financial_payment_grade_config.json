@@ -1,0 +1,51 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-03-10 02:28:46.844444",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "grade",
+  "column_break_vlgy",
+  "prix_heure"
+ ],
+ "fields": [
+  {
+   "fieldname": "grade",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Grade",
+   "options": "Professionnel de Classe A\nProfessionnel de Classe B\nProfessionnel de Classe C\nProfessionnel de Classe D\nATER\nAssistant\nCharg\u00e9 de Cours\nDocteur\nMaitre de Conf\u00e9rences\nProfesseur",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_vlgy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "prix_heure",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Prix /heure",
+   "non_negative": 1,
+   "precision": "0",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-03-10 02:34:13.403567",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "Financial Payment Grade Config",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

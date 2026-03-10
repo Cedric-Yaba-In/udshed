@@ -11,7 +11,7 @@ def statistic_year(academic_year, semestre=None):
     print("Semestre ",semestre)
     teaching_units = course.get_teaching_unit_by_year(academic_year=academic_year,semestre=None)
     teaching_units_key = teaching_units.keys()
-    planning_items = planning.get_all_planning_item_by_year(academic_year,semestre=semestre)
+    planning_items = planning.get_all_planning_item_by_filter(academic_year,semestre=semestre)
     planing_filtred_key = []
     # print("Planning Items ", teaching_units)
 
@@ -95,7 +95,7 @@ def statistic_cours_faculte(academic_year,faculty,course_type=None,semestre=None
 
     teaching_units = course.get_teaching_unit_by_year(academic_year=academic_year,faculty=faculty,semestre=semestre)
     teaching_units_key = teaching_units.keys()
-    planning_items = planning.get_all_planning_item_by_year(academic_year=academic_year,faculty=faculty,semestre=semestre,course_type=course_type)
+    planning_items = planning.get_all_planning_item_by_filter(academic_year=academic_year,faculty=faculty,semestre=semestre,course_type=course_type)
 
     planing_filtred_key = []
 
@@ -190,7 +190,7 @@ def statistic_fieldofstudy(academic_year,faculty,filiere,semestre=None,course_ty
     """Statistique de progression d'une filiére"""
     teaching_units = course.get_teaching_unit_by_year(academic_year=academic_year,faculty=faculty,field_of_study=filiere,semestre=semestre)
     teaching_units_key = teaching_units.keys()
-    planning_items = planning.get_all_planning_item_by_year(academic_year=academic_year,faculty=faculty,field_of_study=filiere,semestre=semestre ,course_type=course_type)
+    planning_items = planning.get_all_planning_item_by_filter(academic_year=academic_year,faculty=faculty,field_of_study=filiere,semestre=semestre ,course_type=course_type)
 
     planing_filtred_key = []
 
@@ -285,7 +285,7 @@ def statistic_fieldofstudy(academic_year,faculty,filiere,semestre=None,course_ty
 def statistic_level(academic_year,faculty,filiere,niveau,semestre=None,course_type=None):
     teaching_units = course.get_teaching_unit_by_year(academic_year=academic_year,faculty=faculty,field_of_study=filiere,level=niveau,semestre=semestre)
     teaching_units_key = teaching_units.keys()
-    planning_items = planning.get_all_planning_item_by_year(academic_year=academic_year,faculty=faculty,field_of_study=filiere,level=niveau,semestre=semestre ,course_type=course_type)
+    planning_items = planning.get_all_planning_item_by_filter(academic_year=academic_year,faculty=faculty,field_of_study=filiere,level=niveau,semestre=semestre ,course_type=course_type)
 
     planing_filtred_key = []
 
@@ -368,9 +368,9 @@ def statistic_level(academic_year,faculty,filiere,niveau,semestre=None,course_ty
     return result
 
 @frappe.whitelist()
-def statistic_teacher(academic_year, teacher, semestre=None ):
-    planning_items = planning.get_planning_items_by_teacher(academic_year=academic_year,semestre=semestre ,teacher=teacher)
-    teaching_units = course.get_teaching_unit_by_year(academic_year=academic_year,teacher=teacher,semestre=semestre)
+def statistic_teacher(academic_year,teacher, faculty=None,filiere=None,niveau=None, semestre=None ):
+    planning_items = planning.get_all_planning_item_by_filter(academic_year=academic_year,faculty=faculty,field_of_study=filiere,level=niveau,semestre=semestre ,teacher=teacher)
+    teaching_units = course.get_teaching_unit_by_year(academic_year=academic_year,faculty=faculty,field_of_study=filiere,level=niveau,semestre=semestre,teacher=teacher)
     teaching_units_key = teaching_units.keys()
     planing_filtred_key = []
     

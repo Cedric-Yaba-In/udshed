@@ -24,12 +24,11 @@
   "universite_rattache",
   "grade",
   "diplome",
-  "code_grade",
   "column_break_cpvj",
   "status",
   "faculte",
-  "cout_unitaire",
-  "specialite"
+  "specialite",
+  "code_grade"
  ],
  "fields": [
   {
@@ -129,11 +128,6 @@
    "label": "Ville de r\u00e9sidence"
   },
   {
-   "fieldname": "cout_unitaire",
-   "fieldtype": "Int",
-   "label": "C\u00f4ut Unitaire"
-  },
-  {
    "fieldname": "diplome",
    "fieldtype": "Data",
    "label": "Dipl\u00f4me"
@@ -176,7 +170,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-03-07 03:48:07.767068",
+ "modified": "2026-03-10 02:35:27.670213",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Teacher",

@@ -1,9 +1,10 @@
 import frappe
 from frappe.query_builder import DocType
 
-def get_all_planning_item_by_year(academic_year,faculty=None,field_of_study=None, level = None,course_type=None,semestre=None):
+def get_all_planning_item_by_filter(academic_year,faculty=None,field_of_study=None, level = None,course_type=None,teacher=None,semestre=None):
     PlanningItem = DocType('Planning Item')
     TeachingUnit = DocType("Teaching Unit")
+    CourseTeacherItem = DocType("Course Teacher Item")
     CourseFieldOfStudyLevelItem = DocType("Course Field of study level item")
     FieldOfStudy = DocType("Field of study")
     Course = DocType('Course')
@@ -18,6 +19,8 @@ def get_all_planning_item_by_year(academic_year,faculty=None,field_of_study=None
 		.on(CourseFieldOfStudyLevelItem.parent == TeachingUnit.name)
 		.join(FieldOfStudy)
 		.on(FieldOfStudy.name==CourseFieldOfStudyLevelItem.filiere)
+        .join(CourseTeacherItem)
+        .on(TeachingUnit.name == CourseTeacherItem.parent)
         .select(
             PlanningItem.name,
             PlanningItem.cours,
@@ -54,6 +57,9 @@ def get_all_planning_item_by_year(academic_year,faculty=None,field_of_study=None
     
     if semestre:
         query = query.where(TeachingUnit.semestre == semestre)
+    
+    if teacher:
+        query = query.where(CourseTeacherItem.enseignant == teacher)
 
     data =  query.run(as_dict=True)
 
@@ -101,7 +107,6 @@ def get_all_planning_item_by_year(academic_year,faculty=None,field_of_study=None
         process_data[key].pop("niveau_key")
     return process_data
 
-def get_planning_items_by_teacher(academic_year,teacher,semestre=None):
     Course = DocType('Course')
     CourseTeacherItem = DocType("Course Teacher Item")
     TeachingUnit = DocType("Teaching Unit")
@@ -144,6 +149,9 @@ def get_planning_items_by_teacher(academic_year,teacher,semestre=None):
             (CourseTeacherItem.enseignant == teacher)
         )
     )
+
+    if faculty:
+        query = query.where(FieldOfStudy.faculte == faculty)
 
     if semestre:
         query = query.where( TeachingUnit.semestre == semestre)

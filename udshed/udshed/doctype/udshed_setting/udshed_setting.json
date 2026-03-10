@@ -10,6 +10,8 @@
   "column_break_lpdk",
   "school_name",
   "school_logo",
+  "section_break_bsrn",
+  "configuration_des_paiements_par_grade",
   "tab_2_tab"
  ],
  "fields": [
@@ -45,13 +47,23 @@
    "fieldtype": "Attach Image",
    "label": "Logo",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_bsrn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "configuration_des_paiements_par_grade",
+   "fieldtype": "Table",
+   "label": "Configuration des paiements par grade",
+   "options": "Financial Payment Grade Config"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-02-15 04:30:37.528733",
+ "modified": "2026-03-10 02:32:23.901367",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Udshed Setting",

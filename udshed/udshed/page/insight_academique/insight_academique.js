@@ -4,19 +4,22 @@ frappe.pages['insight-academique'].on_page_load = function(wrapper) {
 		'/assets/udshed/css/insight.css',
 		'/assets/udshed/js/utils/utils.js', 
 		'/assets/udshed/js/utils/utils_queries.js',
-		'/assets/udshed/js/insight/academique/year_insight.js',
-		'/assets/udshed/js/insight/academique/faculte_insight.js',
-		'/assets/udshed/js/insight/academique/fieldofstudy_insight.js',
-		'/assets/udshed/js/insight/academique/fieldofstudylevel_insight.js',
+		'/assets/udshed/js/insight/academic/year_insight.js',
+		'/assets/udshed/js/insight/academic/faculte_insight.js',
+		'/assets/udshed/js/insight/academic/fieldofstudy_insight.js',
+		'/assets/udshed/js/insight/academic/fieldofstudylevel_insight.js',
+		'/assets/udshed/js/insight/academic/teacher_insight.js',
+		'/assets/udshed/js/insight/academic/queries.js',
 		'/assets/udshed/js/insight/ui/ui.js',
+		'/assets/udshed/js/utils/permission.js'
 	]).then(async () => {
-		var page = frappe.ui.make_app_page({
-			parent: wrapper,
-			title: 'Insight Académique',
-			single_column: true
-		});
-
-		let filters = {
+	var page = frappe.ui.make_app_page({
+            parent: wrapper,
+            title: __('Suivi des Cours'),
+            single_column: true
+        });
+        
+        let filters = {
 			academic_year: null,
 			faculty: null,
 			filiere: null,
@@ -25,57 +28,42 @@ frappe.pages['insight-academique'].on_page_load = function(wrapper) {
 			teacher: null
 		};
 
-		// =====================================================
-    	// 🔎 FILTRES
-    	// =====================================================
+        let levelMap = {}; // label => name
 
-		// Container principal
-		const container = $(`
-			<div class="insight-wrapper">
-				<div class="insight-header"></div>
+        page.set_primary_action("Exporter Excel", () => {
+			
+		},'octicon octicon-plus');
 
-				<div class="insight-kpi-row"></div>
+        $(`
+			<div id="teacher-insight-page">
+                <div id="loading" class="text-center py-5" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">${ __("Chargement...") }</span>
+                    </div>
+                </div>
 
-				<div class="insight-chart-section card"></div>
+                <!-- Dashboard Content -->
+                <div id="dashboard-content">
+                    <!-- Cette section sera dynamiquement remplie par JavaScript -->
+                </div>
+            </div>
+		`).appendTo(wrapper);
 
-				<div class="insight-table-section card"></div>
-			</div>
-		`).appendTo(page.body);
-
-		const header = container.find(".insight-header");
-		const kpiRow = container.find(".insight-kpi-row");
-		const chartSection = container.find(".insight-chart-section");
-		const tableSection = container.find(".insight-table-section");
-
-		let levelMap = {}; // label => name
-		page.set_primary_action("Exporter Excel", () => {
-			if (!datatable || !datatable.data) {
-				frappe.msgprint("Aucune donnée à exporter !");
-				return;
-			}
-
-			const wb = XLSX.utils.book_new();
-			const ws_data = [
-				["Nom", "Niveau", "Statut"], // entêtes
-				...datatable.data.map(row => row)
-			];
-
-			const ws = XLSX.utils.aoa_to_sheet(ws_data);
-			XLSX.utils.book_append_sheet(wb, ws, "Détails Cours");
-
-			XLSX.writeFile(wb, "Dashboard_Insights.xlsx");
-		});
-		// Filtre
-		page.add_field({
+        // Charger le contenu
+        const content = $(wrapper).find('#dashboard-content');
+        
+        page.add_field({
 			fieldtype: 'Link',
 			label: 'Année académique',
 			fieldname: 'academic_year',
 			options: 'Academic Year',
-			change() {
+			change(e) {
 				filters.academic_year = this.get_value();
 				Udshed.Utils.refresh_filter(filters,"academic_year",page,levelMap);
-				// show_calendar(filters);
-				showDashboard(page,filters,{tableSection,chartSection,kpiRow,header})
+                if(!this.get_value()) return;
+				show_dashboard(page,filters,{container:content})
+                console.log("From academic")
+
 			}
 		});
 
@@ -84,16 +72,15 @@ frappe.pages['insight-academique'].on_page_load = function(wrapper) {
 			label: 'Faculté',
 			fieldname: 'faculty',
 			options: 'Faculty',
-			change() {
+			change(e) {
 				filters.faculty = this.get_value();
 				Udshed.Utils.refresh_filter(filters,"faculty",page,levelMap);
-				showDashboard(page,filters,{tableSection,chartSection,kpiRow,header})
-
+                if(!this.get_value()) return;
+				show_dashboard(page,filters,{container:content})
 			}
 		});
 
-
-		const filiere_field = page.add_field({
+        const filiere_field = page.add_field({
 			fieldtype: 'Link',
 			label: 'Filière',
 			fieldname: 'filiere',
@@ -122,21 +109,22 @@ frappe.pages['insight-academique'].on_page_load = function(wrapper) {
 					niveau_field.refresh();
 				});
 				// periods = [...defaultPeriods]
-				showDashboard(page,filters,{tableSection,chartSection,kpiRow,header})
-
+				if(!this.get_value()) return
+				show_dashboard(page,filters,{container:content})
 				// Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)
 				
 			}
-		});
+		});        
 
-		const niveau_field = page.add_field({
+        const niveau_field = page.add_field({
 			fieldtype: 'Select',
 			label: 'Niveau',
 			fieldname: 'niveau',
-			async change() {
+			change() {
 				filters.niveau = levelMap[this.get_value()];
+				if(!this.get_value()) return
 				// periods = this.get_value()==null ? [...defaultPeriods]: await Udshed.Queries.loadCoursePeriod(filters.niveau)
-				showDashboard(page,filters,{tableSection,chartSection,kpiRow,header})
+				show_dashboard(page,filters,{container:content})
 			}
 		});
 		const semestre_field = page.add_field({
@@ -144,61 +132,201 @@ frappe.pages['insight-academique'].on_page_load = function(wrapper) {
 			label: 'Semestre',
 			fieldname: 'semestre',
 			options: [
-				{value:'semestre1', label:'Semestre 1'},
-				{value:'semestre2', label:'Semestre 2'},
+				{value:'Semestre 1', label:'Semestre 1'},
+				{value:'Semestre 2', label:'Semestre 2'},
 			],
-			async change() {
+			change() {
 				filters.semestre = this.get_value();
+				if(!this.get_value()) return
 				// periods = this.get_value()==null ? [...defaultPeriods]: await Udshed.Queries.loadCoursePeriod(filters.niveau)
-				showDashboard(page,filters,{tableSection,chartSection,kpiRow,header})
+				show_dashboard(page,filters,{container:content})
 			}
 		});
-	
-		// let content_data = $('<div id="insight-academique-wrapper"></div>');
-		// $(wrapper).append(content_data);
-		// content_data.html(render());
-		
-	
-	})
+        const teacher_field = page.add_field({
+			fieldtype: 'Link',
+			label: 'Teacher',
+			fieldname: 'teacher',
+			options: 'Teacher',
+			change() {
+				filters.teacher = this.get_value();
+				Udshed.Utils.refresh_filter(filters,"teacher",page,levelMap);
+				show_dashboard(page,filters,{container:content})
+			}
+		});
+
+               
+        // Afficher un indicateur de données d'essai
+        $(document).on("change", ".apply-filter-change", function () {
+            applyFilters();
+        })
+
+        $(document).on("click", ".apply-custom-date", function () {
+            applyCustomDate();
+        })
+
+        $(document).on("click", ".export-data", function () {
+            exportData();
+        })
+
+        $(document).on("click", ".refresh-data", function () {
+            refreshData();
+        })
+
+        $(document).on("click", ".data-navigate-to", function () {
+            const navigateTo = $(this).data("navigate-to");
+            navigateTo(navigateTo);
+
+        })
+
+        $(document).on("click", ".on-view-cours-details", function () {
+            const progTo = $(this).data("view-cours-details");
+            viewCourseDetail(prog);
+
+        })
+
+		let userContext = null;
+		Udshed.UtilsQueries.get_data_of_user((data) => {
+			userContext = Udshed.Perms.normalizeUserContext(data);
+			
+			if(Udshed.Perms.should_apply_filter(userContext))
+			{
+				//Apply filters
+				//academic_year
+				page.fields_dict.academic_year.get_query = () => ({
+					filters: {
+						name: ["in", userContext.academic_year]
+					}
+				});
+			}
+
+			if(userContext.default_academic_year) {
+				page.fields_dict.academic_year.set_value(userContext.default_academic_year);
+				filters.academic_year = userContext.default_academic_year;
+			}
+		})
+        
+    })
 }
 
 function initUI(page_section)
 {
-	// page.body.find(".insight-header").empty()
-	// page.body.find(".insight-kpi-row").empty()
-	// page.body.find(".insight-chart-section").empty()
-	// page.body.find(".insight-table-section").empty()
-	console.log("PAge Section ",page_section.tableSection)
-	page_section.tableSection.empty()
-	page_section.chartSection.empty()
-	page_section.header.empty()
-	page_section.kpiRow.empty()
+	page_section.empty()
 }
 
-function showDashboard(page,filters,page_section)
+function show_dashboard(page,filters,page_section)
 {
-	initUI(page_section) 
-	if(filters.academic_year && !filters.faculty && !filters.filiere && !filters.niveau)
+    //{container,evolutionChart}
+	initUI(page_section.container)
+	if(filters.academic_year && !filters.faculty && !filters.filiere && !filters.niveau && !filters.teacher)
 	{
-		//show for year
-		Udshed.Insight.Academic.Year.showAcadmicYearInsights(page,filters,page_section)
+
+        window.Udshed.Insight.Academic.Queries.getQueriesYearDashbord(filters,(data)=>{
+            //show for year
+		    Udshed.Insight.Academic.Year.showAcademicYearInsights(page,filters,page_section,data)
+        })
+		
+	}
+	else if(filters.academic_year && filters.teacher)
+	{
+		//show teacher
+		window.Udshed.Insight.Academic.Queries.getQueriesTeacherDashbord(filters,(data)=>{
+			Udshed.Insight.Academic.Teacher.showAcademicTeacherInsights(page,filters,page_section,data)
+
+        })
 	}
 	else if(filters.academic_year && filters.faculty && !filters.filiere && !filters.niveau)
 	{
-		//show for faculty
-		Udshed.Insight.Academic.Faculty.showAcadmicFacultyInsights(page,filters,page_section)
-		
+		console.log("Find from faculty")
+		 window.Udshed.Insight.Academic.Queries.getQueriesFacultyDashbord(filters,(data)=>{
+            //show for faculty
+			Udshed.Insight.Academic.Faculty.showAcademicFacultyInsights(page,filters,page_section,data)
+        })		
 	}
 	else if(filters.academic_year && filters.faculty && filters.filiere && !filters.niveau)
 	{
-		//show for filiere
-		Udshed.Insight.Academic.FieldOfStudy.showAcadmicFieldOfStudyInsights(page,filters,page_section)
-
+		window.Udshed.Insight.Academic.Queries.getQueriesFieldOfStudyDashbord(filters,(data)=>{
+            //show for filiere
+			Udshed.Insight.Academic.FieldOfStudy.showAcademicFieldOfStudyInsights(page,filters,page_section,data)
+        })	
 	}
 	else if(filters.academic_year && filters.faculty && filters.filiere && filters.niveau)
 	{
 		//show niveau
-		Udshed.Insight.Academic.FieldOfStudyLevel.showAcadmicFieldOfStudyLevelInsights(page,filters,page_section)
+		window.Udshed.Insight.Academic.Queries.getQueriesFieldOfStudyLevelDashbord(filters,(data)=>{
+			Udshed.Insight.Academic.FieldOfStudyLevel.showAcademicFieldOfStudyLevelInsights(page,filters,page_section,data)
+
+        })
 	}
 	
+}
+
+function updatePageTitle() {
+    let title = '';
+    let subtitle = '';
+    
+    switch(currentView.level) {
+        case 'global':
+            title = 'Tableau de bord de suivi des cours';
+            subtitle = 'Vue globale - Toutes les facultés';
+            break;
+        case 'faculty':
+            title = `Faculté ${currentView.faculty}`;
+            subtitle = `Vue d'ensemble de la faculté`;
+            break;
+        case 'program':
+            title = `Filière ${currentView.program}`;
+            subtitle = `Détail par niveau et par cours`;
+            break;
+        case 'level':
+            title = `Niveau ${currentView.levelName} - ${currentView.program}`;
+            subtitle = `Planning et progression détaillée`;
+            break;
+        case 'course':
+            title = `Cours ${currentView.course}`;
+            subtitle = `Historique complet et statistiques`;
+            break;
+    }
+ ;
+}
+
+
+
+
+function initCourseCharts(data) {
+    // Graphique d'assiduité
+    new frappe.Chart("#attendance-chart", {
+        data: {
+            labels: data.attendance_evolution.map(a => {
+                const date = new Date(a.date);
+                return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+            }),
+            datasets: [
+                {
+                    name: "Taux de présence",
+                    values: data.attendance_evolution.map(a => a.rate),
+                    chartType: 'line'
+                }
+            ]
+        },
+        type: 'line',
+        height: 250,
+        colors: ['#17a2b8']
+    });
+    
+    // Graphique des statuts
+    new frappe.Chart("#course-status-chart", {
+        data: {
+            labels: data.by_status.map(s => s.status),
+            datasets: [
+                {
+                    name: "Sessions",
+                    values: data.by_status.map(s => s.count),
+                    chartType: 'pie'
+                }
+            ]
+        },
+        type: 'pie',
+        height: 250,
+        colors: ['#28a745', '#ffc107', '#dc3545', '#fd7e14']
+    });
 }

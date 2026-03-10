@@ -35,7 +35,7 @@ frappe.pages['insight-academique'].on_page_load = function(wrapper) {
 		},'octicon octicon-plus');
 
         $(`
-			<div id="teacher-insight-page">
+			<div id="academic-insight-page">
                 <div id="loading" class="text-center py-5" style="display: none;">
                     <div class="spinner-border text-primary" role="status">
                         <span class="sr-only">${ __("Chargement...") }</span>
@@ -62,8 +62,6 @@ frappe.pages['insight-academique'].on_page_load = function(wrapper) {
 				Udshed.Utils.refresh_filter(filters,"academic_year",page,levelMap);
                 if(!this.get_value()) return;
 				show_dashboard(page,filters,{container:content})
-                console.log("From academic")
-
 			}
 		});
 
@@ -154,36 +152,6 @@ frappe.pages['insight-academique'].on_page_load = function(wrapper) {
 			}
 		});
 
-               
-        // Afficher un indicateur de données d'essai
-        $(document).on("change", ".apply-filter-change", function () {
-            applyFilters();
-        })
-
-        $(document).on("click", ".apply-custom-date", function () {
-            applyCustomDate();
-        })
-
-        $(document).on("click", ".export-data", function () {
-            exportData();
-        })
-
-        $(document).on("click", ".refresh-data", function () {
-            refreshData();
-        })
-
-        $(document).on("click", ".data-navigate-to", function () {
-            const navigateTo = $(this).data("navigate-to");
-            navigateTo(navigateTo);
-
-        })
-
-        $(document).on("click", ".on-view-cours-details", function () {
-            const progTo = $(this).data("view-cours-details");
-            viewCourseDetail(prog);
-
-        })
-
 		let userContext = null;
 		Udshed.UtilsQueries.get_data_of_user((data) => {
 			userContext = Udshed.Perms.normalizeUserContext(data);
@@ -236,7 +204,6 @@ function show_dashboard(page,filters,page_section)
 	}
 	else if(filters.academic_year && filters.faculty && !filters.filiere && !filters.niveau)
 	{
-		console.log("Find from faculty")
 		 window.Udshed.Insight.Academic.Queries.getQueriesFacultyDashbord(filters,(data)=>{
             //show for faculty
 			Udshed.Insight.Academic.Faculty.showAcademicFacultyInsights(page,filters,page_section,data)
@@ -258,75 +225,4 @@ function show_dashboard(page,filters,page_section)
         })
 	}
 	
-}
-
-function updatePageTitle() {
-    let title = '';
-    let subtitle = '';
-    
-    switch(currentView.level) {
-        case 'global':
-            title = 'Tableau de bord de suivi des cours';
-            subtitle = 'Vue globale - Toutes les facultés';
-            break;
-        case 'faculty':
-            title = `Faculté ${currentView.faculty}`;
-            subtitle = `Vue d'ensemble de la faculté`;
-            break;
-        case 'program':
-            title = `Filière ${currentView.program}`;
-            subtitle = `Détail par niveau et par cours`;
-            break;
-        case 'level':
-            title = `Niveau ${currentView.levelName} - ${currentView.program}`;
-            subtitle = `Planning et progression détaillée`;
-            break;
-        case 'course':
-            title = `Cours ${currentView.course}`;
-            subtitle = `Historique complet et statistiques`;
-            break;
-    }
- ;
-}
-
-
-
-
-function initCourseCharts(data) {
-    // Graphique d'assiduité
-    new frappe.Chart("#attendance-chart", {
-        data: {
-            labels: data.attendance_evolution.map(a => {
-                const date = new Date(a.date);
-                return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-            }),
-            datasets: [
-                {
-                    name: "Taux de présence",
-                    values: data.attendance_evolution.map(a => a.rate),
-                    chartType: 'line'
-                }
-            ]
-        },
-        type: 'line',
-        height: 250,
-        colors: ['#17a2b8']
-    });
-    
-    // Graphique des statuts
-    new frappe.Chart("#course-status-chart", {
-        data: {
-            labels: data.by_status.map(s => s.status),
-            datasets: [
-                {
-                    name: "Sessions",
-                    values: data.by_status.map(s => s.count),
-                    chartType: 'pie'
-                }
-            ]
-        },
-        type: 'pie',
-        height: 250,
-        colors: ['#28a745', '#ffc107', '#dc3545', '#fd7e14']
-    });
 }

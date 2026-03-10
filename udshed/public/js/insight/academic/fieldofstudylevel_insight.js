@@ -106,11 +106,5 @@ window.Udshed.Insight.Academic.FieldOfStudyLevel = {
         `;
             
         container.html(html);
-        $(document).on("click", ".on-view-cours-details", function () {
-            console.log("Vieuw for data")
-            const progTo = $(this).data("view-cours-details");
-            viewCourseDetail(prog);
-
-        })
     }
 };

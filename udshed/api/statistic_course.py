@@ -7,8 +7,6 @@ from functools import reduce
 @frappe.whitelist()
 def statistic_year(academic_year, semestre=None):
     """Statistique global de l'année"""
-
-    print("Semestre ",semestre)
     teaching_units = course.get_teaching_unit_by_year(academic_year=academic_year,semestre=None)
     teaching_units_key = teaching_units.keys()
     planning_items = planning.get_all_planning_item_by_filter(academic_year,semestre=semestre)

@@ -200,10 +200,6 @@ def get_teaching_unit_by_year(academic_year,faculty=None,field_of_study=None,lev
 
 	return process_data
 
-	# result = {}
-
-	# for d in data:
-	# 	if d["name"] in result:
 
 	
 

@@ -6,15 +6,141 @@ frappe.pages['test_insigh'].on_page_load = function(wrapper) {
     });
 
     // Charger le contenu
-    $(wrapper).find('.page-content').html(render_ui());
+    $(wrapper).find('.page-content').html(`
+        <div id="finance-insight-page">
+            <!-- En-tête -->
+            <div class="page-header mb-4">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div id="breadcrumb" class="d-flex align-items-center mb-2">
+                            <span class="breadcrumb-item cursor-pointer" onclick="navigateTo('global')">
+                                <i class="fa fa-home"></i> Accueil
+                            </span>
+                            <span id="faculty-breadcrumb" class="breadcrumb-item cursor-pointer data-navigate-to" data-navigate-to="faculty" onclick="navigateTo('faculty')" style="display: none;"></span>
+                            <span id="program-breadcrumb" class="breadcrumb-item cursor-pointer data-navigate-to" data-navigate-to="program" onclick="navigateTo('program')" style="display: none;"></span>
+                            <span id="level-breadcrumb" class="breadcrumb-item cursor-pointer data-navigate-to" data-navigate-to="level" onclick="navigateTo('level')" style="display: none;"></span>
+                            <span id="teacher-breadcrumb" class="breadcrumb-item" style="display: none;"></span>
+                        </div>
+                        <h2 class="page-title" id="page-title">Tableau de bord financier</h2>
+                        <p class="text-muted" id="page-subtitle">Gestion des paiements des enseignants vacataires</p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-outline-primary btn-sm me-2 export-data" onclick="exportData()">
+                            <i class="fa fa-download"></i> Exporter
+                        </button>
+                        <button class="btn btn-primary btn-sm refresh-data" onclick="refreshData()">
+                            <i class="fa fa-refresh"></i> Rafraîchir
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtres -->
+            <div class="filters-bar frappe-card p-3 mb-4">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-2">
+                        <label class="form-label text-muted small">Période</label>
+                        <select id="period-filter" class="form-control form-control-sm on-period-change" onchange="onPeriodChange()">
+                            <option value="mois">Ce mois</option>
+                            <option value="trimestre" selected>Ce trimestre</option>
+                            <option value="semestre">Ce semestre</option>
+                            <option value="annee">Cette année</option>
+                            <option value="personnalise">Personnalisé</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label text-muted small">Faculté</label>
+                        <select id="faculty-filter" class="form-control form-control-sm on-faculty-change" onchange="onFacultyChange()">
+                            <option value="">Toutes</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label text-muted small">Filière</label>
+                        <select id="program-filter" class="form-control form-control-sm on-program-change" onchange="onProgramChange()">
+                            <option value="">Toutes</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label text-muted small">Niveau</label>
+                        <select id="level-filter" class="form-control form-control-sm on-level-change" onchange="onLevelChange()">
+                            <option value="">Tous</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label text-muted small">Enseignant</label>
+                        <select id="teacher-filter" class="form-control form-control-sm on-teacher-change" onchange="onTeacherChange()">
+                            <option value="">Tous</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label text-muted small">Semestre</label>
+                        <select id="semestre-filter" class="form-control form-control-sm apply-filter-change" onchange="applyFilters()">
+                            <option value="">Tous</option>
+                            <option value="S1">Semestre 1</option>
+                            <option value="S2">Semestre 2</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Date personnalisée -->
+                <div id="custom-date-range" class="row mt-3" style="display: none;">
+                    <div class="col-md-3">
+                        <input type="month" id="start-month" class="form-control form-control-sm" placeholder="Mois début">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="month" id="end-month" class="form-control form-control-sm" placeholder="Mois fin">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-sm btn-primary apply-custom-date" onclick="applyCustomDate()">Appliquer</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div id="loading" class="text-center py-5" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Chargement...</span>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div id="dashboard-content"></div>
+        </div>
+    `);
+    
+    // Styles
+    addCustomStyles();
     
     // Initialiser
     initPage();
     
-    // Afficher un indicateur de données d'essai
+    // Indicateur données mock
     showMockDataIndicator();
+
+    showMockDataIndicator();
+
 	$(document).on("change", ".apply-filter-change", function () {
 		applyFilters();
+	})
+
+    $(document).on("change", ".on-period-change", function () {
+		onPeriodChange();
+	})
+
+    $(document).on("change", ".on-faculty-change", function () {
+		onFacultyChange();
+	})
+
+    $(document).on("change", ".on-program-change", function () {
+		onProgramChange();
+	})
+
+    $(document).on("change", ".on-level-change", function () {
+		onLevelChange();
+	})
+
+    $(document).on("change", ".on-teacher-change", function () {
+		onTeacherChange();
 	})
 
 	$(document).on("click", ".apply-custom-date", function () {
@@ -30,13 +156,162 @@ frappe.pages['test_insigh'].on_page_load = function(wrapper) {
 	})
 
 	$(document).on("click", ".data-navigate-to", function () {
-		const navigateTo = $(this).data("navigate-to");
-		navigateTo(navigateTo);
+		const navTo = $(this).data("navigate-to");
+		navigateTo(navTo);
 
 	})
 
-	
+    $(document).on("click", ".teacher-navigate-to", function () {
+		const navigateTo = $(this).data("teacher-navigate-to");
+		navigateToTeacher(navigateTo);
+
+	})
+
+    $(document).on("click", ".program-navigate-to", function () {
+		const progTo = $(this).data("program-navigate-to");
+		navigateToProgram(prog);
+
+	})
+
+    $(document).on("click", ".on-view-cours-details", function () {
+		const progTo = $(this).data("view-cours-details");
+		viewCourseDetail(prog);
+
+	})
+
+
 };
+
+function addCustomStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        #finance-insight-page {
+            padding: 20px;
+        }
+        
+        .filters-bar {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .breadcrumb-item {
+            position: relative;
+            padding-right: 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .breadcrumb-item:after {
+            content: '/';
+            position: absolute;
+            right: 8px;
+            color: #adb5bd;
+        }
+        
+        .breadcrumb-item:last-child:after {
+            content: '';
+        }
+        
+        .breadcrumb-item.cursor-pointer:hover {
+            color: #007bff;
+            text-decoration: underline;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .bg-primary-light { background: rgba(0, 123, 255, 0.1); }
+        .bg-success-light { background: rgba(40, 167, 69, 0.1); }
+        .bg-warning-light { background: rgba(255, 193, 7, 0.1); }
+        .bg-info-light { background: rgba(23, 162, 184, 0.1); }
+        .bg-danger-light { background: rgba(220, 53, 69, 0.1); }
+        
+        .amount-positive {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .amount-negative {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        
+        .grade-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .grade-Doctorant { background: #e3f2fd; color: #1976d2; }
+        .grade-Assistant { background: #e8f5e8; color: #2e7d32; }
+        .grade-Maître-Assistant { background: #fff3e0; color: #f57c00; }
+        .grade-Maître-de-Conférences { background: #f3e5f5; color: #7b1fa2; }
+        .grade-Professeur { background: #ffebee; color: #c62828; }
+        
+        .program-card {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #f0f0f0;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .program-card:hover {
+            border-color: #007bff;
+            box-shadow: 0 4px 8px rgba(0,123,255,0.1);
+        }
+        
+        .progress-sm {
+            height: 6px;
+            border-radius: 3px;
+        }
+        
+        .table th {
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            border-top: none;
+        }
+        
+        .table td {
+            vertical-align: middle;
+            padding: 12px 8px;
+        }
+        
+        .currency-cell {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            text-align: right;
+        }
+    `;
+    document.head.appendChild(style);
+}
 
 // Variables globales
 let currentData = null;
@@ -45,7 +320,7 @@ let currentView = {
     faculty: null,
     program: null,
     levelName: null,
-    course: null
+    teacher: null
 };
 let evolutionChart = null;
 let distributionChart = null;
@@ -61,7 +336,7 @@ function showMockDataIndicator() {
         <div class="alert alert-info alert-dismissible fade show mb-3" role="alert" style="position: fixed; top: 60px; right: 20px; z-index: 1000; max-width: 300px;">
             <i class="fa fa-flask mr-2"></i>
             <strong>Mode développement</strong>
-            <p class="small mb-0">Données d'essai - Navigation hiérarchique active</p>
+            <p class="small mb-0">Données financières mock - Tous les montants sont en FCFA</p>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -82,10 +357,8 @@ function loadFilterOptions() {
                 populateSelect('faculty-filter', r.message.faculties);
                 populateSelect('program-filter', r.message.programs);
                 populateSelect('level-filter', r.message.levels);
+                populateSelect('semestre-filter', r.message.semestres);
                 populateTeacherSelect(r.message.teachers);
-
-                // populateCourseSelect(r.message.courses);
-                // populatePeriodSelect(r.message.periods);
             }
         }
     });
@@ -108,20 +381,6 @@ function populateSelect(elementId, options) {
     if (currentValue) select.value = currentValue;
 }
 
-function populateCourseSelect(courses) {
-    const select = document.getElementById('course-filter');
-    if (!select) return;
-    
-    select.innerHTML = '<option value="">Tous les cours</option>';
-    
-    courses.forEach(c => {
-        const option = document.createElement('option');
-        option.value = c.code;
-        option.textContent = `${c.code} - ${c.name}`;
-        select.appendChild(option);
-    });
-}
-
 function populateTeacherSelect(teachers) {
     const select = document.getElementById('teacher-filter');
     if (!select) return;
@@ -130,25 +389,20 @@ function populateTeacherSelect(teachers) {
     
     teachers.forEach(t => {
         const option = document.createElement('option');
-        option.value = t.name;
-        option.textContent = t.teacher_name;
+        option.value = t.id;
+        option.textContent = `${t.name} (${t.grade})`;
         select.appendChild(option);
     });
 }
 
-function populatePeriodSelect(periods) {
-    const select = document.getElementById('period-filter');
-    if (!select) return;
-    
-    select.innerHTML = '';
-    
-    periods.forEach(p => {
-        const option = document.createElement('option');
-        option.value = p.value;
-        option.textContent = p.label;
-        if (p.value === 'mois') option.selected = true;
-        select.appendChild(option);
-    });
+function onPeriodChange() {
+    const period = $('#period-filter').val();
+    if (period === 'personnalise') {
+        $('#custom-date-range').slideDown();
+    } else {
+        $('#custom-date-range').slideUp();
+        applyFilters();
+    }
 }
 
 function onFacultyChange() {
@@ -158,12 +412,11 @@ function onFacultyChange() {
         currentView.faculty = faculty;
         currentView.program = null;
         currentView.levelName = null;
-        currentView.course = null;
+        currentView.teacher = null;
         
-        // Mettre à jour les filtres dépendants
         $('#program-filter').val('');
         $('#level-filter').val('');
-        $('#course-filter').val('');
+        $('#teacher-filter').val('');
     }
     applyFilters();
 }
@@ -174,11 +427,10 @@ function onProgramChange() {
         currentView.level = 'program';
         currentView.program = program;
         currentView.levelName = null;
-        currentView.course = null;
+        currentView.teacher = null;
         
-        // Mettre à jour les filtres dépendants
         $('#level-filter').val('');
-        $('#course-filter').val('');
+        $('#teacher-filter').val('');
     }
     applyFilters();
 }
@@ -188,43 +440,34 @@ function onLevelChange() {
     if (level) {
         currentView.level = 'level';
         currentView.levelName = level;
-        currentView.course = null;
+        currentView.teacher = null;
         
-        // Mettre à jour les filtres dépendants
-        $('#course-filter').val('');
+        $('#teacher-filter').val('');
     }
     applyFilters();
 }
 
-function onCourseChange() {
-    const course = $('#course-filter').val();
-    if (course) {
-        currentView.level = 'course';
-        currentView.course = course;
+function onTeacherChange() {
+    const teacher = $('#teacher-filter').val();
+    if (teacher) {
+        currentView.level = 'teacher';
+        currentView.teacher = teacher;
     }
     applyFilters();
 }
 
 function setupPeriodListener() {
-    $('#period-filter').on('change', function() {
-        if (this.value === 'personnalise') {
-            $('#custom-date-range').slideDown();
-        } else {
-            $('#custom-date-range').slideUp();
-            applyFilters();
-        }
-    });
+    // Déjà géré dans onPeriodChange
 }
 
 function applyFilters() {
-    // Mettre à jour currentView avec les valeurs des filtres
+    // Mettre à jour currentView
     currentView.faculty = $('#faculty-filter').val() || null;
     currentView.program = $('#program-filter').val() || null;
     currentView.levelName = $('#level-filter').val() || null;
-    currentView.course = $('#course-filter').val() || null;
+    currentView.teacher = $('#teacher-filter').val() || null;
     
-    // Déterminer le niveau de vue
-    if (currentView.course) currentView.level = 'course';
+    if (currentView.teacher) currentView.level = 'teacher';
     else if (currentView.levelName) currentView.level = 'level';
     else if (currentView.program) currentView.level = 'program';
     else if (currentView.faculty) currentView.level = 'faculty';
@@ -235,18 +478,16 @@ function applyFilters() {
         faculty: currentView.faculty,
         program: currentView.program,
         level: currentView.levelName,
-        course: currentView.course,
-        teacher: $('#teacher-filter').val(),
+        teacher: currentView.teacher,
+        semestre: $('#semestre-filter').val(),
         view_level: currentView.level
     };
-    
-    console.log('Filtres appliqués:', filters);
     
     $('#loading').show();
     $('#dashboard-content').empty();
     
     frappe.call({
-        method: 'udshed.api.test_api.get_teacher_data',
+        method: 'udshed.api.test_api.get_finance_data',
         args: { filters: filters },
         callback: function(r) {
             if (r.message) {
@@ -261,22 +502,21 @@ function applyFilters() {
 }
 
 function applyCustomDate() {
-    const start = $('#start-date').val();
-    const end = $('#end-date').val();
+    const start = $('#start-month').val();
+    const end = $('#end-month').val();
     
     if (start && end) {
         frappe.show_alert({
-            message: __('Filtres personnalisés: du {0} au {1}', [start, end]),
+            message: `Période du ${start} au ${end}`,
             indicator: 'green'
         });
         applyFilters();
     } else {
-        frappe.msgprint(__('Veuillez sélectionner une date de début et de fin'));
+        frappe.msgprint('Veuillez sélectionner une période');
     }
 }
 
 function updateBreadcrumb() {
-    // Mettre à jour le fil d'Ariane
     if (currentView.faculty) {
         $('#faculty-breadcrumb').text(currentView.faculty).show();
     } else {
@@ -295,10 +535,11 @@ function updateBreadcrumb() {
         $('#level-breadcrumb').hide();
     }
     
-    if (currentView.course) {
-        $('#course-breadcrumb').text(currentView.course).show();
+    if (currentView.teacher) {
+        const teacher = currentData?.teacher?.name || 'Enseignant';
+        $('#teacher-breadcrumb').text(teacher).show();
     } else {
-        $('#course-breadcrumb').hide();
+        $('#teacher-breadcrumb').hide();
     }
 }
 
@@ -308,24 +549,24 @@ function updatePageTitle() {
     
     switch(currentView.level) {
         case 'global':
-            title = 'Tableau de bord de suivi des cours';
-            subtitle = 'Vue globale - Toutes les facultés';
+            title = 'Tableau de bord financier global';
+            subtitle = 'Gestion des paiements des enseignants vacataires';
             break;
         case 'faculty':
             title = `Faculté ${currentView.faculty}`;
-            subtitle = `Vue d'ensemble de la faculté`;
+            subtitle = 'Analyse financière par programme et niveau';
             break;
         case 'program':
-            title = `Filière ${currentView.program}`;
-            subtitle = `Détail par niveau et par cours`;
+            title = `Programme ${currentView.program}`;
+            subtitle = 'Détail des coûts par cours et enseignant';
             break;
         case 'level':
-            title = `Niveau ${currentView.levelName} - ${currentView.program}`;
-            subtitle = `Planning et progression détaillée`;
+            title = `Niveau ${currentView.levelName}`;
+            subtitle = 'Analyse des coûts par cours';
             break;
-        case 'course':
-            title = `Cours ${currentView.course}`;
-            subtitle = `Historique complet et statistiques`;
+        case 'teacher':
+            title = currentData?.teacher?.name || 'Enseignant';
+            subtitle = `Grade: ${currentData?.teacher?.grade} · Taux horaire: ${formatCurrency(currentData?.teacher?.taux_horaire)}/h`;
             break;
     }
     
@@ -341,38 +582,38 @@ function navigateTo(level) {
                 faculty: null,
                 program: null,
                 levelName: null,
-                course: null
+                teacher: null
             };
             $('#faculty-filter').val('');
             $('#program-filter').val('');
             $('#level-filter').val('');
-            $('#course-filter').val('');
+            $('#teacher-filter').val('');
             break;
             
         case 'faculty':
             if (currentView.faculty) {
                 currentView.program = null;
                 currentView.levelName = null;
-                currentView.course = null;
+                currentView.teacher = null;
                 $('#program-filter').val('');
                 $('#level-filter').val('');
-                $('#course-filter').val('');
+                $('#teacher-filter').val('');
             }
             break;
             
         case 'program':
             if (currentView.program) {
                 currentView.levelName = null;
-                currentView.course = null;
+                currentView.teacher = null;
                 $('#level-filter').val('');
-                $('#course-filter').val('');
+                $('#teacher-filter').val('');
             }
             break;
             
         case 'level':
             if (currentView.levelName) {
-                currentView.course = null;
-                $('#course-filter').val('');
+                currentView.teacher = null;
+                $('#teacher-filter').val('');
             }
             break;
     }
@@ -397,12 +638,21 @@ function renderView(data) {
         case 'level':
             renderLevelView(data, container);
             break;
-        case 'course':
-            renderCourseView(data, container);
+        case 'teacher':
+            renderTeacherView(data, container);
             break;
         default:
             renderGlobalView(data, container);
     }
+}
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('fr-FR', { 
+        style: 'currency', 
+        currency: 'XOF',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(amount).replace('XOF', 'FCFA');
 }
 
 function renderGlobalView(data, container) {
@@ -415,11 +665,11 @@ function renderGlobalView(data, container) {
                 <div class="stat-card" style="border-left-color: #007bff;">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon bg-primary-light me-3">
-                            <i class="fa fa-calendar-check-o text-primary"></i>
+                            <i class="fa fa-clock-o text-primary"></i>
                         </div>
                         <div>
-                            <div class="stat-label text-muted small">Total Sessions</div>
-                            <div class="stat-value h3 mb-0">${overview.total_sessions}</div>
+                            <div class="stat-label text-muted small">Heures effectuées</div>
+                            <div class="stat-value h3 mb-0">15 h</div>
                         </div>
                     </div>
                 </div>
@@ -428,12 +678,11 @@ function renderGlobalView(data, container) {
                 <div class="stat-card" style="border-left-color: #28a745;">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon bg-success-light me-3">
-                            <i class="fa fa-clock-o text-success"></i>
+                            <i class="fa fa-money text-success"></i>
                         </div>
                         <div>
-                            <div class="stat-label text-muted small">Heures effectuées</div>
-                            <div class="stat-value h3 mb-0">${overview.total_hours_done}h</div>
-                            <small class="text-muted">/${overview.total_hours_planned}h</small>
+                            <div class="stat-label text-muted small">Total payé</div>
+                            <div class="stat-value h3 mb-0">${formatCurrency(50000)}</div>
                         </div>
                     </div>
                 </div>
@@ -442,12 +691,11 @@ function renderGlobalView(data, container) {
                 <div class="stat-card" style="border-left-color: #ffc107;">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon bg-warning-light me-3">
-                            <i class="fa fa-check-circle text-warning"></i>
+                            <i class="fa fa-users text-warning"></i>
                         </div>
                         <div>
-                            <div class="stat-label text-muted small">Taux complétion</div>
-                            <div class="stat-value h3 mb-0">${overview.completion_rate}%</div>
-                            <small class="text-muted">${overview.sessions_completed} terminés</small>
+                            <div class="stat-label text-muted small">Enseignants actifs</div>
+                            <div class="stat-value h3 mb-0">15</div>
                         </div>
                     </div>
                 </div>
@@ -456,12 +704,11 @@ function renderGlobalView(data, container) {
                 <div class="stat-card" style="border-left-color: #17a2b8;">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon bg-info-light me-3">
-                            <i class="fa fa-users text-info"></i>
+                            <i class="fa fa-percent text-info"></i>
                         </div>
                         <div>
-                            <div class="stat-label text-muted small">Présence moyenne</div>
-                            <div class="stat-value h3 mb-0">${overview.avg_attendance}%</div>
-                            <small class="text-muted">Délai moy. ${overview.avg_delay} min</small>
+                            <div class="stat-label text-muted small">Taux horaire moyen</div>
+                            <div class="stat-value h3 mb-0">${formatCurrency(105)}</div>
                         </div>
                     </div>
                 </div>
@@ -472,14 +719,14 @@ function renderGlobalView(data, container) {
         <div class="row mb-4">
             <div class="col-md-8">
                 <div class="frappe-card p-3">
-                    <h5 class="mb-3">Évolution des cours</h5>
-                    <div id="evolution-chart" style="height: 300px;"></div>
+                    <h5 class="mb-3">Évolution mensuelle des paiements</h5>
+                    <div id="monthly-chart" style="height: 300px;"></div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="frappe-card p-3">
-                    <h5 class="mb-3">Répartition par statut</h5>
-                    <div id="status-chart" style="height: 300px;"></div>
+                    <h5 class="mb-3">Répartition par grade</h5>
+                    <div id="grade-chart" style="height: 300px;"></div>
                 </div>
             </div>
         </div>
@@ -496,19 +743,22 @@ function renderGlobalView(data, container) {
                 <div class="program-card" onclick="navigateToFaculty('${f.name}')">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h6 class="mb-0">${f.name}</h6>
-                        <span class="badge badge-${f.completion_color}">${f.completion_rate}%</span>
+                        <span class="badge bg-light">${f.programs} prog.</span>
                     </div>
-                    <div class="small text-muted mb-2">
-                        <i class="fa fa-book mr-1"></i> ${f.programs} programmes · 
-                        <i class="fa fa-clock-o mr-1"></i> ${f.sessions} sessions
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <div class="small text-muted">Heures</div>
+                            <div class="font-weight-bold">${f.hours}h</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="small text-muted">Montant</div>
+                            <div class="font-weight-bold amount-positive">${formatCurrency(f.amount)}</div>
+                        </div>
                     </div>
                     <div class="progress progress-sm">
-                        <div class="progress-bar bg-${f.completion_color}" style="width: ${f.completion_rate}%"></div>
+                        <div class="progress-bar bg-primary" style="width: ${(f.amount / data.overview.total_paid * 100)}%"></div>
                     </div>
-                    <div class="d-flex justify-content-between mt-2 small">
-                        <span>${f.hours_done}h effectuées</span>
-                        <span>/${f.hours_planned}h</span>
-                    </div>
+                    <div class="small text-muted mt-1">${f.sessions} sessions · ${f.teachers.size} enseignants</div>
                 </div>
             </div>
         `;
@@ -518,40 +768,93 @@ function renderGlobalView(data, container) {
             </div>
         </div>
         
-        <!-- Sessions récentes -->
+        <!-- Répartition par grade et top enseignants -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="frappe-card p-3">
+                    <h5 class="mb-3">Détail par grade</h5>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Grade</th>
+                                <th class="text-center">Enseignants</th>
+                                <th class="text-center">Heures</th>
+                                <th class="text-right">Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+    `;
+    
+    data.grade_summary.forEach(g => {
+        html += `
+            <tr>
+                <td><span class="grade-badge grade-${g.grade.replace(' ', '-')}">${g.grade}</span></td>
+                <td class="text-center">${g.teachers.size}</td>
+                <td class="text-center">${g.hours}h</td>
+                <td class="currency-cell">${formatCurrency(g.amount)}</td>
+            </tr>
+        `;
+    });
+    
+    html += `
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="frappe-card p-3">
+                    <h5 class="mb-3">Top enseignants</h5>
+                    <div class="list-group list-group-flush">
+    `;
+    
+    data.top_teachers.forEach((t, index) => {
+        html += `
+            <div class="list-group-item d-flex align-items-center cursor-pointer teacher-navigate-to " data-teacher-navigate-to="${t.id}" onclick="navigateToTeacher('${t.id}')">
+                <span class="badge bg-light me-3" style="min-width: 30px;">#${index + 1}</span>
+                <div class="flex-grow-1">
+                    <strong>${t.name}</strong>
+                    <div class="small text-muted">${t.grade} · ${t.sessions} sessions · ${t.hours}h</div>
+                </div>
+                <div class="amount-positive font-weight-bold">${formatCurrency(t.amount)}</div>
+            </div>
+        `;
+    });
+    
+    html += `
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Transactions récentes -->
         <div class="frappe-card p-3">
-            <h5 class="mb-3">Sessions récentes</h5>
+            <h5 class="mb-3">Dernières transactions</h5>
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Cours</th>
-                            <th>Type</th>
                             <th>Enseignant</th>
-                            <th>Statut</th>
-                            <th>Présence</th>
-                            <th>Actions</th>
+                            <th>Cours</th>
+                            <th>Niveau</th>
+                            <th>Heures</th>
+                            <th>Taux</th>
+                            <th class="text-right">Montant</th>
                         </tr>
                     </thead>
                     <tbody>
     `;
     
-    data.recent_sessions.slice(0, 10).forEach(s => {
-        const statusClass = `status-${s.status}`;
+    data.recent_transactions.forEach(t => {
         html += `
             <tr>
-                <td>${s.date}</td>
-                <td><strong>${s.course_code}</strong><br><small>${s.course_name}</small></td>
-                <td><span class="badge" style="background: ${s.course_type === 'CM' ? '#e3f2fd' : s.course_type === 'TD' ? '#e8f5e8' : '#fff3e0'}; color: ${s.course_type === 'CM' ? '#1976d2' : s.course_type === 'TD' ? '#2e7d32' : '#f57c00'};">${s.course_type}</span></td>
-                <td>${s.teacher_name}</td>
-                <td><span class="status-badge ${statusClass}">${getStatusLabel(s.status)}</span></td>
-                <td>${s.attendance_rate > 0 ? s.attendance_rate + '%' : '-'}</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-primary" onclick="viewCourseDetail('${s.course_code}')">
-                        <i class="fa fa-eye"></i>
-                    </button>
-                </td>
+                <td>${t.date}</td>
+                <td><strong>${t.teacher_name}</strong><br><small>${t.teacher_grade}</small></td>
+                <td>${t.course_code}<br><small>${t.course_name}</small></td>
+                <td>${t.level}</td>
+                <td>${t.hours_actual}h</td>
+                <td>${formatCurrency(t.taux_horaire)}/h</td>
+                <td class="currency-cell amount-positive">${formatCurrency(t.montant)}</td>
             </tr>
         `;
     });
@@ -579,11 +882,11 @@ function renderFacultyView(data, container) {
                 <div class="stat-card" style="border-left-color: #007bff;">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon bg-primary-light me-3">
-                            <i class="fa fa-calendar-check-o text-primary"></i>
+                            <i class="fa fa-clock-o text-primary"></i>
                         </div>
                         <div>
-                            <div class="stat-label text-muted small">Total Sessions</div>
-                            <div class="stat-value h3 mb-0">${overview.total_sessions}</div>
+                            <div class="stat-label text-muted small">Heures</div>
+                            <div class="stat-value h3 mb-0">${overview.total_hours}h</div>
                         </div>
                     </div>
                 </div>
@@ -592,11 +895,11 @@ function renderFacultyView(data, container) {
                 <div class="stat-card" style="border-left-color: #28a745;">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon bg-success-light me-3">
-                            <i class="fa fa-clock-o text-success"></i>
+                            <i class="fa fa-money text-success"></i>
                         </div>
                         <div>
-                            <div class="stat-label text-muted small">Taux complétion</div>
-                            <div class="stat-value h3 mb-0">${overview.completion_rate}%</div>
+                            <div class="stat-label text-muted small">Total payé</div>
+                            <div class="stat-value h3 mb-0">${formatCurrency(overview.total_paid)}</div>
                         </div>
                     </div>
                 </div>
@@ -631,28 +934,30 @@ function renderFacultyView(data, container) {
         
         <!-- Programmes -->
         <div class="frappe-card p-3 mb-4">
-            <h5 class="mb-3">Programmes de la faculté</h5>
+            <h5 class="mb-3">Programmes</h5>
             <div class="row">
     `;
     
     data.program_summary.forEach(p => {
         html += `
-            <div class="col-md-6 mb-3">
-                <div class="program-card" onclick="navigateToProgram('${p.name}')">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6 class="mb-0">${p.name}</h6>
-                        <span class="badge badge-${p.completion_color}">${p.completion_rate}%</span>
-                    </div>
-                    <div class="small text-muted mb-2">
-                        <i class="fa fa-layer-group mr-1"></i> Niveaux: ${p.levels.join(', ')} · 
-                        <i class="fa fa-users mr-1"></i> ${p.teachers} enseignants
+            <div class="col-md-4 mb-3">
+                <div class="program-card program-navigate-to" data-program-navigate-to="${p.name}" onclick="navigateToProgram('${p.name}')">
+                    <h6 class="mb-2">${p.name}</h6>
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <div class="small text-muted">Heures</div>
+                            <div class="font-weight-bold">${p.hours}h</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="small text-muted">Montant</div>
+                            <div class="font-weight-bold amount-positive">${formatCurrency(p.amount)}</div>
+                        </div>
                     </div>
                     <div class="progress progress-sm mb-2">
-                        <div class="progress-bar bg-${p.completion_color}" style="width: ${p.completion_rate}%"></div>
+                        <div class="progress-bar bg-primary" style="width: ${(p.amount / data.overview.total_paid * 100)}%"></div>
                     </div>
-                    <div class="d-flex justify-content-between small">
-                        <span>${p.hours_done}h effectuées</span>
-                        <span class="text-muted">${p.sessions} sessions</span>
+                    <div class="small text-muted">
+                        ${p.levels.size} niveaux · ${p.teachers.size} enseignants · ${p.sessions} sessions
                     </div>
                 </div>
             </div>
@@ -663,46 +968,74 @@ function renderFacultyView(data, container) {
             </div>
         </div>
         
-        <!-- Top enseignants et répartition -->
-        <div class="row">
+        <!-- Niveaux et types -->
+        <div class="row mb-4">
             <div class="col-md-6">
                 <div class="frappe-card p-3">
-                    <h5 class="mb-3">Top enseignants</h5>
-                    <div class="list-group list-group-flush">
+                    <h5 class="mb-3">Répartition par niveau</h5>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Niveau</th>
+                                <th class="text-center">Heures</th>
+                                <th class="text-right">Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody>
     `;
     
-    data.top_teachers.forEach((t, index) => {
+    data.level_summary.forEach(l => {
         html += `
-            <div class="list-group-item d-flex align-items-center">
-                <span class="badge bg-light me-3">#${index + 1}</span>
-                <div class="flex-grow-1">
-                    <strong>${t.name}</strong>
-                    <div class="small text-muted">${t.sessions} sessions · ${t.hours}h</div>
-                </div>
-                <button class="btn btn-sm btn-outline-primary" onclick="viewTeacherDetails('${t.id}')">
-                    <i class="fa fa-user"></i>
-                </button>
-            </div>
+            <tr>
+                <td><strong>${l.level}</strong></td>
+                <td class="text-center">${l.hours}h</td>
+                <td class="currency-cell">${formatCurrency(l.amount)}</td>
+            </tr>
         `;
     });
     
     html += `
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="frappe-card p-3">
-                    <h5 class="mb-3">Répartition par niveau</h5>
-                    <div id="level-chart" style="height: 250px;"></div>
+                    <h5 class="mb-3">Par type de cours</h5>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th class="text-center">Sessions</th>
+                                <th class="text-center">Heures</th>
+                                <th class="text-right">Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+    `;
+    
+    data.type_summary.forEach(t => {
+        html += `
+            <tr>
+                <td>
+                    <span class="badge" style="background: ${t.type === 'CM' ? '#e3f2fd' : t.type === 'TD' ? '#e8f5e8' : '#fff3e0'}; color: ${t.type === 'CM' ? '#1976d2' : t.type === 'TD' ? '#2e7d32' : '#f57c00'};">${t.type}</span>
+                </td>
+                <td class="text-center">${t.sessions}</td>
+                <td class="text-center">${t.hours}h</td>
+                <td class="currency-cell">${formatCurrency(t.amount)}</td>
+            </tr>
+        `;
+    });
+    
+    html += `
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     `;
     
     container.html(html);
-    
-    // Graphique des niveaux
-    initLevelChart(data.by_level);
 }
 
 function renderProgramView(data, container) {
@@ -715,12 +1048,11 @@ function renderProgramView(data, container) {
                 <div class="stat-card" style="border-left-color: #007bff;">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon bg-primary-light me-3">
-                            <i class="fa fa-calendar-check-o text-primary"></i>
+                            <i class="fa fa-clock-o text-primary"></i>
                         </div>
                         <div>
-                            <div class="stat-label text-muted small">Sessions</div>
-                            <div class="stat-value h3 mb-0">${overview.total_sessions}</div>
-                            <small class="text-muted">${overview.sessions_completed} terminés</small>
+                            <div class="stat-label text-muted small">Heures</div>
+                            <div class="stat-value h3 mb-0">${overview.total_hours}h</div>
                         </div>
                     </div>
                 </div>
@@ -729,12 +1061,11 @@ function renderProgramView(data, container) {
                 <div class="stat-card" style="border-left-color: #28a745;">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon bg-success-light me-3">
-                            <i class="fa fa-clock-o text-success"></i>
+                            <i class="fa fa-money text-success"></i>
                         </div>
                         <div>
-                            <div class="stat-label text-muted small">Heures</div>
-                            <div class="stat-value h3 mb-0">${overview.total_hours_done}h</div>
-                            <small class="text-muted">/${overview.total_hours_planned}h</small>
+                            <div class="stat-label text-muted small">Total payé</div>
+                            <div class="stat-value h3 mb-0">${formatCurrency(overview.total_paid)}</div>
                         </div>
                     </div>
                 </div>
@@ -743,12 +1074,11 @@ function renderProgramView(data, container) {
                 <div class="stat-card" style="border-left-color: #ffc107;">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon bg-warning-light me-3">
-                            <i class="fa fa-check-circle text-warning"></i>
+                            <i class="fa fa-book text-warning"></i>
                         </div>
                         <div>
-                            <div class="stat-label text-muted small">Complétion</div>
-                            <div class="stat-value h3 mb-0">${overview.completion_rate}%</div>
-                            <small class="text-muted">${overview.sessions_with_eval} évaluations</small>
+                            <div class="stat-label text-muted small">Cours</div>
+                            <div class="stat-value h3 mb-0">${overview.courses_count}</div>
                         </div>
                     </div>
                 </div>
@@ -760,8 +1090,8 @@ function renderProgramView(data, container) {
                             <i class="fa fa-users text-info"></i>
                         </div>
                         <div>
-                            <div class="stat-label text-muted small">Présence</div>
-                            <div class="stat-value h3 mb-0">${overview.avg_attendance}%</div>
+                            <div class="stat-label text-muted small">Enseignants</div>
+                            <div class="stat-value h3 mb-0">${overview.teachers_count}</div>
                         </div>
                     </div>
                 </div>
@@ -777,21 +1107,26 @@ function renderProgramView(data, container) {
     data.level_summary.forEach(l => {
         html += `
             <div class="col-md-4 mb-3">
-                <div class="program-card" onclick="navigateToLevel('${l.name}')">
+                <div class="program-card" onclick="navigateToLevel('${l.level}')">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h6 class="mb-0">Niveau ${l.name}</h6>
-                        <span class="badge badge-${l.completion_color}">${l.completion_rate}%</span>
+                        <h6 class="mb-0">Niveau ${l.level}</h6>
+                        <span class="badge bg-light">${l.courses.size} cours</span>
                     </div>
-                    <div class="small text-muted mb-2">
-                        <i class="fa fa-book mr-1"></i> ${l.courses} cours · 
-                        <i class="fa fa-users mr-1"></i> ${l.students} étudiants
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <div class="small text-muted">Heures</div>
+                            <div class="font-weight-bold">${l.hours}h</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="small text-muted">Montant</div>
+                            <div class="font-weight-bold amount-positive">${formatCurrency(l.amount)}</div>
+                        </div>
                     </div>
                     <div class="progress progress-sm mb-2">
-                        <div class="progress-bar bg-${l.completion_color}" style="width: ${l.completion_rate}%"></div>
+                        <div class="progress-bar bg-primary" style="width: ${(l.amount / data.overview.total_paid * 100)}%"></div>
                     </div>
-                    <div class="d-flex justify-content-between small">
-                        <span>${l.hours_done}h effectuées</span>
-                        <span class="text-muted">${l.sessions} sessions</span>
+                    <div class="small text-muted">
+                        ${l.teachers.size} enseignants · ${l.sessions} sessions
                     </div>
                 </div>
             </div>
@@ -803,21 +1138,20 @@ function renderProgramView(data, container) {
         </div>
         
         <!-- Cours -->
-        <div class="frappe-card p-3">
-            <h5 class="mb-3">Cours du programme</h5>
+        <div class="frappe-card p-3 mb-4">
+            <h5 class="mb-3">Cours</h5>
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Code</th>
-                            <th>Intitulé</th>
+                            <th>Cours</th>
                             <th>Type</th>
                             <th>Enseignant</th>
-                            <th>Sessions</th>
-                            <th>Heures</th>
-                            <th>Complétion</th>
-                            <th>Présence</th>
-                            <th></th>
+                            <th>Grade</th>
+                            <th class="text-center">Sessions</th>
+                            <th class="text-center">Heures</th>
+                            <th class="text-center">Taux/h</th>
+                            <th class="text-right">Montant</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -825,27 +1159,15 @@ function renderProgramView(data, container) {
     
     data.course_summary.forEach(c => {
         html += `
-            <tr class="cursor-pointer" onclick="navigateToCourse('${c.code}')">
-                <td><strong>${c.code}</strong></td>
-                <td>${c.name}</td>
+            <tr class="cursor-pointer on-view-cours-details" data-view-cours-details="${c.code}" onclick="viewCourseDetail('${c.code}')">
+                <td><strong>${c.code}</strong><br><small>${c.name}</small></td>
                 <td><span class="badge" style="background: ${c.type === 'CM' ? '#e3f2fd' : c.type === 'TD' ? '#e8f5e8' : '#fff3e0'}; color: ${c.type === 'CM' ? '#1976d2' : c.type === 'TD' ? '#2e7d32' : '#f57c00'};">${c.type}</span></td>
                 <td>${c.teacher}</td>
+                <td><span class="grade-badge grade-${c.teacher_grade.replace(' ', '-')}">${c.teacher_grade}</span></td>
                 <td class="text-center">${c.sessions}</td>
-                <td>${c.hours_done}h <small class="text-muted">/${c.hours_planned}h</small></td>
-                <td>
-                    <div class="d-flex align-items-center">
-                        <div class="progress flex-grow-1 me-2" style="height: 6px; width: 60px;">
-                            <div class="progress-bar bg-${c.completion_color}" style="width: ${c.completion_rate}%"></div>
-                        </div>
-                        <small>${c.completion_rate}%</small>
-                    </div>
-                </td>
-                <td>${c.avg_attendance}%</td>
-                <td>
-                    <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); viewCourseDetail('${c.code}')">
-                        <i class="fa fa-chevron-right"></i>
-                    </button>
-                </td>
+                <td class="text-center">${c.hours}h</td>
+                <td class="text-center">${formatCurrency(c.taux_horaire)}</td>
+                <td class="currency-cell amount-positive">${formatCurrency(c.amount)}</td>
             </tr>
         `;
     });
@@ -853,6 +1175,48 @@ function renderProgramView(data, container) {
     html += `
                     </tbody>
                 </table>
+            </div>
+        </div>
+        
+        <!-- Enseignants -->
+        <div class="frappe-card p-3">
+            <h5 class="mb-3">Enseignants</h5>
+            <div class="row">
+    `;
+    
+    data.teacher_summary.forEach(t => {
+        html += `
+            <div class="col-md-4 mb-3">
+                <div class="program-card teacher-navigate-to" data-teacher-navigate-to="${t.id}" onclick="navigateToTeacher('${t.id}')">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar avatar-sm bg-primary-light me-2" style="width: 32px; height: 32px; border-radius: 8px; background: #e3f2fd; display: flex; align-items: center; justify-content: center;">
+                            ${t.name.charAt(0)}
+                        </div>
+                        <div>
+                            <strong>${t.name}</strong>
+                            <div class="small text-muted">${t.grade}</div>
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-4">
+                            <div class="small text-muted">Heures</div>
+                            <div class="font-weight-bold">${t.hours}h</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="small text-muted">Taux</div>
+                            <div class="font-weight-bold">${formatCurrency(t.taux_horaire)}</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="small text-muted">Montant</div>
+                            <div class="font-weight-bold amount-positive">${formatCurrency(t.amount)}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += `
             </div>
         </div>
     `;
@@ -866,57 +1230,41 @@ function renderLevelView(data, container) {
     let html = `
         <!-- KPIs -->
         <div class="row mb-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="stat-card" style="border-left-color: #007bff;">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon bg-primary-light me-3">
-                            <i class="fa fa-calendar-check-o text-primary"></i>
+                            <i class="fa fa-clock-o text-primary"></i>
                         </div>
                         <div>
-                            <div class="stat-label text-muted small">Sessions</div>
-                            <div class="stat-value h3 mb-0">${overview.total_sessions}</div>
-                            <small class="text-muted">${overview.sessions_completed} terminés</small>
+                            <div class="stat-label text-muted small">Heures</div>
+                            <div class="stat-value h3 mb-0">${overview.total_hours}h</div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="stat-card" style="border-left-color: #28a745;">
                     <div class="d-flex align-items-center">
                         <div class="stat-icon bg-success-light me-3">
-                            <i class="fa fa-clock-o text-success"></i>
+                            <i class="fa fa-money text-success"></i>
                         </div>
                         <div>
-                            <div class="stat-label text-muted small">Taux complétion</div>
-                            <div class="stat-value h3 mb-0">${overview.completion_rate}%</div>
+                            <div class="stat-label text-muted small">Total payé</div>
+                            <div class="stat-value h3 mb-0">${formatCurrency(overview.total_paid)}</div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card" style="border-left-color: #ffc107;">
+            <div class="col-md-4">
+                <div class="stat-card" style="border-left-color: #17a2b8;">
                     <div class="d-flex align-items-center">
-                        <div class="stat-icon bg-warning-light me-3">
-                            <i class="fa fa-graduation-cap text-warning"></i>
+                        <div class="stat-icon bg-info-light me-3">
+                            <i class="fa fa-book text-info"></i>
                         </div>
                         <div>
                             <div class="stat-label text-muted small">Cours</div>
                             <div class="stat-value h3 mb-0">${overview.courses_count}</div>
-                            <small class="text-muted">${overview.sessions_with_eval} évaluations</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card" style="border-left-color: #17a2b8;">
-                    <div class="d-flex align-items-center">
-                        <div class="stat-icon bg-info-light me-3">
-                            <i class="fa fa-users text-info"></i>
-                        </div>
-                        <div>
-                            <div class="stat-label text-muted small">Présence</div>
-                            <div class="stat-value h3 mb-0">${overview.avg_attendance}%</div>
-                            <small class="text-muted">Délai ${overview.avg_delay} min</small>
                         </div>
                     </div>
                 </div>
@@ -924,7 +1272,7 @@ function renderLevelView(data, container) {
         </div>
         
         <!-- Cours du niveau -->
-        <div class="frappe-card p-3 mb-4">
+        <div class="frappe-card p-3">
             <h5 class="mb-3">Cours du niveau ${data.level}</h5>
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -933,12 +1281,9 @@ function renderLevelView(data, container) {
                             <th>Cours</th>
                             <th>Type</th>
                             <th>Enseignant</th>
-                            <th>Sessions</th>
-                            <th>Heures</th>
-                            <th>Complétion</th>
-                            <th>Présence</th>
-                            <th>Évals</th>
-                            <th></th>
+                            <th class="text-center">Sessions</th>
+                            <th class="text-center">Heures</th>
+                            <th class="text-right">Montant</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -946,27 +1291,13 @@ function renderLevelView(data, container) {
     
     data.course_summary.forEach(c => {
         html += `
-            <tr class="cursor-pointer" onclick="navigateToCourse('${c.code}')">
+            <tr>
                 <td><strong>${c.code}</strong><br><small>${c.name}</small></td>
                 <td><span class="badge" style="background: ${c.type === 'CM' ? '#e3f2fd' : c.type === 'TD' ? '#e8f5e8' : '#fff3e0'}; color: ${c.type === 'CM' ? '#1976d2' : c.type === 'TD' ? '#2e7d32' : '#f57c00'};">${c.type}</span></td>
                 <td>${c.teacher}</td>
-                <td class="text-center">${c.sessions} <small class="text-muted">(${c.sessions_completed} OK)</small></td>
-                <td>${c.hours_done}h <small class="text-muted">/${c.hours_planned}h</small></td>
-                <td>
-                    <div class="d-flex align-items-center">
-                        <div class="progress flex-grow-1 me-2" style="height: 6px; width: 60px;">
-                            <div class="progress-bar bg-${c.completion_color}" style="width: ${c.completion_rate}%"></div>
-                        </div>
-                        <small>${c.completion_rate}%</small>
-                    </div>
-                </td>
-                <td>${c.avg_attendance}%</td>
-                <td class="text-center"><span class="badge bg-light">${c.evaluations}</span></td>
-                <td>
-                    <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); viewCourseDetail('${c.code}')">
-                        <i class="fa fa-chevron-right"></i>
-                    </button>
-                </td>
+                <td class="text-center">${c.sessions}</td>
+                <td class="text-center">${c.hours}h</td>
+                <td class="currency-cell amount-positive">${formatCurrency(c.amount)}</td>
             </tr>
         `;
     });
@@ -976,82 +1307,41 @@ function renderLevelView(data, container) {
                 </table>
             </div>
         </div>
-        
-        <!-- Calendrier -->
-        <div class="frappe-card p-3">
-            <h5 class="mb-3">Calendrier des sessions</h5>
-            <div class="row">
-    `;
-    
-    // Afficher les 7 prochains jours
-    const today = new Date();
-    for (let i = 0; i < 7; i++) {
-        const date = new Date(today);
-        date.setDate(today.getDate() + i);
-        const dateStr = date.toISOString().split('T')[0];
-        const dayName = date.toLocaleDateString('fr-FR', { weekday: 'short' });
-        
-        html += `
-            <div class="col calendar-day">
-                <div class="small text-muted mb-2">${dayName} ${date.getDate()}</div>
-        `;
-        
-        if (data.calendar[dateStr]) {
-            data.calendar[dateStr].forEach(event => {
-                html += `
-                    <div class="calendar-event" onclick="viewSessionDetail('${event.course}', '${dateStr}')">
-                        <div class="font-weight-bold">${event.time}</div>
-                        <div>${event.course}</div>
-                        <div class="small text-muted">${event.teacher}</div>
-                    </div>
-                `;
-            });
-        } else {
-            html += `<div class="text-muted small">Aucune session</div>`;
-        }
-        
-        html += `</div>`;
-    }
-    
-    html += `
-            </div>
-        </div>
     `;
     
     container.html(html);
 }
 
-function renderCourseView(data, container) {
+function renderTeacherView(data, container) {
+    const teacher = data.teacher;
     const overview = data.overview;
-    const course = data.course;
     
     let html = `
-        <!-- En-tête du cours -->
+        <!-- Informations enseignant -->
         <div class="frappe-card p-4 mb-4">
             <div class="row">
                 <div class="col-md-8">
-                    <h3>${course.name}</h3>
-                    <p class="text-muted mb-2">${course.code} · ${course.type} · Niveau ${course.level}</p>
-                    <div class="d-flex align-items-center">
-                        <div class="avatar avatar-sm bg-primary-light me-2" style="width: 32px; height: 32px; border-radius: 8px; background: #e3f2fd; display: flex; align-items: center; justify-content: center;">
-                            ${course.teacher.charAt(0)}
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar avatar-lg bg-primary-light me-3" style="width: 64px; height: 64px; border-radius: 12px; background: #e3f2fd; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: #1976d2;">
+                            ${teacher.name.charAt(0)}
                         </div>
-                        <span>${course.teacher}</span>
-                        <button class="btn btn-sm btn-outline-primary ms-3" onclick="viewTeacherDetails('${course.teacher_id}')">
-                            <i class="fa fa-user"></i> Voir l'enseignant
-                        </button>
+                        <div>
+                            <h3 class="mb-1">${teacher.name}</h3>
+                            <p class="mb-1">
+                                <span class="grade-badge grade-${teacher.grade.replace(' ', '-')} me-2">${teacher.grade}</span>
+                                <span class="badge ${teacher.status === 'Actif' ? 'bg-success' : 'bg-danger'}">${teacher.status}</span>
+                            </p>
+                            <p class="text-muted small mb-0">
+                                <i class="fa fa-credit-card mr-1"></i> IBAN: ${teacher.iban}
+                            </p>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-4 text-right">
-                    <div class="d-flex justify-content-end">
-                        <div class="text-center me-4">
-                            <div class="h4 mb-0">${overview.completion_rate}%</div>
-                            <div class="small text-muted">Complétion</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="h4 mb-0">${overview.avg_attendance}%</div>
-                            <div class="small text-muted">Présence</div>
-                        </div>
+                    <div class="h2 amount-positive mb-1">${formatCurrency(overview.total_paid)}</div>
+                    <div class="text-muted">Total payé sur la période</div>
+                    <div class="mt-2">
+                        <span class="badge bg-light">Taux horaire: ${formatCurrency(teacher.taux_horaire)}</span>
                     </div>
                 </div>
             </div>
@@ -1061,30 +1351,27 @@ function renderCourseView(data, container) {
         <div class="row mb-4">
             <div class="col-md-3">
                 <div class="stat-card p-3" style="border-left-color: #007bff;">
-                    <div class="small text-muted">Sessions</div>
-                    <div class="h3 mb-0">${overview.total_sessions}</div>
-                    <small class="text-muted">${overview.sessions_completed} terminés · ${overview.sessions_planned} à venir</small>
+                    <div class="small text-muted">Heures effectuées</div>
+                    <div class="h3 mb-0">${overview.total_hours}h</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card p-3" style="border-left-color: #28a745;">
-                    <div class="small text-muted">Heures effectuées</div>
-                    <div class="h3 mb-0">${overview.total_hours_done}h</div>
-                    <small class="text-muted">sur ${overview.total_hours_planned}h prévues</small>
+                    <div class="small text-muted">Sessions</div>
+                    <div class="h3 mb-0">${overview.total_sessions}</div>
+                    <small class="text-muted">${overview.sessions_effectuees} effectuées · ${overview.sessions_annulees} annulées</small>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card p-3" style="border-left-color: #ffc107;">
-                    <div class="small text-muted">Annulations/Reports</div>
-                    <div class="h3 mb-0">${overview.sessions_cancelled + overview.sessions_rescheduled}</div>
-                    <small class="text-muted">${overview.sessions_cancelled} annulés · ${overview.sessions_rescheduled} reportés</small>
+                    <div class="small text-muted">Moyenne mensuelle</div>
+                    <div class="h3 mb-0">${formatCurrency(overview.avg_monthly)}</div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stat-card p-3" style="border-left-color: #17a2b8;">
-                    <div class="small text-muted">Évaluations</div>
-                    <div class="h3 mb-0">${overview.evaluations_count}</div>
-                    <small class="text-muted">sessions d'évaluation</small>
+                    <div class="small text-muted">Taux horaire effectif</div>
+                    <div class="h3 mb-0">${formatCurrency(overview.avg_hourly)}</div>
                 </div>
             </div>
         </div>
@@ -1093,48 +1380,49 @@ function renderCourseView(data, container) {
         <div class="row mb-4">
             <div class="col-md-8">
                 <div class="frappe-card p-3">
-                    <h5 class="mb-3">Évolution de l'assiduité</h5>
-                    <div id="attendance-chart" style="height: 250px;"></div>
+                    <h5 class="mb-3">Évolution mensuelle</h5>
+                    <div id="teacher-monthly-chart" style="height: 250px;"></div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="frappe-card p-3">
-                    <h5 class="mb-3">Statut des sessions</h5>
-                    <div id="course-status-chart" style="height: 250px;"></div>
+                    <h5 class="mb-3">Répartition par cours</h5>
+                    <div id="teacher-courses-chart" style="height: 250px;"></div>
                 </div>
             </div>
         </div>
         
-        <!-- Liste des sessions -->
-        <div class="frappe-card p-3">
-            <h5 class="mb-3">Historique des sessions</h5>
+        <!-- Cours enseignés -->
+        <div class="frappe-card p-3 mb-4">
+            <h5 class="mb-3">Cours enseignés</h5>
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Horaire</th>
-                            <th>Salle</th>
-                            <th>Statut</th>
-                            <th>Présence</th>
-                            <th>Retard</th>
-                            <th>Évaluation</th>
+                            <th>Cours</th>
+                            <th>Type</th>
+                            <th>Faculté</th>
+                            <th>Programme</th>
+                            <th>Niveau</th>
+                            <th class="text-center">Sessions</th>
+                            <th class="text-center">Heures</th>
+                            <th class="text-right">Montant</th>
                         </tr>
                     </thead>
                     <tbody>
     `;
     
-    data.sessions.forEach(s => {
-        const statusClass = `status-${s.status}`;
+    data.course_summary.forEach(c => {
         html += `
             <tr>
-                <td>${s.date}</td>
-                <td>${s.start_time} - ${s.end_time}</td>
-                <td>${s.room}</td>
-                <td><span class="status-badge ${statusClass}">${getStatusLabel(s.status)}</span></td>
-                <td>${s.attendance_rate > 0 ? s.attendance_rate + '%' : '-'}</td>
-                <td>${s.delay_minutes > 0 ? s.delay_minutes + ' min' : '-'}</td>
-                <td>${s.has_evaluation ? '<span class="badge bg-success">' + s.evaluation_type + '</span>' : '-'}</td>
+                <td><strong>${c.code}</strong><br><small>${c.name}</small></td>
+                <td><span class="badge" style="background: ${c.type === 'CM' ? '#e3f2fd' : c.type === 'TD' ? '#e8f5e8' : '#fff3e0'}; color: ${c.type === 'CM' ? '#1976d2' : c.type === 'TD' ? '#2e7d32' : '#f57c00'};">${c.type}</span></td>
+                <td>${c.faculty}</td>
+                <td>${c.program}</td>
+                <td>${c.level}</td>
+                <td class="text-center">${c.sessions}</td>
+                <td class="text-center">${c.hours}h</td>
+                <td class="currency-cell amount-positive">${formatCurrency(c.amount)}</td>
             </tr>
         `;
     });
@@ -1145,152 +1433,130 @@ function renderCourseView(data, container) {
             </div>
         </div>
         
-        <!-- Évaluations -->
-        ${data.evaluations.length > 0 ? `
-        <div class="frappe-card p-3 mt-4">
-            <h5 class="mb-3">Évaluations</h5>
+        <!-- Historique des paiements -->
+        <div class="frappe-card p-3">
+            <h5 class="mb-3">Historique des paiements</h5>
             <div class="table-responsive">
-                <table class="table">
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>Date</th>
+                            <th>Cours</th>
                             <th>Type</th>
-                            <th>Présence</th>
+                            <th>Heures</th>
+                            <th>Taux</th>
+                            <th class="text-right">Montant</th>
+                            <th>Statut</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${data.evaluations.map(e => `
-                            <tr>
-                                <td>${e.date}</td>
-                                <td>${e.type}</td>
-                                <td>${e.attendance}%</td>
-                            </tr>
-                        `).join('')}
+    `;
+    
+    data.recent_transactions.forEach(t => {
+        html += `
+            <tr>
+                <td>${t.date}</td>
+                <td>${t.course_code}<br><small>${t.course_name}</small></td>
+                <td>${t.course_type}</td>
+                <td>${t.hours_actual}h</td>
+                <td>${formatCurrency(t.taux_horaire)}/h</td>
+                <td class="currency-cell amount-positive">${formatCurrency(t.montant)}</td>
+                <td><span class="badge ${t.status === 'effectué' ? 'bg-success' : 'bg-danger'}">${t.status}</span></td>
+            </tr>
+        `;
+    });
+    
+    html += `
                     </tbody>
                 </table>
             </div>
         </div>
-        ` : ''}
     `;
     
     container.html(html);
     
-    // Initialiser les graphiques du cours
-    initCourseCharts(data);
+    // Initialiser les graphiques de l'enseignant
+    initTeacherCharts(data);
 }
 
 function initGlobalCharts(data) {
-    // Graphique d'évolution
+    // Graphique mensuel
     if (evolutionChart) evolutionChart.destroy();
     
-    evolutionChart = new frappe.Chart("#evolution-chart", {
+    evolutionChart = new frappe.Chart("#monthly-chart", {
         data: {
-            labels: data.evolution.map(d => {
-                const date = new Date(d.date);
-                return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-            }),
+            labels: data.monthly_evolution.map(m => m.month.substring(0, 3)),
             datasets: [
                 {
-                    name: "Planifiés",
-                    values: data.evolution.map(d => d.planned),
-                    chartType: 'line'
-                },
-                {
-                    name: "Terminés",
-                    values: data.evolution.map(d => d.completed),
-                    chartType: 'line'
-                }
-            ]
-        },
-        type: 'line',
-        height: 280,
-        colors: ['#ffc107', '#28a745']
-    });
-    
-    // Graphique des statuts
-    new frappe.Chart("#status-chart", {
-        data: {
-            labels: data.by_status.map(s => s.status),
-            datasets: [
-                {
-                    name: "Sessions",
-                    values: data.by_status.map(s => s.count),
-                    chartType: 'pie'
-                }
-            ]
-        },
-        type: 'pie',
-        height: 280,
-        colors: ['#ffc107', '#17a2b8', '#28a745', '#dc3545', '#fd7e14']
-    });
-}
-
-function initLevelChart(levelData) {
-    new frappe.Chart("#level-chart", {
-        data: {
-            labels: levelData.map(l => l.level),
-            datasets: [
-                {
-                    name: "Sessions",
-                    values: levelData.map(l => l.count),
+                    name: "Montant (FCFA)",
+                    values: data.monthly_evolution.map(m => m.amount),
                     chartType: 'bar'
                 }
             ]
         },
         type: 'bar',
-        height: 250,
-        colors: ['#007bff']
+        height: 280,
+        colors: ['#28a745']
+    });
+    
+    // Graphique par grade
+    new frappe.Chart("#grade-chart", {
+        data: {
+            labels: data.grade_summary.map(g => g.grade),
+            datasets: [
+                {
+                    name: "Montant",
+                    values: data.grade_summary.map(g => g.amount),
+                    chartType: 'pie'
+                }
+            ]
+        },
+        type: 'pie',
+        height: 280,
+        colors: ['#007bff', '#28a745', '#ffc107', '#17a2b8', '#dc3545']
     });
 }
 
-function initCourseCharts(data) {
-    // Graphique d'assiduité
-    new frappe.Chart("#attendance-chart", {
+function initTeacherCharts(data) {
+    // Graphique mensuel enseignant
+    new frappe.Chart("#teacher-monthly-chart", {
         data: {
-            labels: data.attendance_evolution.map(a => {
-                const date = new Date(a.date);
-                return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-            }),
+            labels: data.monthly_summary.map(m => m.month.substring(0, 3)),
             datasets: [
                 {
-                    name: "Taux de présence",
-                    values: data.attendance_evolution.map(a => a.rate),
+                    name: "Heures",
+                    values: data.monthly_summary.map(m => m.hours),
+                    chartType: 'line'
+                },
+                {
+                    name: "Montant",
+                    values: data.monthly_summary.map(m => m.amount / 1000), // en milliers
                     chartType: 'line'
                 }
             ]
         },
         type: 'line',
         height: 250,
-        colors: ['#17a2b8']
+        colors: ['#007bff', '#28a745']
     });
     
-    // Graphique des statuts
-    new frappe.Chart("#course-status-chart", {
+    // Graphique répartition par cours
+    const courseData = data.course_summary.slice(0, 5);
+    new frappe.Chart("#teacher-courses-chart", {
         data: {
-            labels: data.by_status.map(s => s.status),
+            labels: courseData.map(c => c.code),
             datasets: [
                 {
-                    name: "Sessions",
-                    values: data.by_status.map(s => s.count),
+                    name: "Montant",
+                    values: courseData.map(c => c.amount),
                     chartType: 'pie'
                 }
             ]
         },
         type: 'pie',
         height: 250,
-        colors: ['#28a745', '#ffc107', '#dc3545', '#fd7e14']
+        colors: ['#007bff', '#28a745', '#ffc107', '#17a2b8', '#dc3545']
     });
-}
-
-function getStatusLabel(status) {
-    const labels = {
-        'planned': 'Planifié',
-        'in_progress': 'En cours',
-        'completed': 'Terminé',
-        'cancelled': 'Annulé',
-        'rescheduled': 'Reporté'
-    };
-    return labels[status] || status;
 }
 
 // Fonctions de navigation
@@ -1309,129 +1575,26 @@ function navigateToLevel(levelName) {
     onLevelChange();
 }
 
-function navigateToCourse(courseCode) {
-    $('#course-filter').val(courseCode);
-    onCourseChange();
+function navigateToTeacher(teacherId) {
+    $('#teacher-filter').val(teacherId);
+    onTeacherChange();
 }
 
 function viewCourseDetail(courseCode) {
-    navigateToCourse(courseCode);
-}
-
-function viewTeacherDetails(teacherId) {
-    frappe.call({
-        method: 'udshed.api.test_api.get_teacher_details',
-        args: { teacher_id: teacherId },
-        callback: function(r) {
-            if (r.message) {
-                showTeacherDetailsModal(r.message);
-            }
-        }
-    });
-}
-
-function viewSessionDetail(courseCode, date) {
     frappe.show_alert({
-        message: `Détails de la session du ${date} pour ${courseCode}`,
+        message: `Détails du cours ${courseCode}`,
         indicator: 'blue'
     });
-    // Dans une version réelle, ouvrir une modale avec les détails
-}
-
-function showTeacherDetailsModal(teacher) {
-    const dialog = new frappe.ui.Dialog({
-        title: `Détails - ${teacher.name}`,
-        size: 'large',
-        fields: [
-            {
-                fieldtype: 'HTML',
-                fieldname: 'details',
-                options: `
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <p><i class="fa fa-envelope text-muted mr-2"></i> ${teacher.email}</p>
-                            <p><i class="fa fa-phone text-muted mr-2"></i> ${teacher.phone}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><i class="fa fa-building text-muted mr-2"></i> ${teacher.department}</p>
-                            <p><i class="fa fa-flask text-muted mr-2"></i> ${teacher.specialty}</p>
-                        </div>
-                    </div>
-                    
-                    <h6 class="mt-3 mb-2">Statistiques</h6>
-                    <div class="row mb-4">
-                        <div class="col-md-3">
-                            <div class="frappe-card p-2 text-center">
-                                <div class="h5 mb-0">${teacher.stats.total_courses}</div>
-                                <div class="small text-muted">Cours</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="frappe-card p-2 text-center">
-                                <div class="h5 mb-0">${teacher.stats.total_hours}h</div>
-                                <div class="small text-muted">Heures</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="frappe-card p-2 text-center">
-                                <div class="h5 mb-0">${teacher.stats.avg_attendance}%</div>
-                                <div class="small text-muted">Présence</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="frappe-card p-2 text-center">
-                                <div class="h5 mb-0">${teacher.stats.punctuality}%</div>
-                                <div class="small text-muted">Ponctualité</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <h6 class="mb-2">Cours enseignés</h6>
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Code</th>
-                                <th>Intitulé</th>
-                                <th>Niveau</th>
-                                <th>Volume</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${teacher.courses.map(c => `
-                                <tr>
-                                    <td>${c.code}</td>
-                                    <td>${c.name}</td>
-                                    <td>${c.level}</td>
-                                    <td>${c.hours}h</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `
-            }
-        ],
-        primary_action_label: __('Fermer'),
-        primary_action: function() {
-            dialog.hide();
-        }
-    });
-    
-    dialog.show();
+    // Dans une version réelle, ouvrir une modale ou naviguer
 }
 
 function exportData() {
     if (!currentData) return;
     
-    frappe.show_alert({
-        message: __('Préparation de l\'export...'),
-        indicator: 'blue'
-    });
-    
-    // Simuler un export
     const dataStr = JSON.stringify(currentData, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
     
-    const exportFileDefaultName = `cours-${currentView.level}-${new Date().toISOString().slice(0,10)}.json`;
+    const exportFileDefaultName = `finance-${currentView.level}-${new Date().toISOString().slice(0,10)}.json`;
     
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
@@ -1439,278 +1602,15 @@ function exportData() {
     linkElement.click();
     
     frappe.show_alert({
-        message: __('Export terminé'),
+        message: 'Export terminé',
         indicator: 'green'
     });
 }
 
 function refreshData() {
     frappe.show_alert({
-        message: __('Rafraîchissement des données...'),
+        message: 'Rafraîchissement des données...',
         indicator: 'blue'
     });
     applyFilters();
-}
-
-function clearFilters() {
-    $('#faculty-filter').val('');
-    $('#program-filter').val('');
-    $('#level-filter').val('');
-    $('#course-filter').val('');
-    $('#teacher-filter').val('');
-    $('#period-filter').val('mois');
-    $('#custom-date-range').slideUp();
-    
-    currentView = {
-        level: 'global',
-        faculty: null,
-        program: null,
-        levelName: null,
-        course: null
-    };
-    
-    applyFilters();
-}
-
-function render_ui()
-{
-	return `
-	<div id="teacher-insight-page">
-    <!-- En-tête -->
-    <div class="page-header mb-4">
-        <div class="row align-items-center">
-            <div class="col">
-                <div class="d-flex align-items-center">
-                    <!-- Fil d'Ariane de navigation -->
-                    <div id="breadcrumb" class="d-flex align-items-center">
-                        <span class="breadcrumb-item cursor-pointer data-navigate-to" data-navigate-to="global" onclick="navigateTo('global')">
-                            <i class="fa fa-home"></i> Accueil
-                        </span>
-                        <span id="faculty-breadcrumb" class="breadcrumb-item cursor-pointer data-navigate-to" data-navigate-to="faculty" onclick="navigateTo('faculty')" style="display: none;"></span>
-                        <span id="program-breadcrumb" class="breadcrumb-item cursor-pointer data-navigate-to" data-navigate-to="faculty" onclick="navigateTo('program')" style="display: none;"></span>
-                        <span id="level-breadcrumb" class="breadcrumb-item cursor-pointer data-navigate-to" data-navigate-to="faculty" onclick="navigateTo('level')" style="display: none;"></span>
-                        <span id="course-breadcrumb" class="breadcrumb-item" style="display: none;"></span>
-                    </div>
-                </div>
-                <h2 class="page-title mt-2" id="page-title">Tableau de bord de suivi des cours</h2>
-                <p class="text-muted" id="page-subtitle">Vue globale - Toutes les facultés</p>
-            </div>
-            <div class="col-auto">
-                <button class="btn btn-outline-primary btn-sm me-2 export-data" onclick="exportData()">
-                    <i class="fa fa-download"></i> ${ __("Exporter") }
-                </button>
-                <button class="btn btn-primary btn-sm refresh-data" onclick="refreshData()">
-                    <i class="fa fa-refresh"></i> ${ __("Rafraîchir") }
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Barre de filtres -->
-    <div class="filters-bar frappe-card p-3 mb-4">
-        <div class="row g-3 align-items-end">
-            <div class="col-md-2">
-                <label class="form-label text-muted small">${ __("Période") }</label>
-                <select id="period-filter" class="form-control form-control-sm apply-filter-change" onchange="applyFilters()">
-                    <option value="semaine">${ __("Cette semaine") }</option>
-                    <option value="mois" selected>${ __("Ce mois") }</option>
-                    <option value="trimestre">${ __("Ce trimestre") }</option>
-                    <option value="annee">${ __("Cette année") }</option>
-                    <option value="personnalise">${ __("Personnalisé") }</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label text-muted small">${ __("Faculté") }</label>
-                <select id="faculty-filter" class="form-control form-control-sm apply-filter-change" onchange="onFacultyChange()">
-                    <option value="">${ __("Toutes") }</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label text-muted small">${ __("Filière") }</label>
-                <select id="program-filter" class="form-control form-control-sm apply-filter-change" onchange="onProgramChange()">
-                    <option value="">${ __("Toutes") }</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label text-muted small">${ __("Niveau") }</label>
-                <select id="level-filter" class="form-control form-control-sm apply-filter-change" onchange="onLevelChange()">
-                    <option value="">${ __("Tous") }</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label text-muted small">${ __("Cours") }</label>
-                <select id="course-filter" class="form-control form-control-sm apply-filter-change" onchange="onCourseChange()">
-                    <option value="">${ __("Tous") }</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label text-muted small">${ __("Enseignant") }</label>
-                <select id="teacher-filter" class="form-control form-control-sm apply-filter-change" onchange="applyFilters()">
-                    <option value="">${ __("Tous") }</option>
-                </select>
-            </div>
-        </div>
-        
-        <!-- Filtres personnalisés -->
-        <div id="custom-date-range" class="row mt-3" style="display: none;">
-            <div class="col-md-3">
-                <input type="date" id="start-date" class="form-control form-control-sm" placeholder="Date début">
-            </div>
-            <div class="col-md-3">
-                <input type="date" id="end-date" class="form-control form-control-sm" placeholder="Date fin">
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-sm btn-primary apply-custom-date" onclick="applyCustomDate()">${ __("Appliquer") }</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading -->
-    <div id="loading" class="text-center py-5" style="display: none;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="sr-only">${ __("Chargement...") }</span>
-        </div>
-    </div>
-
-    <!-- Dashboard Content -->
-    <div id="dashboard-content">
-        <!-- Cette section sera dynamiquement remplie par JavaScript -->
-    </div>
-</div>
-
-<style>
-    #teacher-insight-page {
-        padding: 20px;
-    }
-    
-    .filters-bar {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    
-    /* Fil d'Ariane */
-    .breadcrumb-item {
-        position: relative;
-        padding-right: 20px;
-        color: #6c757d;
-        font-size: 0.9rem;
-    }
-    
-    .breadcrumb-item:after {
-        content: '/';
-        position: absolute;
-        right: 8px;
-        color: #adb5bd;
-    }
-    
-    .breadcrumb-item:last-child:after {
-        content: '';
-    }
-    
-    .breadcrumb-item.cursor-pointer:hover {
-        color: #007bff;
-        text-decoration: underline;
-    }
-    
-    /* Cartes de statistiques */
-    .stat-card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        transition: transform 0.2s, box-shadow 0.2s;
-        border-left: 4px solid;
-    }
-    
-    .stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-    }
-    
-    .stat-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-    }
-    
-    /* Badges de statut */
-    .status-badge {
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        display: inline-block;
-    }
-    
-    .status-planned { background: #fff3cd; color: #856404; }
-    .status-in_progress { background: #d1ecf1; color: #0c5460; }
-    .status-completed { background: #d4edda; color: #155724; }
-    .status-cancelled { background: #f8d7da; color: #721c24; }
-    .status-rescheduled { background: #fff3e0; color: #f57c00; }
-    
-    /* Cartes de programme/niveau */
-    .program-card {
-        background: white;
-        border-radius: 10px;
-        padding: 16px;
-        margin-bottom: 12px;
-        border: 1px solid #f0f0f0;
-        transition: all 0.2s;
-        cursor: pointer;
-    }
-    
-    .program-card:hover {
-        border-color: #007bff;
-        box-shadow: 0 4px 8px rgba(0,123,255,0.1);
-    }
-    
-    .progress-sm {
-        height: 6px;
-        border-radius: 3px;
-    }
-    
-    /* Tableau responsive */
-    .table th {
-        font-weight: 600;
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #6c757d;
-        border-top: none;
-    }
-    
-    .table td {
-        vertical-align: middle;
-        padding: 12px 8px;
-    }
-    
-    /* Calendrier */
-    .calendar-day {
-        border-left: 1px solid #f0f0f0;
-        padding: 8px;
-        min-height: 100px;
-    }
-    
-    .calendar-day:first-child {
-        border-left: none;
-    }
-    
-    .calendar-event {
-        background: #e3f2fd;
-        border-radius: 4px;
-        padding: 4px 8px;
-        margin-bottom: 4px;
-        font-size: 0.75rem;
-        cursor: pointer;
-    }
-    
-    .calendar-event:hover {
-        background: #bbdefb;
-    }
-</style>
-	`
 }

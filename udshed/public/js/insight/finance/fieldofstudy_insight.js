@@ -1,106 +1,80 @@
 window.Udshed = window.Udshed || {};
 window.Udshed.Insight = window.Udshed.Insight || {};
-window.Udshed.Insight.Academic = window.Udshed.Insight.Academic || {};
-window.Udshed.Insight.Academic.FieldOfStudy = {
-    showAcadmicFieldOfStudyInsights(page,filters,page_section) {
-        Udshed.Insight.UI.render_kpis(page_section.kpiRow,[
-            {label: __("Nombre de niveau"), value: "10"},
-             {label: __("Evolution globale des cours"), value: "12%"},           
-        ])
-            Udshed.Insight.UI.render_table({
-                columns:[{
-                    label: "Niveau",
-                    fieldname: "niveau",
-                    fieldtype: "Data"
-                 },
-                 {
-                    label: "Cours terminé",
-                    fieldname: "en_cours",
-                    fieldtype: "Data"
-                 },
-                 {
-                    label: "CC fait",
-                    fieldname: "cc_fait",
-                    fieldtype: "Int"
-                 },
-                 {
-                    label: "Examen fait",
-                    fieldname: "examen_fait",
-                    fieldtype: "Float"
-                 },
-                  {
-                    label: "Semestre",
-                    fieldname: "semestre",
-                    fieldtype: "Float"
-                 },
-                 {
-                    label: "Progression (%)",
-                    fieldname: "progression",
-                    fieldtype: "Float"
-                 }
-                ],
-                values:[
-                    { niveau: "L1", en_cours: "Programmation Orienté Objet", cc_fait: 2, examen_fait:0,semestre:"Semestre 1",progression:12.4},
-                    { niveau: "L2", en_cours: "Uml", cc_fait: 1, examen_fait:2,semestre:"Semestre 2",progression:98},
-                    { niveau: "L3", en_cours: "Gestion de Projet", cc_fait: 1, examen_fait:1,semestre:"Semestre 1",progression:100},
-                ]
-                },
-                page_section.tableSection,
-                "Rapport de progression de la filière"
-            )
-
-        if(filters.semestre)
-        {
-            Udshed.Insight.UI.render_chart(`Progression global par niveau au ${filters.semestre=="semestre1"?'Semestre 1':'Semestre 2'}`,"bar",page_section.chartSection,{
-                labels: ["IRT  1","IRT 2","IRT 3",],
-                dataset_label: "Etudiant",
-                values: [78,19,57]
-            })
-            Udshed.Insight.UI.render_table({
-                columns:[{
-                    label: "Niveau",
-                    fieldname: "niveau",
-                    fieldtype: "Data"
-                 },
-                 {
-                    label: "Cours terminé",
-                    fieldname: "en_cours",
-                    fieldtype: "Data"
-                 },
-                 {
-                    label: "CC fait",
-                    fieldname: "cc_fait",
-                    fieldtype: "Int"
-                 },
-                 {
-                    label: "Examen fait",
-                    fieldname: "examen_fait",
-                    fieldtype: "Float"
-                 },
-                 {
-                    label: "Progression (%)",
-                    fieldname: "progression",
-                    fieldtype: "Float"
-                 }
-                ],
-                values:[
-                    { niveau: "L1", en_cours: "Programmation Orienté Objet", cc_fait: 2, examen_fait:0,progression:12.4},
-                    { niveau: "L2", en_cours: "Uml", cc_fait: 1, examen_fait:2,progression:98},
-                    { niveau: "L3", en_cours: "Gestion de Projet", cc_fait: 1, examen_fait:1,progression:100},
-                ]
-                },
-                page_section.tableSection,
-                "Rapport de progression de la filière"
-            )
-        }
-        else 
-        {
-            Udshed.Insight.UI.render_chart(`Progression global par niveau ${filters.semestre=="semestre1"?'Semestre 1':'Semestre 2'}`,"bar",page_section.chartSection,{
-                labels: ["Semestre 1","Semestre 2"],
-                dataset_label: "Etudiant",
-                values: [12,19]
-            })
-        }
+window.Udshed.Insight.Finance = window.Udshed.Insight.Finance || {};
+window.Udshed.Insight.Finance.FieldOfStudy = {
+    showFinanceFieldOfStudyInsights(page,filters,page_section,data) {
+       const overview = data.global;
+       const container = page_section.container;
+    
+        let html = `
+            <!-- KPIs -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    ${window.Udshed.Insight.UI.render_kpi_with_icon({
+                        bgColor:"#007bff",
+                        iconColor:"#007bff",
+                        icon:"fa fa-calendar-check-o",
+                        label:"Total Sessions",
+                        value:`${overview.sessions}`
+                    })}
+                </div>
+                <div class="col-md-4">
+                    ${window.Udshed.Insight.UI.render_kpi_with_icon({
+                        bgColor:"#28a745",
+                        iconColor:"#28a745",
+                        icon:"fa fa-clock-o",
+                        label:"Heures",
+                        value:`${overview.done_hours}h`,
+                        comment:`/${overview.total_hours}h`
+                    })}
+                </div>
+                <div class="col-md-4">
+                    ${window.Udshed.Insight.UI.render_kpi_with_icon({
+                        bgColor:"#ffc107",
+                        iconColor:"#ffc107",
+                        icon:"fa fa-check-circle",
+                        label:"Complétion",
+                        value:`${overview.completion}%`
+                    })}
+                </div>
+            </div>
+            
+            <!-- Niveaux -->
+            <div class="frappe-card p-3 mb-4">
+                <h5 class="mb-3">Niveaux</h5>
+                <div class="row">
+        `;
+    
+        data.level.forEach(l => {
+            html += `
+                <div class="col-md-4 mb-3">
+                    <div class="program-card" onclick="navigateToLevel('${l.level.name}')">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0">Niveau ${l.level.level}</h6>
+                            <span class="badge badge-${l.completion_color}">${l.completion}%</span>
+                        </div>
+                        <div class="small text-muted mb-2">
+                            <i class="fa fa-book mr-1"></i> ${l.count_teaching_unit} cours · 
+                        </div>
+                        <div class="progress progress-sm mb-2">
+                            <div class="progress-bar bg-${l.completion_color}" style="width: ${l.completion}%"></div>
+                        </div>
+                        <div class="d-flex justify-content-between small">
+                            <span>${l.done_hours}h effectuées</span>
+                            <span class="text-muted">${l.sessions} sessions</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    
+        html += `
+                </div>
+            </div>
+        `;
+    
+    
+        container.html(html);
         
     }
 };

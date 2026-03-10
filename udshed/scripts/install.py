@@ -4,6 +4,7 @@ import udshed.utils.time_utils as time_utils
 def create_default_data():
     default_acadamic_year = time_utils.get_default_academic_year()
     create_default_calendar_period()
+    create_default_config_setting()
 
 def create_default_calendar_period():
     if not frappe.db.exists("Calendar Planing","Default"):
@@ -27,6 +28,27 @@ def create_default_calendar_period():
 
         default_calendar.insert()
         frappe.db.commit()
+
+def create_default_config_setting():
+    udshed_setting = frappe.get_single("Udshed Setting")
+    grade_list = {
+        "Professionnel de Classe A":5000,
+        "Professionnel de Classe B":5000,
+        "Professionnel de Classe C":5000,
+        "Professionnel de Classe D":5000,
+        "ATER":2500,
+        "Assistant":7000,
+        "Chargé de Cours":7500,
+        "Docteur":8000,
+        "Maitre de Conférences":10000,
+        "Professeur":12000
+    }
+    for titre, prix in grade_list.items():
+        udshed_setting.append("configuration_des_paiements_par_grade",{
+            "grade":titre,
+            "prix_heure":prix
+        })
+    udshed_setting.save(ignore_permissions=True)
 
 def load_json(doctype, path):
     if not os.path.exists(path):
@@ -55,5 +77,5 @@ def load_sidebar():
     
 def after_install():
     create_default_data()
-    load_workspace()
-    load_sidebar()
+    # load_workspace()
+    # load_sidebar()

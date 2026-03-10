@@ -35,8 +35,7 @@
    "fieldname": "school_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Nom de l'\u00e9tablissement",
-   "reqd": 1
+   "label": "Nom de l'\u00e9tablissement"
   },
   {
    "fieldname": "column_break_lpdk",
@@ -45,8 +44,7 @@
   {
    "fieldname": "school_logo",
    "fieldtype": "Attach Image",
-   "label": "Logo",
-   "reqd": 1
+   "label": "Logo"
   },
   {
    "fieldname": "section_break_bsrn",
@@ -63,7 +61,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-03-10 02:32:23.901367",
+ "modified": "2026-03-10 05:57:59.445090",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Udshed Setting",

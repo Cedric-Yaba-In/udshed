@@ -93,7 +93,6 @@ window.Udshed.Insight.Academic.Year = {
         this.initGlobalCharts(data);
     },
     initGlobalCharts(data) {
-        console.log("Data ",data)
         // Graphique des statuts
         new frappe.Chart("#status-chart", {
             data: {

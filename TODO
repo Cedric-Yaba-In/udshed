@@ -16,3 +16,16 @@
 - ajouter ou supprimer un élement de la grille
 - Gérer les droits d'accés en fontion de la filiére (importer ou modifier la grille uniquement où on est coordonateur mais tout le monde peut visualiser)
 - Terminer l'import pour les filiéres sans UV dans la grille (Important)
+
+-- Statistique ---
+- Dashboard statistique des cours (OK)
+- Exporter les statistiques de cours en excel
+- Dashboard statistique financier
+- Exporter les statistique financiers en excel
+- Exporter les statistiques en pdf (Optionnel mais a regarders)
+
+--- Document académique (word, pdf) en version rempli et le modele ---
+- Fiche de progresison de cours d'enseignant vacataire
+- Fiche de réglement des vacations pour vacataire
+- Fiche de convention des vacations signé
+- Attestation d'enseignement 

@@ -42,7 +42,6 @@ def get_app_logo():
 
 @frappe.whitelist(allow_guest=False)
 def generate_planning_pdf(filters):
-
     app_logo = get_app_logo()
 
     filiere = None

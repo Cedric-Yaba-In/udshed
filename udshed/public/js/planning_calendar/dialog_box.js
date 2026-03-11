@@ -126,9 +126,20 @@ window.Udshed.Dialogs = {
                     },
                     callback: (e) => {
                         dialog.hide();
-                        frappe.show_alert({ message:__('Planning crée.'), indicator:'green' });
-                        frappe.utils.play_sound("submit");
-                        callbak();
+                        if(e.message.status)
+                        {
+                            frappe.show_alert({ message:__('Planning crée.'), indicator:'green' });
+                            frappe.utils.play_sound("submit");
+                            callbak();
+                        }
+                        else{
+                            frappe.msgprint({
+                                title: __('Echec de planification'),
+                                message: e.message.message.replace("\n","<br\>"),
+                                indicator: 'red'
+                            });
+                            frappe.utils.play_sound("error");
+                        }
                     },
                     error: (err) => {
                         frappe.utils.play_sound("error");
@@ -247,11 +258,24 @@ window.Udshed.Dialogs = {
                         day_of_week: day.toISOString().split('T')[0],
                         half_day: halfDay,
                     },
-                    callback: () => {
+                    callback: (e) => {
                         dialog.hide();
-                        callback();
-                        frappe.show_alert({ message:__('Planning mis à jour.'), indicator:'green' });
-                        frappe.utils.play_sound("submit");
+                        if(e.message.status)
+                        {
+                            callback();
+                            frappe.show_alert({ message:__('Planning mis à jour.'), indicator:'green' });
+                            frappe.utils.play_sound("submit");
+                        }
+                        else
+                        {
+                           frappe.msgprint({
+                                title: __('Echec de modification du planning'),
+                                message: e.message.message.replace("\n","<br\>"),
+                                indicator: 'red'
+                            });
+                            frappe.utils.play_sound("error"); 
+                        }
+                        
                     },
                     error: (err) => {
                         console.error(err);

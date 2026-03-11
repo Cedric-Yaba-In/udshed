@@ -238,7 +238,7 @@ def get_levels(doctype, txt, searchfield, start, page_len, filters):
 def get_teaching_unit_by_level(doctype, txt, searchfield, start, page_len, filters):
 	TeachingUnit = DocType("Teaching Unit")
 	CourseNiveauFiliere = DocType("Course Field of study level item")
-
+	# print("Doctype ",txt," searchfiled",searchfield)
 	query = (
     	frappe.qb.from_(TeachingUnit)
     	.join(CourseNiveauFiliere)
@@ -253,7 +253,12 @@ def get_teaching_unit_by_level(doctype, txt, searchfield, start, page_len, filte
         	(TeachingUnit.academic_year == filters.get("academic_year")) 
 		)
 	)
-
+	if txt:
+		query = query.where(
+			TeachingUnit.intitule_cours.like(f"%{txt}%") |
+			TeachingUnit.name.like(f"%{txt}%")
+			
+		)
 	data =  query.run()
 	return data
 

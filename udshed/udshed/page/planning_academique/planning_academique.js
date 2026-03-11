@@ -15,17 +15,7 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 
 		var currentWeekStart = Udshed.DateUtils.getMonday(new Date());
 
-		
 		async function loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods) {
-
-			// $("#planning_calendar .planning-grid").html(`
-			// 	<div style="text-align:center; padding:40px;">
-			// 		<div class="spinner-border"></div>
-			// 		<p>Chargement des données...</p>
-			// 	</div>
-			// s`);
-			// frappe.publish_progress(30, title="Chargement des cours")
-
 			Udshed.DateUtils.updateWeekLabel(currentWeekStart);
 			Udshed.DateUtils.syncSelectors(weekSelect,monthPicker,currentWeekStart);
 			
@@ -39,9 +29,6 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			title: 'Planning',
 			single_column: true
 		});
-
-		
-
 
 		let filters = {
 			academic_year: null,
@@ -67,10 +54,8 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 
 		const monthPicker = document.getElementById("month-picker");
 		const weekSelect = document.getElementById("week-select");
-
 		
 		let btnEporterPDF =  page.set_primary_action('Exporter en PDF', () => {
-
 			if(Udshed.Utils.isValidFecthDataFilter(filters))
 			{
 				let url = `/api/method/udshed.www.planning_pdf.download_planning_pdf?filters=${encodeURIComponent(JSON.stringify({...filters,week_start:currentWeekStart.toISOString().split('T')[0]}))}`;
@@ -96,7 +81,6 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 				Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)
 				periods = [...defaultPeriods]
 				// show_calendar(filters);
-
 			}
 		});
 

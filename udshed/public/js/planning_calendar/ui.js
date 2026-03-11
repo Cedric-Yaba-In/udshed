@@ -74,14 +74,13 @@ window.Udshed.UI = {
         calendar_zone.empty();
         let plan = new Map();
         coursePeriod.forEach((period)=>{
-            plan.set(period.name,{libelle:period.libelle,items:[],fuseauHoraire : period.fuseau_horaire})
+            plan.set(period.name,{libelle:period.libelle,items:[],fuseauHoraire : period.fuseau_horaire, heure_de_debut:period.heure_de_debut, heure_de_fin:period.heure_de_fin})
         })
 
         // Construire les lignes du matin et de l'après-midi
         for (let day of ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]) {
             for(let period of coursePeriod)
             {
-                // console.log("Period Ite ",period)
                 periodItem = grid_data[day].get(period.name)
 
                 let period_cours_type_class = "cm";
@@ -151,15 +150,13 @@ window.Udshed.UI = {
             <div class="planning-header">Samedi</div>`
 
         for(let period of plan.keys())
-        {
-            console.log("period fund ",plan.get(period))
-            periodItem = period.split("-")
+        {   
             calendarHTML += `<div class="planning-time-label">`
             if(plan.get(period).libelle)
             {
                 calendarHTML+= `<span>${plan.get(period).libelle}</span>`
             }
-            let startPeriod = periodItem[0].split(":"), endPeriod = periodItem[1].split(":");
+            let startPeriod = plan.get(period).heure_de_debut.split(":"), endPeriod = plan.get(period).heure_de_fin.split(":");
             calendarHTML +=`                    
                     <div class="planning-time-range">${startPeriod[0]}:${startPeriod[1]} - ${endPeriod[0]}:${endPeriod[1]}</div>
                     <div class="planning-time-fuseau">${plan.get(period).fuseauHoraire}</div>

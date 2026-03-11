@@ -137,7 +137,13 @@ def generate_planning_pdf(filters):
             "school_logo": school_logo,
             "app_logo": app_logo,
             "generated_on": datetime.now().strftime("%d/%m/%Y à %H:%M"),
-            "period":period
+            "period":[
+                {
+                    **p,
+                    "heure_de_debut": datetime.strptime(str(p["heure_de_debut"]), "%H:%M:%S").strftime('%H:%M'),
+                    "heure_de_fin":datetime.strptime(str(p["heure_de_fin"]), "%H:%M:%S").strftime('%H:%M')
+                } for p in period
+            ]
         }
     if teacher:
         data_to_print["teacher"] = f"{teacher.grade}. {teacher.first_name} {teacher.last_name}"

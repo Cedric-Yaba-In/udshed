@@ -222,17 +222,17 @@ th { background:#f2f2f2; }
     <!-- {{item}} -->
     {% if item %}
       <div class="event {{ item.css }}">
-        <b>{{ item.subject }}</b><br/><br/>
+        <b>{{ item.subject }}</b><br/>
         {{ item.cours_label }}<br/><br/>
-        <span class="type_cours">{{ item.type }}</span><br>--------------------------------------<br/><br/>
+        <span class="type_cours">{{ item.type }}</span><br>--------------------------------------<br/>
         {% if item.mode == "En ligne" %}
           En ligne
         {% else %}
           Batiment: {{ item.batiment or "-" }}<br> Salle: {{ item.salle or "-" }}
         {% endif %}
-        <br>--------------------------------------<br/><br/>
+        <br>--------------------------------------<br/>
         {% if filters.teacher %}
-          <b>{{item.filiere}} {{item.niveau_label}}</b><br/><br/>
+          <b>{{item.filiere}} {{item.niveau_label}}</b><br/>
         {% else %}
           {% for t in item.teachers %}
             <b>{{ t }}</b><br>

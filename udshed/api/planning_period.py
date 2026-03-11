@@ -1,9 +1,9 @@
+from datetime import datetime, timedelta
 import frappe
 
 def get_unique_sorted_period(periods):
     set_period = {}
     unique = []
-    print("Periods ",periods)
     for d in periods:
         if d["name"] not in set_period:
             set_period[d["name"]]=d["name"]
@@ -17,8 +17,7 @@ def get_unique_sorted_period(periods):
             if "fuseau_horaire" in d:
                 data_to_set["fuseau_horaire"] = d["fuseau_horaire"]
             unique.append(data_to_set)
-            
-    return sorted(unique,key = lambda x: x["name"])
+    return sorted(unique,key = lambda x: f"{datetime.strptime(str(x["heure_de_debut"]), "%H:%M:%S").strftime('%H:%M')}-{datetime.strptime(str(x["heure_de_fin"]), "%H:%M:%S").strftime('%H:%M')}")
 
 
 @frappe.whitelist()

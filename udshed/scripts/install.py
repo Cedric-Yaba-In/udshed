@@ -15,14 +15,14 @@ def create_default_calendar_period():
         })
         default_calendar.append("heure_planification",{
             "doctype":"Planning Period",
-            "heure_de_debut":"08:00",
-            "heure_de_fin":"12:00",
+            "heure_de_debut":"08:00:00",
+            "heure_de_fin":"12:00:00",
             "libelle":"Matin",
         })
         default_calendar.append("heure_planification",{
             "doctype":"Planning Period",
-            "heure_de_debut":"13:30",
-            "heure_de_fin":"16:45",
+            "heure_de_debut":"13:30:00",
+            "heure_de_fin":"16:45:00",
             "libelle":"Soir",
         })
 

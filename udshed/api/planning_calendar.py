@@ -119,6 +119,7 @@ def create_planning(academic_year, cours, course_type,day_of_week, half_day,bati
         planning = frappe.get_doc(planning_data)
 
         planning.insert(ignore_permissions = True)
+        frappe.db.commit()
         return {
             "status":True,
             "data":planning
@@ -143,7 +144,7 @@ def update_planning(planning_item_name,academic_year,cours,course_type, day_of_w
         planning_item.mode = mode
 
         cours_teachers = list(map(lambda x: x.enseignant, teaching_unit.table_enseignant))
-        
+
         if len(cours_teachers)==0:
             frappe.throw(f"Le cours {teaching_unit.intitule_cours} n'a pas d'enseignant assigné. veuillez assigner un enseignant puis recommencer")
 
@@ -167,6 +168,7 @@ def update_planning(planning_item_name,academic_year,cours,course_type, day_of_w
             planning_item.batiment = batiment
         
         planning_item.save()
+        frappe.db.commit()
 
         return {
             "status":True,

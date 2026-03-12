@@ -49,6 +49,8 @@ window.Udshed.PlanningQueries  = {
             freeze_message: __("Suppression du planning en cours..."),
             args: { planning_name:planning_name },
             callback: (r) => {
+                frappe.show_alert({ message:__('Planning supprimé avec succés.'), indicator:'green' });
+                frappe.utils.play_sound("delete");
                 callback_function(r.message);                
             }
         });

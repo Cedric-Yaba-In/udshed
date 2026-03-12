@@ -264,8 +264,12 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		
 
 		$(document).on("click", ".planning-cell", function () {
+
 			//on se rassure qu'il a les droits de motifications
-			if(!Udshed.Perms.user_can_edit_planning_cell(filters,userContext)) return;
+			if(!Udshed.Perms.user_can_edit_planning_cell(filters,userContext)) {
+				frappe.utils.play_sound("click");
+				return
+			};
 
 			currentDay = new Date(parseInt(weekSelect.value)); // Récupérer la date de la semaine sélectionnée
 			let day ={ "Monday": 0, "Tuesday": 1, "Wednesday": 2, "Thursday": 3, "Friday": 4,"Saturday": 5}

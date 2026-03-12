@@ -9,6 +9,8 @@ window.Udshed.Dialogs = {
                 indicator: "red",
                 message: __("Veuillez sélectionner une année académique avant de créer une planification.")
             });
+            frappe.utils.play_sound("click");
+
             return;
         }
 
@@ -18,6 +20,8 @@ window.Udshed.Dialogs = {
         		indicator: "red",
         		message: __("Veuillez sélectionner une faculté avant de créer une planification.")
         	});
+            frappe.utils.play_sound("click");
+
         	return;
         }
         if(!filter.filiere)
@@ -27,6 +31,8 @@ window.Udshed.Dialogs = {
         		indicator: "red",
         		message: __("Veuillez sélectionner une filière avant de créer une planification.")
         	});
+            frappe.utils.play_sound("click");
+
             return;
         }
         
@@ -36,6 +42,8 @@ window.Udshed.Dialogs = {
         		indicator: "red",
         		message: __("Veuillez sélectionner un niveau avant de créer une planification.")
         	});
+            frappe.utils.play_sound("click");
+
         	return;
         }       
         
@@ -116,10 +124,10 @@ window.Udshed.Dialogs = {
             primary_action(values) {
                 frappe.call({
                     method: "udshed.api.planning_calendar.create_planning",
+                    freeze: true,
+                    freeze_message: __("Nouvelle plannification en cours..."),
                     args: {
-                        academic_year:filter.academic_year,
-                        freeze: true,
-                        freeze_message: __("Nouvelle plannification en cours..."),
+                        academic_year:filter.academic_year,                        
                         ...values,
                         day_of_week: day.toISOString().split('T')[0],
                         half_day: halfDay,
@@ -255,16 +263,16 @@ window.Udshed.Dialogs = {
                         planning_item_name: course.item.name, // ID DocType
                         academic_year:filter.academic_year,
                         ...values,
-                        day_of_week: day.toISOString().split('T')[0],
+                        day_of_week: frappe.datetime.obj_to_str(day),
                         half_day: halfDay,
                     },
                     callback: (e) => {
                         dialog.hide();
                         if(e.message.status)
                         {
-                            callback();
                             frappe.show_alert({ message:__('Planning mis à jour.'), indicator:'green' });
                             frappe.utils.play_sound("submit");
+                            callback();                            
                         }
                         else
                         {

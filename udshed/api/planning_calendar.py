@@ -84,21 +84,24 @@ def create_planning(academic_year, cours, course_type,day_of_week, half_day,bati
         cours_teachers = list(map(lambda x: x.enseignant, teaching_unit.table_enseignant))
         
         if len(cours_teachers)==0:
-            frappe.throw(f"Le cours {teaching_unit.intitule_cours} n'a pas d'enseignant assigné. veuillez assigner un enseignant puis recommencer")
+            frappe.throw(f"Le cours <b>{teaching_unit.intitule_cours}</b><br/> n'a pas d'enseignant assigné. veuillez assigner un enseignant puis recommencer")
 
         date_week_start = datetime.fromisoformat(day_of_week)
         
-        planning_days = frappe.get_all("Planning Item",{"date":date_week_start, "period":half_day},["name","cours","type","date","period"])
+        planning_days = frappe.get_all("Planning Item",{"date":date_week_start, "period":half_day},["name","cours","type","date","period","salle","batiment"])
         for plan in planning_days:
             doc = course.get_single_teaching_unit(plan.cours,academic_year)
+
             cours_teachers_existing = list(map(lambda x: x.enseignant, doc.table_enseignant))
             # Check for common teachers
             common_teachers = set(cours_teachers).intersection(set(cours_teachers_existing))
             if common_teachers:
-                frappe.throw(f"Conflit de planning détecté avec le cours '{doc.intitule_cours}' pour les enseignants: {', '.join(common_teachers)}")
+                niveau_filiere_intersect = list(map(lambda x: {"filiere":x.filiere,"niveau":frappe.get_doc("Field of study Level",x.niveau)}, doc.course_levels))
+                frappe.throw(f"Conflit de planning détecté avec le cours <b>{doc.intitule_cours}</b> pour les enseignants: <b>{', '.join(common_teachers)}</b>.<br/>Enseignants déjà programmés dans les classes: <b>{', '.join([f"{x["filiere"]} {x["niveau"].level}" for x in niveau_filiere_intersect])}</b>")
             
-            if salle and doc.salle == salle:
-                frappe.throw(f"Conflit de salle détecté avec la salle '{doc.salle}' utilisé pour le cours {doc.intitule_cours}")
+            if salle and plan.salle == salle:
+                niveau_filiere_intersect = list(map(lambda x: {"filiere":x.filiere,"niveau":frappe.get_doc("Field of study Level",x.niveau)}, doc.course_levels))
+                frappe.throw(f"Conflit de salle détecté avec la salle <b>{plan.salle}</b><br/>Salle déjà utilisé pour le cours de <b>{doc.intitule_cours}</b> par les classes: <b>{', '.join([f"{x["filiere"]} {x["niveau"].level}" for x in niveau_filiere_intersect])}</b>")
             
 
         planning_data = {
@@ -146,11 +149,11 @@ def update_planning(planning_item_name,academic_year,cours,course_type, day_of_w
         cours_teachers = list(map(lambda x: x.enseignant, teaching_unit.table_enseignant))
 
         if len(cours_teachers)==0:
-            frappe.throw(f"Le cours {teaching_unit.intitule_cours} n'a pas d'enseignant assigné. veuillez assigner un enseignant puis recommencer")
+            frappe.throw(f"Le cours <b>{teaching_unit.intitule_cours}</b><br/> n'a pas d'enseignant assigné. veuillez assigner un enseignant puis recommencer")
 
         date_week_start = datetime.fromisoformat(day_of_week)
         
-        planning_days = frappe.get_all("Planning Item",{"date":date_week_start, "period":half_day},["name","cours","type","date","period"])
+        planning_days = frappe.get_all("Planning Item",{"date":date_week_start, "period":half_day},["name","cours","type","date","period","salle","batiment"])
         for plan in planning_days:
             if plan.name == planning_item_name:
                 continue
@@ -159,9 +162,12 @@ def update_planning(planning_item_name,academic_year,cours,course_type, day_of_w
             # Check for common teachers
             common_teachers = set(cours_teachers).intersection(set(cours_teachers_existing))
             if common_teachers:
-                frappe.throw(f"Conflit de planning détecté avec le cours '{doc.intitule_cours}' pour les enseignants: {', '.join(common_teachers)}")
-            if salle and doc.salle == salle:
-                frappe.throw(f"Conflit de salle détecté avec la salle '{doc.salle}' utilisé pour le cours {doc.intitule_cours}")
+                niveau_filiere_intersect = list(map(lambda x: {"filiere":x.filiere,"niveau":frappe.get_doc("Field of study Level",x.niveau)}, doc.course_levels))
+                frappe.throw(f"Conflit de planning détecté avec le cours <b>{doc.intitule_cours}</b> pour les enseignants: <b>{', '.join(common_teachers)}</b>.<br/>Enseignants déjà programmés dans les classes: <b>{', '.join([f"{x["filiere"]} {x["niveau"].level}" for x in niveau_filiere_intersect])}</b>")
+            
+            if salle and plan.salle == salle:
+                niveau_filiere_intersect = list(map(lambda x: {"filiere":x.filiere,"niveau":frappe.get_doc("Field of study Level",x.niveau)}, doc.course_levels))
+                frappe.throw(f"Conflit de salle détecté avec la salle <b>{plan.salle}</b><br/>Salle déjà utilisé pour le cours de <b>{doc.intitule_cours}</b> par les classes: <b>{', '.join([f"{x["filiere"]} {x["niveau"].level}" for x in niveau_filiere_intersect])}</b>")
         if salle:
             planning_item.salle = salle
         if batiment:

@@ -129,7 +129,7 @@ window.Udshed.Dialogs = {
                     args: {
                         academic_year:filter.academic_year,                        
                         ...values,
-                        day_of_week: day.toISOString().split('T')[0],
+                        day_of_week: frappe.datetime.obj_to_str(day),
                         half_day: halfDay,
                     },
                     callback: (e) => {

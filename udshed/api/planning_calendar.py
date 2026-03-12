@@ -13,7 +13,7 @@ def get_week_planning(academic_year,week_start,filiere=None, niveau=None,teacher
     TeachingUnit = DocType("Teaching Unit")
     CourseNiveauFiliere = DocType("Course Field of study level item")
     CourseEnseignant = DocType("Course Teacher Item")
-    date_week_start = datetime.fromisoformat(week_start)
+    date_week_start = frappe.utils.getdate(week_start)
 
     query = (
         frappe.qb.from_(PlanningItem)
@@ -40,7 +40,7 @@ def get_week_planning(academic_year,week_start,filiere=None, niveau=None,teacher
         .where(
             (PlanningItem.academic_year == academic_year) &
             (PlanningItem.date >= date_week_start) &
-            (PlanningItem.date <= frappe.utils.add_days(date_week_start, 7))
+            (PlanningItem.date < frappe.utils.add_days(date_week_start, 7))
         )
     )
     if filiere:
@@ -86,7 +86,7 @@ def create_planning(academic_year, cours, course_type,day_of_week, half_day,bati
         if len(cours_teachers)==0:
             frappe.throw(f"Le cours <b>{teaching_unit.intitule_cours}</b><br/> n'a pas d'enseignant assigné. veuillez assigner un enseignant puis recommencer")
 
-        date_week_start = datetime.fromisoformat(day_of_week)
+        date_week_start = frappe.utils.getdate(day_of_week)
         
         planning_days = frappe.get_all("Planning Item",{"date":date_week_start, "period":half_day},["name","cours","type","date","period","salle","batiment"])
         for plan in planning_days:
@@ -151,7 +151,7 @@ def update_planning(planning_item_name,academic_year,cours,course_type, day_of_w
         if len(cours_teachers)==0:
             frappe.throw(f"Le cours <b>{teaching_unit.intitule_cours}</b><br/> n'a pas d'enseignant assigné. veuillez assigner un enseignant puis recommencer")
 
-        date_week_start = datetime.fromisoformat(day_of_week)
+        date_week_start = frappe.utils.getdate(day_of_week)
         
         planning_days = frappe.get_all("Planning Item",{"date":date_week_start, "period":half_day},["name","cours","type","date","period","salle","batiment"])
         for plan in planning_days:

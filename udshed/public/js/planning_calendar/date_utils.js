@@ -16,7 +16,7 @@ window.Udshed.DateUtils = {
     updateWeekLabel(currentWeekStart) {
         const start = new Date(currentWeekStart);
         const end = new Date(start);
-        end.setDate(start.getDate() + 6);
+        end.setDate(start.getDate() + 5);
 
         const options = { day: '2-digit', month: 'long', year: 'numeric' };
 
@@ -65,16 +65,14 @@ window.Udshed.DateUtils = {
 
         weeks.forEach((weekStart, index) => {
             const end = new Date(weekStart);
-            end.setDate(weekStart.getDate() + 6);
+            end.setDate(weekStart.getDate() + 5);
 
             const option = document.createElement("option");
             option.value = weekStart.getTime();
 
-            option.text = `Semaine ${index + 1} : ${
-            weekStart.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })
-            } - ${
-            end.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })
-            }`;
+            option.text = `Semaine ${index + 1} : 
+                ${ weekStart.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })} - 
+                ${ end.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) }`;
 
             weekSelect.appendChild(option);
         });

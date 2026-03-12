@@ -19,7 +19,7 @@ window.Udshed.PlanningQueries  = {
                 // filiere: filter.filiere,
                 // niveau: filter.niveau,
                 ...filter,
-                week_start: currentWeekStart.toISOString().split('T')[0]// format YYYY-MM-DD
+                week_start: frappe.datetime.obj_to_str(currentWeekStart)// format YYYY-MM-DD
             },
             callback: (res) => {
                 if(!res.message) return callback_function([])

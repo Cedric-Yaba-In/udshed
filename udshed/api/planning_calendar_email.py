@@ -50,15 +50,12 @@ def send_planning_to_mail(filters,to_all_teacher=None,to_teacher=None,to_me=None
         for item in items:
             if not item["enseignant"] in teachers:
                 teachers.append(item["enseignant"])
-            print("Teachers list ",teachers,filters)
         for t in teachers:
             planning_teacher = frappe.get_doc("Teacher",{"name":t})
             filters["teacher"] = t
-            print("sending to teacher", planning_teacher, planning_teacher.email)
 
             send_planning_to_teacher_email(filters, planning_teacher,school_name, school_logo)
 
-        print("current_user",frappe.session.user)
 
     if to_me:
         if frappe.db.exists("User", frappe.session.user):
@@ -66,12 +63,11 @@ def send_planning_to_mail(filters,to_all_teacher=None,to_teacher=None,to_me=None
         else:
 
             current_user = frappe.get_doc("Teacher",frappe.session.user)
-        print(current_user,frappe.session.user)
         frappe.sendmail(
             sender = email_utils.get_formatted_sender(),
             recipients = [current_user.email],
             subject =  f"UdM: {planning_name}",
-            message =  email_html_template(school_name, school_logo, frappe.session.user, start_date, end_date),
+            message =  email_html_template(school_name, school_logo, current_user.full_name, start_date, end_date),
             attachments= [{
                 "fname": planning_name + ".pdf",
                 "fcontent": pdf

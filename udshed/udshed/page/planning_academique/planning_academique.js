@@ -58,13 +58,13 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		let btnEporterPDF =  page.set_primary_action('Exporter en PDF', () => {
 			if(Udshed.Utils.isValidFecthDataFilter(filters))
 			{
-				let url = `/api/method/udshed.www.planning_pdf.download_planning_pdf?filters=${encodeURIComponent(JSON.stringify({...filters,week_start:currentWeekStart.toISOString().split('T')[0]}))}`;
+				let url = `/api/method/udshed.www.planning_pdf.download_planning_pdf?filters=${encodeURIComponent(JSON.stringify({...filters,week_start:frappe.datetime.obj_to_str(currentWeekStart)}))}`;
 				window.open(url);
 			}
 		});
 
 		let btnEnvoiMail =  page.set_secondary_action("Envoyer par mail", () => {
-			Udshed.Dialogs.openSendPlanningDialog({...filters,week_start:currentWeekStart.toISOString().split('T')[0]},null,()=>{})
+			Udshed.Dialogs.openSendPlanningDialog({...filters,week_start:frappe.datetime.obj_to_str(currentWeekStart)},null,()=>{})
 			
 		}); 
 

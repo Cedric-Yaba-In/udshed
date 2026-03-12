@@ -27,6 +27,7 @@
    "label": "Insight Acad\u00e9mique",
    "link_to": "insight-academique",
    "link_type": "Page",
+   "route_options": "",
    "show_arrow": 0,
    "type": "Link"
   },
@@ -54,7 +55,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-03-09 16:26:43.153299",
+ "modified": "2026-03-12 15:29:58.967238",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Insight",

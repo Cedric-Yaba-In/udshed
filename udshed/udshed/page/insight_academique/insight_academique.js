@@ -13,6 +13,10 @@ frappe.pages['insight-academique'].on_page_load = function(wrapper) {
 		'/assets/udshed/js/insight/ui/ui.js',
 		'/assets/udshed/js/utils/permission.js'
 	]).then(async () => {
+		// frappe.workspace.show("Insight");
+		frappe.set_route("insight-academique", {
+			sidebar: "insight"
+		})
 	var page = frappe.ui.make_app_page({
             parent: wrapper,
             title: __('Suivi des Cours'),

@@ -15,7 +15,7 @@
  "label": "Insight",
  "link_type": "DocType",
  "links": [],
- "modified": "2026-02-23 04:15:09.485002",
+ "modified": "2026-03-12 15:15:59.386192",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Insight",
@@ -36,7 +36,20 @@
   }
  ],
  "sequence_id": 26.0,
- "shortcuts": [],
+ "shortcuts": [
+  {
+   "doc_view": "",
+   "label": "Insight Acad\u00e9mique",
+   "link_to": "insight-academique",
+   "type": "Page"
+  },
+  {
+   "doc_view": "",
+   "label": "Insight Financier",
+   "link_to": "insight-financier",
+   "type": "Page"
+  }
+ ],
  "title": "Insight",
  "type": "Workspace"
 }

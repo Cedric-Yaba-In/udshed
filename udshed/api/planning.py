@@ -106,3 +106,6 @@ def get_all_planning_item_by_filter(academic_year,faculty=None,field_of_study=No
     for key in process_data.keys():
         process_data[key].pop("niveau_key")
     return process_data
+
+
+    

@@ -82,6 +82,7 @@ def create_planning(academic_year, cours, course_type,day_of_week, half_day,bati
     try:
         teaching_unit = course.get_single_teaching_unit(cours,academic_year)
         cours_teachers = list(map(lambda x: x.enseignant, teaching_unit.table_enseignant))
+        concerned_field_of_study_level = list(map(lambda x: {"filiere":x.filiere,"niveau":x.niveau,"name":x.name},teaching_unit.course_levels))
         
         if len(cours_teachers)==0:
             frappe.throw(f"Le cours <b>{teaching_unit.intitule_cours}</b><br/> n'a pas d'enseignant assigné. veuillez assigner un enseignant puis recommencer")
@@ -91,8 +92,20 @@ def create_planning(academic_year, cours, course_type,day_of_week, half_day,bati
         planning_days = frappe.get_all("Planning Item",{"date":date_week_start, "period":half_day},["name","cours","type","date","period","salle","batiment"])
         for plan in planning_days:
             doc = course.get_single_teaching_unit(plan.cours,academic_year)
-
             cours_teachers_existing = list(map(lambda x: x.enseignant, doc.table_enseignant))
+            used_field_of_study_level = list(map(lambda x: {"filiere":x.filiere,"niveau":x.niveau,"name":x.name},doc.course_levels))
+
+            common_field_of_study_level_existing = set([x["niveau"] for x in concerned_field_of_study_level]).intersection(set([x["niveau"] for x in used_field_of_study_level]))
+
+            if common_field_of_study_level_existing:
+                found_field_of_study = []
+                for l in common_field_of_study_level_existing:
+                    for c in concerned_field_of_study_level:
+                        if c["niveau"]==l:
+                            current_level = frappe.get_doc("Field of study Level",c["niveau"])
+                            found_field_of_study.append(f"{c["filiere"]} {current_level.level}")
+                frappe.throw(f"Conflit de plannig détecté <br>Les classes <b>{', '.join(found_field_of_study)}</b> aussi concerné(es) par ce cours déjà occupé(s) avec le cours <b>{doc.intitule_cours}</b> de <b>{', '.join(cours_teachers_existing)}</b> durant cette plage horraire")
+
             # Check for common teachers
             common_teachers = set(cours_teachers).intersection(set(cours_teachers_existing))
             if common_teachers:
@@ -147,6 +160,7 @@ def update_planning(planning_item_name,academic_year,cours,course_type, day_of_w
         planning_item.mode = mode
 
         cours_teachers = list(map(lambda x: x.enseignant, teaching_unit.table_enseignant))
+        concerned_field_of_study_level = list(map(lambda x: {"filiere":x.filiere,"niveau":x.niveau,"name":x.name},teaching_unit.course_levels))
 
         if len(cours_teachers)==0:
             frappe.throw(f"Le cours <b>{teaching_unit.intitule_cours}</b><br/> n'a pas d'enseignant assigné. veuillez assigner un enseignant puis recommencer")
@@ -159,6 +173,20 @@ def update_planning(planning_item_name,academic_year,cours,course_type, day_of_w
                 continue
             doc = course.get_single_teaching_unit(plan.cours,academic_year)
             cours_teachers_existing = list(map(lambda x: x.enseignant, doc.table_enseignant))
+            used_field_of_study_level = list(map(lambda x: {"filiere":x.filiere,"niveau":x.niveau,"name":x.name},doc.course_levels))
+
+            #Check for common field_of level
+            common_field_of_study_level_existing = set([x["niveau"] for x in concerned_field_of_study_level]).intersection(set([x["niveau"] for x in used_field_of_study_level]))
+            if common_field_of_study_level_existing:
+                found_field_of_study = []
+                for l in common_field_of_study_level_existing:
+                    for c in concerned_field_of_study_level:
+                        if c["niveau"]==l:
+                            current_level = frappe.get_doc("Field of study Level",c["niveau"])
+                            found_field_of_study.append(f"{c["filiere"]} {current_level.level}")
+                frappe.throw(f"Conflit de plannig détecté <br>Les classes <b>{', '.join(found_field_of_study)}</b> aussi concerné(es) par ce cours déjà occupé(s) avec le cours <b>{doc.intitule_cours}</b> de <b>{', '.join(cours_teachers_existing)}</b> durant cette plage horraire")
+
+
             # Check for common teachers
             common_teachers = set(cours_teachers).intersection(set(cours_teachers_existing))
             if common_teachers:

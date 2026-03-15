@@ -50,10 +50,8 @@ def statistic_year(academic_year, semestre=None):
         result["global"]["sessions"]+=len(planning_items_by_course["planning"])
         hours_done=0
         for plan in planning_items_by_course["planning"]:
-            period = plan["period"].split("-")
-            format_period_start = "%H:%M" if len(period[0])==5 else "%H:%M:%S"
-            format_period_end = "%H:%M" if len(period[1])==5 else "%H:%M:%S"
-            current_hours = datetime.strptime(period[1], format_period_end) - datetime.strptime(period[0], format_period_start)
+            period = frappe.get_doc("Planning Period",plan["period"])
+            current_hours = datetime.strptime(str(period.heure_de_fin), "%H:%M:%S") - datetime.strptime(str(period.heure_de_debut), "%H:%M:%S")
             hours_done = hours_done +  int(current_hours.total_seconds()/60)
             faculty_list_dict[planning_items_by_course["faculte"]]["sessions"] += 1
 
@@ -142,10 +140,9 @@ def statistic_cours_faculte(academic_year,faculty,course_type=None,semestre=None
         hours_done=0
         filiere_found = list(set([x["filiere"] for x in planning_items_by_course["niveau"]]))
         for plan in planning_items_by_course["planning"]:
-            period = plan["period"].split("-")
-            format_period_start = "%H:%M" if len(period[0])==5 else "%H:%M:%S"
-            format_period_end = "%H:%M" if len(period[1])==5 else "%H:%M:%S"
-            current_hours = datetime.strptime(period[1], format_period_end) - datetime.strptime(period[0], format_period_start)
+            period = frappe.get_doc("Planning Period",plan["period"])
+            current_hours = datetime.strptime(str(period.heure_de_fin), "%H:%M:%S") - datetime.strptime(str(period.heure_de_debut), "%H:%M:%S")
+
             hours_done = hours_done +  int(current_hours.total_seconds()/60)
             for f in filiere_found:
                 filiere_list_dict[f]["sessions"] += 1
@@ -238,10 +235,8 @@ def statistic_fieldofstudy(academic_year,faculty,filiere,semestre=None,course_ty
         hours_done=0
         level_found = list(set([x["niveau"] for x in planning_items_by_course["niveau"]]))
         for plan in planning_items_by_course["planning"]:
-            period = plan["period"].split("-")
-            format_period_start = "%H:%M" if len(period[0])==5 else "%H:%M:%S"
-            format_period_end = "%H:%M" if len(period[1])==5 else "%H:%M:%S"
-            current_hours = datetime.strptime(period[1], format_period_end) - datetime.strptime(period[0], format_period_start)
+            period = frappe.get_doc("Planning Period",plan["period"])
+            current_hours = datetime.strptime(str(period.heure_de_fin), "%H:%M:%S") - datetime.strptime(str(period.heure_de_debut), "%H:%M:%S")
             hours_done = hours_done +  int(current_hours.total_seconds()/60)
             for n in level_found:
                 level_list_dict[n]["sessions"] += 1
@@ -329,10 +324,10 @@ def statistic_level(academic_year,faculty,filiere,niveau,semestre=None,course_ty
         result["global"]["sessions"]+=len(planning_items_by_course["planning"])
         hours_done=0
         for plan in planning_items_by_course["planning"]:
-            period = plan["period"].split("-")
-            format_period_start = "%H:%M" if len(period[0])==5 else "%H:%M:%S"
-            format_period_end = "%H:%M" if len(period[1])==5 else "%H:%M:%S"
-            current_hours = datetime.strptime(period[1], format_period_end) - datetime.strptime(period[0], format_period_start)
+            
+            period = frappe.get_doc("Planning Period",plan["period"])
+            current_hours = datetime.strptime(str(period.heure_de_fin), "%H:%M:%S") - datetime.strptime(str(period.heure_de_debut), "%H:%M:%S")
+
             hours_done = hours_done +  int(current_hours.total_seconds()/60)
             list_teaching_unit_dict[plan_key]["sessions"] += 1
             list_teaching_unit_dict[plan_key]["sessions_map"][plan["type"]] +=1
@@ -433,10 +428,14 @@ def statistic_teacher(academic_year,teacher, faculty=None,filiere=None,niveau=No
         filiere_found = list(set([f"{x["filiere"]}_{x["niveau"]}" for x in planning_items_by_course["niveau"]]))
 
         for plan in planning_items_by_course["planning"]:
-            period = plan["period"].split("-")
-            format_period_start = "%H:%M" if len(period[0])==5 else "%H:%M:%S"
-            format_period_end = "%H:%M" if len(period[1])==5 else "%H:%M:%S"
-            current_hours = datetime.strptime(period[1], format_period_end) - datetime.strptime(period[0], format_period_start)
+            # period = plan["period"].split("-")
+            # format_period_start = "%H:%M" if len(period[0])==5 else "%H:%M:%S"
+            # format_period_end = "%H:%M" if len(period[1])==5 else "%H:%M:%S"
+            # current_hours = datetime.strptime(period[1], format_period_end) - datetime.strptime(period[0], format_period_start)
+            period = frappe.get_doc("Planning Period",plan["period"])
+            # current_hours = datetime.strptime(period.heure_de_debut, "%H:%M:%S") - datetime.strptime(period.heure_de_fin, "%H:%M:%S")
+            current_hours = datetime.strptime(str(period.heure_de_fin), "%H:%M:%S") - datetime.strptime(str(period.heure_de_debut), "%H:%M:%S")
+
             hours_done = hours_done +  int(current_hours.total_seconds()/60)
             list_teaching_unit_dict[plan_key]["sessions"] += 1
             list_teaching_unit_dict[plan_key]["sessions_map"][plan["type"]] +=1

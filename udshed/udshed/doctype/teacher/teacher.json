@@ -20,7 +20,7 @@
   "ville_de_residence",
   "autres_telephones",
   "informations_professionel_section",
-  "tittre",
+  "titre",
   "universite_rattache",
   "grade",
   "diplome",
@@ -80,13 +80,6 @@
    "fieldname": "informations_professionel_section",
    "fieldtype": "Section Break",
    "label": "Informations professionel"
-  },
-  {
-   "fieldname": "tittre",
-   "fieldtype": "Select",
-   "in_standard_filter": 1,
-   "label": "Titre",
-   "options": "Professionnel de Classe A\nProfessionnel de Classe B\nProfessionnel de Classe C\nProfessionnel de Classe D\nATER\nAssistant\nCharg\u00e9 de Cours\nDocteur\nMaitre de Conf\u00e9rences\nProfesseur"
   },
   {
    "fieldname": "column_break_cpvj",
@@ -165,12 +158,19 @@
    "fieldtype": "Int",
    "label": "Code Grade",
    "non_negative": 1
+  },
+  {
+   "fieldname": "titre",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Titre",
+   "options": "Professionnel de Classe A\nProfessionnel de Classe B\nProfessionnel de Classe C\nProfessionnel de Classe D\nATER\nAssistant\nCharg\u00e9 de Cours\nDocteur\nMaitre de Conf\u00e9rences\nProfesseur"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-03-10 02:35:27.670213",
+ "modified": "2026-03-13 17:11:12.918529",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Teacher",

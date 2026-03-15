@@ -6,7 +6,8 @@ const ROLE_LIST= {
     TEACHER:"Teacher",
     STUDENT:"Student",
     COORDINATOR:"Coordinator",
-    SYSTEME_MANAGER:"System Manager"
+    SYSTEME_MANAGER:"System Manager",
+    PLANNING_MANAGER:"Planning Manager"
 }
 
 
@@ -22,7 +23,7 @@ window.Udshed.Perms = {
         })
         if(permsContext.length==0) return false;
         let permContextItem = permsContext[0]
-        return permContextItem.role==ROLE_LIST.COORDINATOR;
+        return permContextItem.role==ROLE_LIST.COORDINATOR || permContextItem.role==ROLE_LIST.PLANNING_MANAGER;
     },
 
 

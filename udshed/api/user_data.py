@@ -25,21 +25,30 @@ def get_user_context():
 
 	print("Frappe role ", frappe.get_roles(user))
 	# COORDINATEUR DE NIVEAU
-	if "Coordonateur" in roles:
-		Teacher = DocType("Teacher")
+	role = None
+	if "Planning Manager" in roles:
+		role="Planning Manager"
+	if "Coordinateur" in roles:
+		role="Coordinateur"
+	
+	if "Coordonateur" or "Planning Manager" in roles:
+		User = DocType("User")
 		FieldOfStudy = DocType("Field of study")
 		FieldOfStudyLevel = DocType("Field of study Level")
-
 	
 		query_coordo = (
 			frappe.qb.from_(FieldOfStudy)
 			.join(FieldOfStudyLevel)
 			.on(FieldOfStudyLevel.parent == FieldOfStudy.name)
 			.join(Teacher)
-			.on(FieldOfStudyLevel.coordonateur == Teacher.name)
+			.on(
+				( FieldOfStudyLevel.coordonateur == Teacher.name ) |
+				(FieldOfStudyLevel.gestionnaire_de_planning == Teacher.name)
+			)
 			.select(
 				FieldOfStudyLevel.name,
 				FieldOfStudyLevel.coordonateur,
+				FieldOfStudyLevel.gestionnaire_de_planning,
 				FieldOfStudy.name_of_field,
 				FieldOfStudyLevel.level
 			)
@@ -47,10 +56,12 @@ def get_user_context():
 				(Teacher.email == user)
 			)
 		)
+		
 		coord = query_coordo.run(as_dict=True)
+		
 		if len(coord) > 0:
 			coordo_data = {
-				"role": "Coordinator",
+				"role": role,
 				"faculty": [],
 				"filiere": [],
 				"niveau": [],
@@ -63,7 +74,6 @@ def get_user_context():
 				"academic_year_list": academic_year_list
 			}
 			for c in coord:
-				print("Coord  ddccc ",c)
 				filiere = frappe.get_doc("Field of study", {"name_of_field": c.name_of_field})
 				faculte = frappe.get_doc("Faculty", {"name": filiere.faculte})
 

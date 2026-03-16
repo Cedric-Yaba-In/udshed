@@ -32,7 +32,7 @@
    "fieldname": "type",
    "fieldtype": "Select",
    "label": "Type",
-   "options": "Cours\nTraveaux Pratiques (TP)\nTraveaux Dirig\u00e9s (TD)\nControlle Continue (CC)\nExamen de session normal\nExamen de rattrapage",
+   "options": "Cours Magistral (CM)\nTraveaux Pratiques (TP)\nTraveaux Dirig\u00e9s (TD)\nControlle Continue (CC)\nExamen de session normal\nExamen de rattrapage",
    "reqd": 1
   },
   {
@@ -91,7 +91,7 @@
  "index_web_pages_for_search": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2026-03-01 09:06:38.045340",
+ "modified": "2026-03-16 06:15:56.356487",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Planning Item",

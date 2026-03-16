@@ -101,6 +101,131 @@
     color: var(--text-muted);
 }
 
+ #finance-insight-page {
+            padding: 20px;
+        }
+        
+        .filters-bar {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .breadcrumb-item {
+            position: relative;
+            padding-right: 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .breadcrumb-item:after {
+            content: '/';
+            position: absolute;
+            right: 8px;
+            color: #adb5bd;
+        }
+        
+        .breadcrumb-item:last-child:after {
+            content: '';
+        }
+        
+        .breadcrumb-item.cursor-pointer:hover {
+            color: #007bff;
+            text-decoration: underline;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .bg-primary-light { background: rgba(0, 123, 255, 0.1); }
+        .bg-success-light { background: rgba(40, 167, 69, 0.1); }
+        .bg-warning-light { background: rgba(255, 193, 7, 0.1); }
+        .bg-info-light { background: rgba(23, 162, 184, 0.1); }
+        .bg-danger-light { background: rgba(220, 53, 69, 0.1); }
+        
+        .amount-positive {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .amount-negative {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        
+        .grade-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .grade-Doctorant { background: #e3f2fd; color: #1976d2; }
+        .grade-Assistant { background: #e8f5e8; color: #2e7d32; }
+        .grade-Maître-Assistant { background: #fff3e0; color: #f57c00; }
+        .grade-Maître-de-Conférences { background: #f3e5f5; color: #7b1fa2; }
+        .grade-Professeur { background: #ffebee; color: #c62828; }
+        
+        .program-card {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #f0f0f0;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .program-card:hover {
+            border-color: #007bff;
+            box-shadow: 0 4px 8px rgba(0,123,255,0.1);
+        }
+        
+        .progress-sm {
+            height: 6px;
+            border-radius: 3px;
+        }
+        
+        .table th {
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            border-top: none;
+        }
+        
+        .table td {
+            vertical-align: middle;
+            padding: 12px 8px;
+        }
+        
+        .currency-cell {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            text-align: right;
+        }
+
 /* Responsive */
 @media (max-width: 768px) {
     .insight-wrapper {

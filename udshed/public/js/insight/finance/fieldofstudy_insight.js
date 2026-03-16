@@ -13,9 +13,9 @@ window.Udshed.Insight.Finance.FieldOfStudy = {
                     ${window.Udshed.Insight.UI.render_kpi_with_icon({
                         bgColor:"#007bff",
                         iconColor:"#007bff",
-                        icon:"fa fa-calendar-check-o",
-                        label:"Total Sessions",
-                        value:`${overview.sessions}`
+                        icon:"fa fa-clock-o",
+                        label:"Heures effectuées",
+                        value:`${overview.done_hours}`
                     })}
                 </div>
                 <div class="col-md-4">
@@ -23,9 +23,8 @@ window.Udshed.Insight.Finance.FieldOfStudy = {
                         bgColor:"#28a745",
                         iconColor:"#28a745",
                         icon:"fa fa-clock-o",
-                        label:"Heures",
-                        value:`${overview.done_hours}h`,
-                        comment:`/${overview.total_hours}h`
+                        label:"Total à payé",
+                        value:`${frappe.format_value(overview.consume_price,{fieldtype:"Currency"})}`,
                     })}
                 </div>
                 <div class="col-md-4">
@@ -34,7 +33,7 @@ window.Udshed.Insight.Finance.FieldOfStudy = {
                         iconColor:"#ffc107",
                         icon:"fa fa-check-circle",
                         label:"Complétion",
-                        value:`${overview.completion}%`
+                        value:`${frappe.format_value(overview.rate_moyenne,{fieldtype:"Currency"})}`
                     })}
                 </div>
             </div>

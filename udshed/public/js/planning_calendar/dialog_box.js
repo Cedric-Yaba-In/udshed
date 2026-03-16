@@ -80,7 +80,7 @@ window.Udshed.Dialogs = {
                     fieldtype: "Select",
                     label: __("Type"),
                     fieldname: "course_type",
-                    options: [ __("Cours"), 
+                    options: [ __("Cours Magistral (CM)"), 
                         __("Traveaux Pratiques (TP)"),
                          __("Controlle Continue (CC)"), 
                          __("Examen de session normal"),
@@ -215,7 +215,7 @@ window.Udshed.Dialogs = {
                     label: "Type",
                     default: course.item.type,
                     fieldname: "course_type",
-                    options: [  __("Cours"), __("Traveaux Pratiques (TP)"), __("Controlle Continue (CC)"), __("Examen de session normal"), __("Examen de rattrapage")],
+                    options: [  __("Cours Magistral (CM)"), __("Traveaux Pratiques (TP)"), __("Controlle Continue (CC)"), __("Examen de session normal"), __("Examen de rattrapage")],
                     reqd: 1
                 },
                 { 

@@ -6,7 +6,7 @@ window.Udshed.Insight.Finance.Queries =   {
     getQueriesYearDashbord(data,callback)
     {
         frappe.call({
-            method: "udshed.api.statistic_course.statistic_year",
+            method: "udshed.api.statistic_course_finance.statistic_year",
             args: data,
             callback: (e) => {
                 console.log("User session Year:", e.message);

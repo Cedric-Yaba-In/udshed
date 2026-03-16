@@ -5,7 +5,12 @@ frappe.pages['insight-financier'].on_page_load = function(wrapper) {
 		'/assets/udshed/js/utils/utils.js', 
 		'/assets/udshed/js/utils/utils_queries.js',
         '/assets/udshed/js/insight/ui/ui.js',
-		'/assets/udshed/js/utils/permission.js'
+		'/assets/udshed/js/utils/permission.js',
+		'/assets/udshed/js/insight/finance/faculte_insight.js',
+		'/assets/udshed/js/insight/finance/fieldofstudylevel_insight.js',
+		'/assets/udshed/js/insight/finance/queries.js',
+		'/assets/udshed/js/insight/finance/teacher_insight.js',
+		'/assets/udshed/js/insight/finance/year_insight.js'
     ]).then(async ()=>{
 		frappe.set_route("insight-financier", {
 			sidebar: "insight"
@@ -179,40 +184,40 @@ function show_dashboard(page,filters,page_section)
 	if(filters.academic_year && !filters.faculty && !filters.filiere && !filters.niveau && !filters.teacher)
 	{
 
-        window.Udshed.Insight.Academic.Queries.getQueriesYearDashbord(filters,(data)=>{
+        window.Udshed.Insight.Finance.Queries.getQueriesYearDashbord(filters,(data)=>{
             //show for year
-		    Udshed.Insight.Academic.Year.showAcademicYearInsights(page,filters,page_section,data)
+		    Udshed.Insight.Finance.Year.showFinanceYearInsights(page,filters,page_section,data)
         })
 		
 	}
 	else if(filters.academic_year && filters.teacher)
 	{
 		//show teacher
-		window.Udshed.Insight.Academic.Queries.getQueriesTeacherDashbord(filters,(data)=>{
-			Udshed.Insight.Academic.Teacher.showAcademicTeacherInsights(page,filters,page_section,data)
+		window.Udshed.Insight.Finance.Queries.getQueriesTeacherDashbord(filters,(data)=>{
+			Udshed.Insight.Finance.Teacher.showFinanceTeacherInsights(page,filters,page_section,data)
 
         })
 	}
 	else if(filters.academic_year && filters.faculty && !filters.filiere && !filters.niveau)
 	{
 		console.log("Find from faculty")
-		 window.Udshed.Insight.Academic.Queries.getQueriesFacultyDashbord(filters,(data)=>{
+		 window.Udshed.Insight.Finance.Queries.getQueriesFacultyDashbord(filters,(data)=>{
             //show for faculty
-			Udshed.Insight.Academic.Faculty.showAcademicFacultyInsights(page,filters,page_section,data)
+			Udshed.Insight.Finance.Faculty.showFinanceFacultyInsights(page,filters,page_section,data)
         })		
 	}
 	else if(filters.academic_year && filters.faculty && filters.filiere && !filters.niveau)
 	{
-		window.Udshed.Insight.Academic.Queries.getQueriesFieldOfStudyDashbord(filters,(data)=>{
+		window.Udshed.Insight.Finance.Queries.getQueriesFieldOfStudyDashbord(filters,(data)=>{
             //show for filiere
-			Udshed.Insight.Academic.FieldOfStudy.showAcademicFieldOfStudyInsights(page,filters,page_section,data)
+			Udshed.Insight.Finance.FieldOfStudy.showFinanceFieldOfStudyInsights(page,filters,page_section,data)
         })	
 	}
 	else if(filters.academic_year && filters.faculty && filters.filiere && filters.niveau)
 	{
 		//show niveau
-		window.Udshed.Insight.Academic.Queries.getQueriesFieldOfStudyLevelDashbord(filters,(data)=>{
-			Udshed.Insight.Academic.FieldOfStudyLevel.showAcademicFieldOfStudyLevelInsights(page,filters,page_section,data)
+		window.Udshed.Insight.Finance.Queries.getQueriesFieldOfStudyLevelDashbord(filters,(data)=>{
+			Udshed.Insight.Finance.FieldOfStudyLevel.showFinanceFieldOfStudyLevelInsights(page,filters,page_section,data)
 
         })
 	}

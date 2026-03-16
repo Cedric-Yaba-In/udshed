@@ -160,6 +160,7 @@
    "non_negative": 1
   },
   {
+   "default": "Professionnel de Classe A",
    "fieldname": "titre",
    "fieldtype": "Select",
    "in_standard_filter": 1,
@@ -170,7 +171,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-03-13 17:11:12.918529",
+ "modified": "2026-03-15 18:25:44.999074",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Teacher",

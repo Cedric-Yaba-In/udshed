@@ -84,5 +84,11 @@ window.Udshed.Utils = {
             grid[day] = mapDay;
         }
         return grid;
+    },
+    formatCurrency(amount,currency) {
+        return new Intl.NumberFormat('fr-FR', { 
+            style: 'currency', 
+            currency: currency,
+        }).format(amount);
     }
 }

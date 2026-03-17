@@ -7,6 +7,8 @@ window.Udshed.Insight.Academic.Queries =   {
     {
         frappe.call({
             method: "udshed.api.statistic_course.statistic_year",
+            freeze:true,
+            freeze_message: __("Chargement du tableau analytique..."),
             args: data,
             callback: (e) => {
                 console.log("User session Year:", e.message);
@@ -22,6 +24,8 @@ window.Udshed.Insight.Academic.Queries =   {
     {
         frappe.call({
             method: "udshed.api.statistic_course.statistic_cours_faculte",
+            freeze:true,
+            freeze_message: __("Chargement du tableau analytique..."),
             args: data,
             callback: (e) => {
                 console.log("User session Faculty:", e.message);
@@ -37,6 +41,8 @@ window.Udshed.Insight.Academic.Queries =   {
     {
         frappe.call({
             method: "udshed.api.statistic_course.statistic_fieldofstudy",
+            freeze:true,
+            freeze_message: __("Chargement du tableau analytique..."),
             args: data,
             callback: (e) => {
                 console.log("User session field of study:", e.message);
@@ -51,6 +57,8 @@ window.Udshed.Insight.Academic.Queries =   {
     {
         frappe.call({
             method: "udshed.api.statistic_course.statistic_level",
+            freeze:true,
+            freeze_message: __("Chargement du tableau analytique..."),
             args: data,
             callback: (e) => {
                 console.log("User session level:", e.message);
@@ -66,6 +74,8 @@ window.Udshed.Insight.Academic.Queries =   {
     {
         frappe.call({
             method: "udshed.api.statistic_course.statistic_teacher",
+            freeze:true,
+            freeze_message: __("Chargement du tableau analytique..."),
             args: data,
             callback: (e) => {
                 console.log("User session teacher:", e.message);

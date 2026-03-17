@@ -17,7 +17,7 @@ window.Udshed.UtilsQueries  = {
         });
 
         frappe.call({
-            method: "udshed.api.course.get_teaching_unit_by_year",
+            method: "udshed.api.course.get_teaching_unit_by_year",            
             args: { 
                 academic_year: "2025-2026",
                 faculty:"FST"

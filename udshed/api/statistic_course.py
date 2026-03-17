@@ -310,7 +310,7 @@ def statistic_level(academic_year,faculty,filiere,niveau,semestre=None,course_ty
             "done_hours":0,
             "total_hours":0,
             "sessions_map":{
-                "Cours":0,
+                "Cours Magistral (CM)":0,
                 "Traveaux Pratiques (TP)":0,
                 "Traveaux Dirigés (TD)":0,
                 "Controlle Continue (CC)":0,

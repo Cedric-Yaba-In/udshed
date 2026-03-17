@@ -50,7 +50,7 @@ window.Udshed.Insight.Finance.Queries =   {
     getQueriesFieldOfStudyLevelDashbord(data,callback)
     {
         frappe.call({
-            method: "udshed.api.statistic_course.statistic_level",
+            method: "udshed.api.statistic_course_finance.statistic_level",
             args: data,
             callback: (e) => {
                 console.log("User session level:", e.message);
@@ -65,7 +65,7 @@ window.Udshed.Insight.Finance.Queries =   {
     getQueriesTeacherDashbord(data,callback)
     {
         frappe.call({
-            method: "udshed.api.statistic_course.statistic_teacher",
+            method: "udshed.api.statistic_course_finance.statistic_teacher",
             args: data,
             callback: (e) => {
                 console.log("User session teacher:", e.message);

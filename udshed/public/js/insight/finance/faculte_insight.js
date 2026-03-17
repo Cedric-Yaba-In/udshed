@@ -12,7 +12,7 @@ window.Udshed.Insight.Finance.Faculty = {
                     ${window.Udshed.Insight.UI.render_kpi_with_icon({
                         bgColor:"#007bff",
                         iconColor:"#007bff",
-                        icon:"fa fa-calendar-check-o",
+                        icon:"fa fa-clock-o",
                         label:"Heures effectuées",
                         value:`${overview.done_hours} h`
                     })}

@@ -7,6 +7,7 @@ frappe.pages['insight-financier'].on_page_load = function(wrapper) {
         '/assets/udshed/js/insight/ui/ui.js',
 		'/assets/udshed/js/utils/permission.js',
 		'/assets/udshed/js/insight/finance/faculte_insight.js',
+		'/assets/udshed/js/insight/finance/fieldofstudy_insight.js',
 		'/assets/udshed/js/insight/finance/fieldofstudylevel_insight.js',
 		'/assets/udshed/js/insight/finance/queries.js',
 		'/assets/udshed/js/insight/finance/teacher_insight.js',

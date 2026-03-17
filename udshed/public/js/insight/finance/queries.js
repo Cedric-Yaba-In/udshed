@@ -36,7 +36,7 @@ window.Udshed.Insight.Finance.Queries =   {
     getQueriesFieldOfStudyDashbord(data,callback)
     {
         frappe.call({
-            method: "udshed.api.statistic_course.statistic_fieldofstudy",
+            method: "udshed.api.statistic_course_finance.statistic_fieldofstudy",
             args: data,
             callback: (e) => {
                 console.log("User session field of study:", e.message);

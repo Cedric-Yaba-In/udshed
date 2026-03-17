@@ -15,16 +15,16 @@ window.Udshed.Insight.Finance.FieldOfStudy = {
                         iconColor:"#007bff",
                         icon:"fa fa-clock-o",
                         label:"Heures effectuées",
-                        value:`${overview.done_hours}`
+                        value:`${overview.done_hours} h`
                     })}
                 </div>
                 <div class="col-md-4">
                     ${window.Udshed.Insight.UI.render_kpi_with_icon({
                         bgColor:"#28a745",
                         iconColor:"#28a745",
-                        icon:"fa fa-clock-o",
+                        icon:"fa fa-money",
                         label:"Total à payé",
-                        value:`${frappe.format_value(overview.consume_price,{fieldtype:"Currency"})}`,
+                        value:`${Udshed.Utils.formatCurrency(overview.consume_price,overview.default_currency)}`,
                     })}
                 </div>
                 <div class="col-md-4">
@@ -32,8 +32,8 @@ window.Udshed.Insight.Finance.FieldOfStudy = {
                         bgColor:"#ffc107",
                         iconColor:"#ffc107",
                         icon:"fa fa-check-circle",
-                        label:"Complétion",
-                        value:`${frappe.format_value(overview.rate_moyenne,{fieldtype:"Currency"})}`
+                        label:"Taux horaire moyen",
+                        value:`${Udshed.Utils.formatCurrency(overview.rate_moyenne,overview.default_currency)}`
                     })}
                 </div>
             </div>
@@ -43,29 +43,32 @@ window.Udshed.Insight.Finance.FieldOfStudy = {
                 <h5 class="mb-3">Niveaux</h5>
                 <div class="row">
         `;
-    
-        data.level.forEach(l => {
-            html += `
-                <div class="col-md-4 mb-3">
-                    <div class="program-card" onclick="navigateToLevel('${l.level.name}')">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h6 class="mb-0">Niveau ${l.level.level}</h6>
-                            <span class="badge badge-${l.completion_color}">${l.completion}%</span>
+                data.level.forEach(l => {
+                    html += `
+                        <div class="col-md-4 mb-3">
+                            <div class="program-card" onclick="navigateToFaculty('${l.level.name}')">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="mb-0">${l.level.level}</h6>
+                                    <span class="badge bg-light">${l.count_teaching_unit} cours ·</span>
+                                </div>
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <div class="small text-muted">Heures</div>
+                                        <div class="font-weight-bold">${l.done_hours} h</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="small text-muted">Montant</div>
+                                        <div class="font-weight-bold amount-positive">${Udshed.Utils.formatCurrency(l.consume_price,overview.default_currency)} </div>
+                                    </div>
+                                </div>
+                                <div class="progress progress-sm">
+                                    <div class="progress-bar bg-primary" style="width: ${l.completion_finance}%"></div>
+                                </div>
+                                <div class="small text-muted mt-1">${l.sessions} sessions ·</div>
+                            </div>
                         </div>
-                        <div class="small text-muted mb-2">
-                            <i class="fa fa-book mr-1"></i> ${l.count_teaching_unit} cours · 
-                        </div>
-                        <div class="progress progress-sm mb-2">
-                            <div class="progress-bar bg-${l.completion_color}" style="width: ${l.completion}%"></div>
-                        </div>
-                        <div class="d-flex justify-content-between small">
-                            <span>${l.done_hours}h effectuées</span>
-                            <span class="text-muted">${l.sessions} sessions</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
+                    `;
+                });   
     
         html += `
                 </div>

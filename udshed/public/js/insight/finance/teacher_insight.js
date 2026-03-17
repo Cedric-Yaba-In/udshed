@@ -13,9 +13,9 @@ window.Udshed.Insight.Finance.Teacher = {
                     ${window.Udshed.Insight.UI.render_kpi_with_icon({
                         bgColor:"#007bff",
                         iconColor:"#007bff",
-                        icon:"fa fa-calendar-check-o",
-                        label:"Total Sessions",
-                        value:`${overview.sessions}`
+                        icon:"fa fa-money",
+                        label:"Montant",
+                        value: Udshed.Utils.formatCurrency(overview.consume_price,overview.default_currency)
                     })}
                 </div>
                 <div class="col-md-3">
@@ -24,7 +24,7 @@ window.Udshed.Insight.Finance.Teacher = {
                         iconColor:"#28a745",
                         icon:"fa fa-check-circle",
                         label:"Taux complétion",
-                        value:`${overview.completion}%`
+                        value:`${overview.completion_finance}%`
                     })}
                 </div>
                 <div class="col-md-3">
@@ -58,25 +58,28 @@ window.Udshed.Insight.Finance.Teacher = {
                         <div class="row">`                    
                             data.niveau_filiere.forEach(f => {
                                 html += `
-                                    <div class="col-md-4 mb-3">
-                                        <div class="program-card" onclick="navigateToFaculty('${f.filiere.code}')">
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <h6 class="mb-0">${f.filiere.name} ${f.filiere.field_of_study_level.find((l)=>l.name==f.niveau).level}</h6>
-                                                <span class="badge badge-${f.completion_color}">${f.completion}%</span>
-                                            </div>
-                                            <div class="small text-muted mb-2 d-flex justify-content-between">
-                                                <span><i class="fa fa-book mr-1"></i> ${f.teaching_unit.length} cours</span> 
-                                                <span><i class="fa fa-clock-o mr-1"></i> ${f.sessions} sessions</span>
-                                            </div>
-                                            <div class="progress progress-sm">
-                                                <div class="progress-bar bg-${f.completion_color}" style="width: ${f.completion}%"></div>
-                                            </div>
-                                            <div class="d-flex justify-content-between mt-2 small">
-                                                <span>${f.done_hours} h effectuées</span>
-                                                <span>/${f.total_hours} h</span>
-                                            </div>
+
+                                <div class="col-md-4 mb-3">
+                                <div class="program-card" onclick="navigateToFaculty('${f.filiere.name}')">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0">${f.filiere.name} ${f.filiere.field_of_study_level.find((l)=>l.name==f.niveau).level}</h6>
+                                    </div>
+                                    <div class="row g-2 mb-2">
+                                        <div class="col-6">
+                                            <div class="small text-muted">Heures</div>
+                                            <div class="font-weight-bold">${f.done_hours} h</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="small text-muted">Montant</div>
+                                            <div class="font-weight-bold amount-positive">${Udshed.Utils.formatCurrency(f.consume_price,overview.default_currency)} </div>
                                         </div>
                                     </div>
+                                    <div class="progress progress-sm">
+                                        <div class="progress-bar bg-primary" style="width: ${f.completion_finance}%"></div>
+                                    </div>
+                                    <div class="small text-muted mt-1">${f.sessions} sessions ·</div>
+                                </div>
+                            </div>
                                 `;
                             });             
                     
@@ -96,13 +99,7 @@ window.Udshed.Insight.Finance.Teacher = {
                                 <th>Classes</th>
                                 <th>Sessions</th>
                                 <th>Heures</th>
-                                <th>Complétion</th>
-                                <th>Cours</th>
-                                <th>TD</th>
-                                <th>TP</th>
-                                <th>CC</th>
-                                <th>Examen</th>
-                                <th>Rattrapage</th>
+                                <th>A payer</th>
                             </tr>
                         </thead>
                         <tbody> `;    
@@ -114,20 +111,7 @@ window.Udshed.Insight.Finance.Teacher = {
                                     <td>${c.teaching_unit.course_levels.map((level)=>this.getStringFieldOfStudyAndLevel(level,levels)).join(', ')}</td>
                                     <td class="text-center">${c.sessions}</td>
                                     <td>${c.done_hours}h <small class="text-muted">/${c.total_hours}h</small></td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="progress flex-grow-1 me-2" style="height: 6px; width: 60px;">
-                                                <div class="progress-bar bg-${c.completion_color}" style="width: ${c.completion}%"></div>
-                                            </div>
-                                            <small>${c.completion}%</small>
-                                        </div>
-                                    </td>
-                                    <td class="text-center">${c.sessions_map["Cours"]}</td>
-                                    <td class="text-center">${c.sessions_map["Traveaux Dirigés (TD)"]}</td>
-                                    <td class="text-center">${c.sessions_map["Traveaux Pratiques (TP)"]}</td>
-                                    <td class="text-center">${c.sessions_map["Controlle Continue (CC)"]}</td>
-                                    <td class="text-center">${c.sessions_map["Examen de session normal"]}</td>
-                                    <td class="text-center">${c.sessions_map["Examen de rattrapage"]}</td>
+                                    <td class="currency-cell amount-positive">${Udshed.Utils.formatCurrency(c.consume_price,overview.default_currency)}</td>
                                 </tr>
                             `
                         });

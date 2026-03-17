@@ -97,7 +97,7 @@ window.Udshed.Insight.Academic.Teacher = {
                                 <th>Sessions</th>
                                 <th>Heures</th>
                                 <th>Complétion</th>
-                                <th>Cours</th>
+                                <th>CM</th>
                                 <th>TD</th>
                                 <th>TP</th>
                                 <th>CC</th>
@@ -122,7 +122,7 @@ window.Udshed.Insight.Academic.Teacher = {
                                             <small>${c.completion}%</small>
                                         </div>
                                     </td>
-                                    <td class="text-center">${c.sessions_map["Cours"]}</td>
+                                    <td class="text-center">${c.sessions_map["Cours Magistral (CM)"]}</td>
                                     <td class="text-center">${c.sessions_map["Traveaux Dirigés (TD)"]}</td>
                                     <td class="text-center">${c.sessions_map["Traveaux Pratiques (TP)"]}</td>
                                     <td class="text-center">${c.sessions_map["Controlle Continue (CC)"]}</td>

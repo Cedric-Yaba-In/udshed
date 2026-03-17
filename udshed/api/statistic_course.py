@@ -395,7 +395,7 @@ def statistic_teacher(academic_year,teacher, faculty=None,filiere=None,niveau=No
             "done_hours":0,
             "total_hours":0,
             "sessions_map":{
-                "Cours":0,
+                "Cours Magistral (CM)":0,
                 "Traveaux Pratiques (TP)":0,
                 "Traveaux Dirigés (TD)":0,
                 "Controlle Continue (CC)":0,
@@ -529,7 +529,7 @@ def get_session_map(planningItem):
     exam_rattrap_value = 0
 
     for x in item:
-        if x["type"]=="Cours":
+        if x["type"]=="Cours Magistral (CM)":
             cours_value +=1
         elif x["type"]=="Traveaux Dirigés (TD)":
             td_value +=1
@@ -544,7 +544,7 @@ def get_session_map(planningItem):
 
     return [
         {
-            "type":"Cours",
+            "type":"Cours Magistral (CM)",
             "value":cours_value
         },
         {

@@ -11,8 +11,8 @@ window.Udshed.Insight.Finance.FieldOfStudyLevel = {
             <div class="row mb-4">
                 <div class="col-md-3">
                     ${window.Udshed.Insight.UI.render_kpi_with_icon({
-                        bgColor:"#17a2b8",
-                        iconColor:"#17a2b8",
+                        bgColor:"#007bff",
+                        iconColor:"#007bff",
                         icon:"fa fa-clock-o",
                         label:"Heures",
                         value:`${overview.done_hours}h`,
@@ -41,10 +41,9 @@ window.Udshed.Insight.Finance.FieldOfStudyLevel = {
                     ${window.Udshed.Insight.UI.render_kpi_with_icon({
                         bgColor:"#17a2b8",
                         iconColor:"#17a2b8",
-                        icon:"fa fa-clock-o",
-                        label:"Heures",
-                        value:`${overview.done_hours}h`,
-                        comment:`/${overview.total_hours}h`
+                        icon:"fa fa-book",
+                        label:"Cours",
+                        value:`${data.teaching_unit.length}`
                     })}
                 </div>
             </div>

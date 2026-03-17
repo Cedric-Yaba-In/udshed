@@ -10,7 +10,6 @@ window.Udshed.Insight.Finance.Year = {
         let html = `
                 <!-- KPIs -->
             <div class="row mb-4"> 
-
                 <div class="col-md-4">
                     ${window.Udshed.Insight.UI.render_kpi_with_icon({
                         bgColor:"#007bff",

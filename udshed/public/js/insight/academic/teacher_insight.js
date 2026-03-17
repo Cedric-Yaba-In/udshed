@@ -65,7 +65,7 @@ window.Udshed.Insight.Academic.Teacher = {
                                                 <span class="badge badge-${f.completion_color}">${f.completion}%</span>
                                             </div>
                                             <div class="small text-muted mb-2 d-flex justify-content-between">
-                                                <span><i class="fa fa-book mr-1"></i> ${f.teaching_unit.length} cours</span> 
+                                                <span><i class="fa fa-book mr-1"></i> ${f.teaching_units.length} cours</span> 
                                                 <span><i class="fa fa-clock-o mr-1"></i> ${f.sessions} sessions</span>
                                             </div>
                                             <div class="progress progress-sm">

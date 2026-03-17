@@ -167,7 +167,6 @@ def statistic_cours_faculte(academic_year,faculty,course_type=None,semestre=None
     for f in filiere_list_dict.values():
         total_hours = get_total_hours_of_teaching_unit_in_list(f["teaching_unit"])
         total_hours = total_hours if total_hours >0 else 1
-        f.pop("teaching_unit")
 
         result["filiere"].append({
             **f,
@@ -261,7 +260,6 @@ def statistic_fieldofstudy(academic_year,faculty,filiere,semestre=None,course_ty
     for l in level_list_dict.values():
         total_hours = get_total_hours_of_teaching_unit_in_list(l["teaching_unit"])
         total_hours = total_hours if total_hours>0 else 1
-        l.pop("teaching_unit")
 
         result["level"].append({
             **l,
@@ -316,7 +314,8 @@ def statistic_level(academic_year,faculty,filiere,niveau,semestre=None,course_ty
                 "Controlle Continue (CC)":0,
                 "Examen de session normal":0,
                 "Examen de rattrapage":0
-            }
+            },
+            "teaching_units":[t]
         }
     #Pour chaque teaching unit
     for plan_key in planing_filtred_key:
@@ -350,9 +349,11 @@ def statistic_level(academic_year,faculty,filiere,niveau,semestre=None,course_ty
     result["global"]["done_hours"] =  int(result["global"]["done_hours"] / 60)
     result["global"]["completion"] = "{:.2f}".format((result["global"]["done_hours"] / (result["global"]["total_hours"] if result["global"]["total_hours"] >0 else 1)) * 100)
     for l in list_teaching_unit_dict.values():
-        total_hours = l["total_hours"] if l["total_hours"]>0 else 1
+        total_hours = get_total_hours_of_teaching_unit_in_list(l["teaching_units"])
+        l.pop("teaching_units")
         result["teaching_unit"].append({
             **l,
+            "total_hours":total_hours,
             "done_hours":int(l["done_hours"] / 60),
             "completion": "{:.2f}".format((int(l["done_hours"] / 60) / total_hours)*100), 
             "completion_color": get_completion_color((int(l["done_hours"] / 60) / total_hours)*100),
@@ -401,11 +402,12 @@ def statistic_teacher(academic_year,teacher, faculty=None,filiere=None,niveau=No
                 "Controlle Continue (CC)":0,
                 "Examen de session normal":0,
                 "Examen de rattrapage":0
-            }
+            },
+            "teaching_units":[t]
         }
         for n in t["niveau"]:
             if f"{n["filiere"]}_{n["niveau"]}" in list_niveau_filiere_dict:
-                list_niveau_filiere_dict[f"{n["filiere"]}_{n["niveau"]}"]["teaching_unit"].append(t)
+                list_niveau_filiere_dict[f"{n["filiere"]}_{n["niveau"]}"]["teaching_units"].append(t)
             else:
                 list_niveau_filiere_dict[f"{n["filiere"]}_{n["niveau"]}"]={
                     "filiere":frappe.get_doc("Field of study",n["filiere"]),
@@ -417,7 +419,7 @@ def statistic_teacher(academic_year,teacher, faculty=None,filiere=None,niveau=No
                     "planned_course":0,
                     "to_start_course":0,
                     "end_course":0,
-                    "teaching_unit":[t]
+                    "teaching_units":[t]
                 }
     
     #Pour chaque teaching unit
@@ -463,16 +465,17 @@ def statistic_teacher(academic_year,teacher, faculty=None,filiere=None,niveau=No
     result["global"]["done_hours"] =  int(result["global"]["done_hours"] / 60)
     result["global"]["completion"] = "{:.2f}".format((result["global"]["done_hours"] / (result["global"]["total_hours"] if result["global"]["total_hours"] >0 else 1)) * 100)
     for l in list_teaching_unit_dict.values():
-        total_hours = l["total_hours"] if l["total_hours"]>0 else 1
+        total_hours =  get_total_hours_of_teaching_unit_in_list(l["teaching_units"])
         result["teaching_unit"].append({
             **l,
+            "total_hours":total_hours,
             "done_hours":int(l["done_hours"] / 60),
             "completion": "{:.2f}".format((int(l["done_hours"] / 60) / total_hours)*100), 
             "completion_color": get_completion_color((int(l["done_hours"] / 60) / total_hours)*100),
         })
     
     for f in list_niveau_filiere_dict.values():
-        total_hours = get_total_hours_of_teaching_unit_in_list(f["teaching_unit"])
+        total_hours = get_total_hours_of_teaching_unit_in_list(f["teaching_units"])
         total_hours = total_hours if total_hours>0 else 1
         # f.pop("teaching_unit")Cour
         result["niveau_filiere"].append({
@@ -494,15 +497,23 @@ def get_total_hours_of_teaching_unit_in_dict(teaching_units):
 def get_total_hours_of_teaching_unit_in_list(teaching_units):
     total_hour = 0
     for value in teaching_units:
-        if not value["nombre_dheure_cm"]:
-            value["nombre_dheure_cm"] = 0
-        if not value["nombre_dheure_td"]:
-            value["nombre_dheure_td"] = 0
-        if not value["nombre_dheure_tp"]:
-            value["nombre_dheure_tp"] = 0
-        total_hour += value["nombre_dheure_cm"] + value["nombre_dheure_td"] + value["nombre_dheure_tp"]
+        total_hour += get_total_hours_of_teaching_unit(value)
     return total_hour
+
+def get_total_hours_of_teaching_unit(teaching_unit):
+    h_cm = teaching_unit["nombre_dheure_cm"]
+    h_td = teaching_unit["nombre_dheure_td"]
+    h_tp = teaching_unit["nombre_dheure_tp"]
+    if not teaching_unit["nombre_dheure_cm"]:
+        h_cm= 0
+    if not teaching_unit["nombre_dheure_td"]:
+        h_td = 0
+    if not teaching_unit["nombre_dheure_tp"]:
+        h_tp = 0
+    return  h_cm + h_td + h_tp
     
+    
+
 
 
 def get_completion_color(rate):

@@ -321,7 +321,8 @@ def statistic_level(academic_year,faculty,filiere,niveau,semestre=None,course_ty
                 "Controlle Continue (CC)":0,
                 "Examen de session normal":0,
                 "Examen de rattrapage":0
-            }
+            },
+            "teaching_units":[t]
         }
 
     #Pour chaque teaching unit
@@ -358,12 +359,14 @@ def statistic_level(academic_year,faculty,filiere,niveau,semestre=None,course_ty
     result["global"]["completion_finance"] = "{:.2f}".format((result["global"]["consume_price"] / (result["global"]["total_price"] if result["global"]["total_price"] >0 else 1)) * 100)     
     
     for l in list_teaching_unit_dict.values():
-        total_hours = l["total_hours"] if l["total_hours"]>0 else 1
+        total_hours = statistic_course.get_total_hours_of_teaching_unit_in_list(l["teaching_units"])
+
         total_price = get_total_price_of_teaching_unit(teaching_units[l["teaching_unit"].name])
         total_price = total_price if total_price >0 else 1
         result["teaching_unit"].append({
             **l,
             "total_price":total_price,
+            "total_hours":total_hours,
             "done_hours":int(l["done_hours"] / 60),
             "completion": "{:.2f}".format((int(l["done_hours"] / 60) / total_hours)*100), 
             "completion_finance": "{:.2f}".format((int(l["consume_price"]) / total_price)*100), 
@@ -411,11 +414,11 @@ def statistic_teacher(academic_year,teacher, faculty=None,filiere=None,niveau=No
             "completion_finance":0,
             "done_hours":0,
             "total_hours":0,
-            "teaching_list":[t],
+            "teaching_units":[t],
         }
         for n in t["niveau"]:
             if f"{n["filiere"]}_{n["niveau"]}" in list_niveau_filiere_dict:
-                list_niveau_filiere_dict[f"{n["filiere"]}_{n["niveau"]}"]["teaching_unit"].append(t)
+                list_niveau_filiere_dict[f"{n["filiere"]}_{n["niveau"]}"]["teaching_units"].append(t)
             else:
                 list_niveau_filiere_dict[f"{n["filiere"]}_{n["niveau"]}"]={
                     "filiere":frappe.get_doc("Field of study",n["filiere"]),
@@ -427,12 +430,10 @@ def statistic_teacher(academic_year,teacher, faculty=None,filiere=None,niveau=No
                     "consume_price":0,
                     "total_price":0,
                     "completion_finance":0,
-                    "teaching_unit":[t],
+                    "teaching_units":[t],
                     "niveau_count":frappe.db.count("Field of study Level",{"parent":n["filiere"]})
                 }
 
-
-    
     #Pour chaque teaching unit
     for plan_key in planing_filtred_key:
         planning_items_by_course = planning_items[plan_key]
@@ -464,6 +465,7 @@ def statistic_teacher(academic_year,teacher, faculty=None,filiere=None,niveau=No
             (teaching_units[plan_key]["nombre_dheure_td"] if teaching_units[plan_key]["nombre_dheure_td"] else 0) + 
             (teaching_units[plan_key]["nombre_dheure_tp"] if teaching_units[plan_key]["nombre_dheure_tp"] else 0)
         )
+
         list_teaching_unit_dict[plan_key]["total_hours"] = hours_to_done            
         result["global"]["done_hours"] += hours_done
 
@@ -473,11 +475,12 @@ def statistic_teacher(academic_year,teacher, faculty=None,filiere=None,niveau=No
     result["global"]["completion_finance"] = "{:.2f}".format((result["global"]["consume_price"] / (result["global"]["total_price"] if result["global"]["total_price"] >0 else 1)) * 100)
 
     for l in list_teaching_unit_dict.values():
-        total_hours = l["total_hours"] if l["total_hours"]>0 else 1
-        total_price = get_total_price_of_teaching_unit_list(l["teaching_list"])
+        total_hours = statistic_course.get_total_hours_of_teaching_unit_in_list(l["teaching_units"])
+        total_price = get_total_price_of_teaching_unit_list(l["teaching_units"])
         total_price = total_price if total_price >0 else 1
         result["teaching_unit"].append({
             **l,
+            "total_hours":total_hours,
             "total_price":total_price,
             "done_hours":int(l["done_hours"] / 60),
             "completion": "{:.2f}".format((int(l["done_hours"]) / total_hours)*100), 
@@ -485,9 +488,9 @@ def statistic_teacher(academic_year,teacher, faculty=None,filiere=None,niveau=No
         })
     
     for f in list_niveau_filiere_dict.values():
-        total_hours = statistic_course.get_total_hours_of_teaching_unit_in_list(f["teaching_unit"])
+        total_hours = statistic_course.get_total_hours_of_teaching_unit_in_list(f["teaching_units"])
         total_hours = total_hours if total_hours>0 else 1
-        total_price = get_total_price_of_teaching_unit_list(f["teaching_unit"])
+        total_price = get_total_price_of_teaching_unit_list(f["teaching_units"])
         total_price = total_price if total_price >0 else 1
         # f.pop("teaching_unit")Cour
         result["niveau_filiere"].append({

@@ -21,7 +21,7 @@ window.Udshed.Insight.Finance.Queries =   {
     getQueriesFacultyDashbord(data,callback)
     {
         frappe.call({
-            method: "udshed.api.statistic_course.statistic_cours_faculte",
+            method: "udshed.api.statistic_course_finance.statistic_cours_faculte",
             args: data,
             callback: (e) => {
                 console.log("User session Faculty:", e.message);

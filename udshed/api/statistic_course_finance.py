@@ -87,7 +87,98 @@ def statistic_year(academic_year, semestre=None):
 @frappe.whitelist()
 def statistic_cours_faculte(academic_year,faculty,course_type=None,semestre=None):
     """ Statistique de la faculté pour une année"""
-    pass
+    teaching_units = course.get_teaching_unit_by_year(academic_year=academic_year,faculty=faculty,semestre=None)
+    teaching_units_key = teaching_units.keys()
+    planning_items = planning.get_all_planning_item_by_filter(academic_year=academic_year,faculty=faculty,semestre=semestre)
+    planing_filtred_key = []
+    # print("Planning Items ", teaching_units)
+
+    for item_key in planning_items.keys():
+        if item_key in teaching_units_key:
+            planing_filtred_key.append(item_key)
+
+    #Preparation de l'ensemble des kpis
+    result = {
+        "global":{
+            "consume_price":0,
+            "total_hours": statistic_course.get_total_hours_of_teaching_unit_in_dict(teaching_units),
+            "total_price":get_total_price_of_teaching_unit_list(list(teaching_units.values())),
+            "done_hours":0,
+            "rate_moyenne":get_default_taux(),
+            "completion_finance":0,
+            "sessions":0,
+            "default_currency":frappe.defaults.get_user_default("currency"),
+            "default_finance_by_grade":get_default_finance_config(),
+            "filiere_count":0
+        },
+        "filiere":[],
+    }   
+
+     #Preparation des kpis de facultes
+    filiere_list_dict = {}    
+    for value in teaching_units.values():
+        for niveau in value["niveau"]:
+            if niveau["filiere"] not in filiere_list_dict.keys():
+                filiere_found =frappe.get_doc("Field of study",niveau["filiere"])
+                filiere_list_dict[niveau["filiere"]] = {
+                    "filiere":filiere_found,
+                    "sessions":0,
+                    "done_hours":0,
+                    "total_hours":0,
+                    "total_price":0,
+                    "completion_finance":0,
+                    "consume_price":0,
+                    "completion":0,
+                    "teaching_unit":[value],
+                    "niveau_count":frappe.db.count("Field of study Level",{"parent":filiere_found.name})
+                }
+                result["global"]["filiere_count"] +=1
+            else:
+                filiere_list_dict[niveau["filiere"]]["teaching_unit"].append(value)
+    
+    #Pour chaque teaching unit
+    for plan_key in planing_filtred_key:
+        planning_items_by_course = planning_items[plan_key]
+        result["global"]["sessions"]+=len(planning_items_by_course["planning"])
+        hours_done=0
+        consume_price = 0
+        filiere_found = list(set([x["filiere"] for x in planning_items_by_course["niveau"]]))
+        for plan in planning_items_by_course["planning"]:
+            period = frappe.get_doc("Planning Period",plan["period"])
+            current_hours = datetime.strptime(str(period.heure_de_fin), "%H:%M:%S") - datetime.strptime(str(period.heure_de_debut), "%H:%M:%S")
+            consume_price_item = get_price_of_teacher_list_by_donehours(teaching_units[plan_key]["enseignant"],int(current_hours.total_seconds()/3600),plan["type"]) 
+
+            hours_done = hours_done +  int(current_hours.total_seconds()/60)
+            for f in filiere_found:
+                filiere_list_dict[f]["sessions"] += 1
+                filiere_list_dict[f]["consume_price"] +=consume_price_item
+            consume_price += consume_price_item
+
+        for f in filiere_found:
+            filiere_list_dict[f]["done_hours"] += hours_done
+            
+        result["global"]["done_hours"] += hours_done
+        result["global"]["consume_price"] += consume_price
+
+    result["global"]["completion_finance"] = "{:.2f}".format((result["global"]["consume_price"] / (result["global"]["total_price"] if result["global"]["total_price"]>0 else 1)) * 100)
+    result["global"]["done_hours"] =  int(result["global"]["done_hours"] / 60)
+
+    for f in filiere_list_dict.values():
+        total_price = get_total_price_of_teaching_unit_list(f["teaching_unit"])
+        total_price = total_price if total_price >0 else 1
+        f.pop("teaching_unit")
+
+        result["filiere"].append({
+            **f,
+            "total_price":total_price,
+            "done_hours":int(f["done_hours"] / 60),
+            "completion": "{:.2f}".format((int(f["consume_price"] / 60) / total_price)*100), 
+            "completion_color": statistic_course.get_completion_color((int(f["consume_price"] / 60) / total_price)*100),
+        })
+
+    return result
+
+
 
 
 @frappe.whitelist()

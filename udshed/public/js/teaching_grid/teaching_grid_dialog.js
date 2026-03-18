@@ -5,7 +5,7 @@ window.Udshed.TeachingGrid.Dialog = {
     
     
 // Ouvrir le dialogue d'assignation des enseignants
-open_teacher_assignment_dialog(courseTeacherDocName, courseCode,teachingUnitName, rowIndex, colIndex) {
+open_teacher_assignment_dialog(courseCode,teachingUnitCode, rowIndex, colIndex,filters,callbackFunction) {
     
     // Créer un dialogue avec un grid lié au child table de votre doctype
     var dialog = new frappe.ui.Dialog({
@@ -25,15 +25,14 @@ open_teacher_assignment_dialog(courseTeacherDocName, courseCode,teachingUnitName
             },
             {
                 fieldtype: 'Table',
-                fieldname: 'teachers',
+                fieldname: 'table_enseignant',
                 label: __('Enseignants'),
-                // Lien direct vers votre child table doctype
-                options: 'Course Teacher Item', // Remplacez par le nom de votre child table
+                options: 'Course Teacher Item',
                 description: 'Liste des enseignants pour ce cours',
                 fields: [
                     {
                         fieldtype: 'Link',
-                        fieldname: 'teacher',
+                        fieldname: 'enseignant',
                         label: 'Enseignant',
                         options: 'Teacher', // Votre doctype enseignant
                         in_list_view: 1,
@@ -54,19 +53,6 @@ open_teacher_assignment_dialog(courseTeacherDocName, courseCode,teachingUnitName
                         columns: 3
                     }
                 ],
-                get_data: function() {
-                    return new Promise(resolve => {
-                        Udshed.TeachingGrid.UtilsQueries.load_doctype_list({
-                                doctype: 'Course Teacher Item', // Votre doctype principal
-                                name: courseTeacherDocName
-                            },
-                            (data)=>{
-                                console.log("Data ",data)
-                                resolve(data)
-                            }
-                        )
-                    });
-                }
             },
             {
                 fieldtype: 'Section Break'
@@ -77,102 +63,57 @@ open_teacher_assignment_dialog(courseTeacherDocName, courseCode,teachingUnitName
                 options: '<div class="teacher-hours-preview">Prévisualisation de la répartition des heures</div>'
             }
         ],
-        primary_action_label: __('Fermer'),
-        primary_action: function() {
-            dialog.hide();
+        data:[],
+        primary_action_label: __('Enregistrer'),        
+        primary_action: function(values) {
+            console.log("Field ",values)
+            Udshed.TeachingGrid.UtilsQueries.update_teacher_list(teachingUnitCode,values.table_enseignant?values.table_enseignant:[],()=>{
+                    dialog.hide()
+                    callbackFunction()
+                }
+            );
         }
     });
-    
+
     // Charger les données du cours pour la prévisualisation
-    // Udshed.TeachingGrid.Dialog.load_course_data_for_preview(courseTeacherDocName, dialog);
-    
-    // Mettre à jour la prévisualisation quand le grid change
-    // $(dialog.fields_dict.teachers.grid.wrapper).on('change', 'select, input', function() {
-    //     Udshed.TeachingGrid.Dialog.update_teacher_preview_from_grid(courseTeacherDocName,teachingUnitName, dialog);
-    // });
-    
+    Udshed.TeachingGrid.Dialog.load_course_data_for_preview(teachingUnitCode, dialog,filters.academic_year);
+        
     dialog.show();
 },
 
-// Mettre à jour la prévisualisation
-update_teacher_preview(courseDoc, dialog) {
-    var html = '<h5>Répartition des heures par enseignant</h5>';
-    
-    if (!courseDoc.teachers || courseDoc.teachers.length === 0) {
-        html += '<p class="text-muted">Aucun enseignant assigné</p>';
-        dialog.fields_dict.preview_html.$wrapper.html(html);
-        return;
-    }
-    
-    // Calculer la distribution des heures
-    var distribution = {};
-    var totalHours = (courseDoc.cm_hours || 0) + (courseDoc.td_hours || 0) + 
-                     (courseDoc.tp_hours || 0) + (courseDoc.tpe_hours || 0);
-    
-    var hourTypes = {
-        'CM': courseDoc.cm_hours || 0,
-        'TD': courseDoc.td_hours || 0,
-        'TP': courseDoc.tp_hours || 0,
-        'TPE': courseDoc.tpe_hours || 0
-    };
-    
-    // Pour chaque assignation, calculer les heures
-    courseDoc.teachers.forEach(function(assignment) {
-        if (!distribution[assignment.teacher]) {
-            distribution[assignment.teacher] = {
-                name: assignment.teacher,
-                full_name: assignment.teacher, // À améliorer avec le vrai nom
-                hours: 0,
-                details: []
-            };
-        }
-        
-        if (assignment.assignment_type === 'Tous') {
-            var allHours = totalHours;
-            distribution[assignment.teacher].hours += allHours;
-            distribution[assignment.teacher].details.push({
-                type: 'Tous',
-                hours: allHours
-            });
-        } else if (hourTypes[assignment.assignment_type]) {
-            var typeHours = hourTypes[assignment.assignment_type];
-            var assignedHours = typeHours * (assignment.hours_percentage / 100);
-            distribution[assignment.teacher].hours += assignedHours;
-            distribution[assignment.teacher].details.push({
-                type: assignment.assignment_type,
-                hours: assignedHours,
-                percentage: assignment.hours_percentage
-            });
-        }
-    });
-    
-    // Construire le tableau HTML
-    html += '<table class="table table-bordered table-sm">';
-    html += '<thead><tr><th>Enseignant</th><th>Type</th><th>Heures</th></tr></thead>';
-    html += '<tbody>';
-    
-    for (var teacher in distribution) {
-        var t = distribution[teacher];
-        var rowspan = t.details.length;
-        var first = true;
-        
-        t.details.forEach(function(detail) {
-            html += '<tr>';
-            if (first) {
-                html += `<td rowspan="${rowspan}"><strong>${t.full_name}</strong></td>`;
-                first = false;
+load_course_data_for_preview(teachingUnitCode,dialog,academic_year)
+{
+    Udshed.TeachingGrid.UtilsQueries.load_doctype(
+        {
+            doctype: 'Teaching Unit',
+            filters: {
+                'name': teachingUnitCode,
+            },
+            fields: ['*']
+        },
+        (data)=>{
+            if(!data) return;
+            teacher_list = data.table_enseignant
+            console.log("Teacher list ",teacher_list)
+            // Récupérer le grid
+            var grid = dialog.fields_dict.table_enseignant.grid;
+
+            // Ajouter les données existantes
+            if (teacher_list && teacher_list.length > 0) {
+                grid.df.data = teacher_list.map((t)=>({
+                    enseignant:t.enseignant,
+                    type_de_cours: t.type_de_cours
+                }))
+                grid.refresh();
+            } else {
+                // Vider le grid
+                grid.df.data = [];
+                grid.refresh();
             }
-            html += `<td>${detail.type} ${detail.percentage ? '(' + detail.percentage + '%)' : ''}</td>`;
-            html += `<td>${detail.hours.toFixed(1)}h</td>`;
-            html += '</tr>';
-        });
-    }
-    
-    html += '</tbody>';
-    html += `<tfoot><tr><th colspan="2">Total</th><th>${totalHours}h</th></tr></tfoot>`;
-    html += '</table>';
-    
-    dialog.fields_dict.preview_html.$wrapper.html(html);
+
+        },
+        "Chargement de la liste des enseignants du cours",
+    )
 },
 
 // Mettre à jour la prévisualisation à partir du grid

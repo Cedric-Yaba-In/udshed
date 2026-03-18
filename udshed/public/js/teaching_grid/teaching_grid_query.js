@@ -44,10 +44,29 @@ window.Udshed.TeachingGrid.UtilsQueries = {
             }
         });
     },    
-    load_doctype_list(args,callbackFunction)
+    load_doctype_list(args,callbackFunction,message ="Chargement de la liste")
+    {
+        frappe.call({
+            method: 'frappe.client.get_list',
+            freeze:true,
+            freeze_message:__(message),
+            args: {...args},
+            callback: function(r) {
+                if (r.message) {
+                    // nsage.teachers
+                    callbackFunction(r.message);
+                } else {
+                    callbackFunction(null);
+                }
+            }
+        });
+    },
+    load_doctype(args,callbackFunction,message ="Chargement de la liste")
     {
         frappe.call({
             method: 'frappe.client.get',
+            freeze:true,
+            freeze_message:__(message),
             args: {...args},
             callback: function(r) {
                 if (r.message) {
@@ -91,7 +110,7 @@ window.Udshed.TeachingGrid.UtilsQueries = {
 
     export_grid(filters,callbackFunction= ()=>{})
     {
-            frappe.call({
+        frappe.call({
             method: 'udshed.api.teaching_grid.export_grid',
             args:{...filters},
             freeze: true,
@@ -107,6 +126,39 @@ window.Udshed.TeachingGrid.UtilsQueries = {
                         seconds: 3
                     });
                     frappe.utils.play_sound("submit");
+
+                } else {
+                    frappe.msgprint({
+                        title: __('Erreur'),
+                        message: r.message.error || __('Impossible d\'exporter la grille'),
+                        indicator: 'red'
+                    });
+                }
+            }
+        });
+    },
+
+    update_teacher_list(teachingUnitCode,grid_teacher,callbackFunction = ()=>{})
+    {
+        frappe.call({
+            method: 'udshed.api.course.update_teacher_unit',
+            args:{
+                teaching_unit_code:teachingUnitCode,
+                grid_teacher:[...grid_teacher]
+            },
+            freeze: true,
+            freeze_message: __("Mise à jour de la grille en cours..."),
+            callback: function(r) {
+                if (r.message) {
+                    // Ouvrir l'URL du fichier
+                    
+                    frappe.show_alert({
+                        message: __('Gilles mise à jour'),
+                        indicator: 'green',
+                        seconds: 3
+                    });
+                    frappe.utils.play_sound("submit");
+                    callbackFunction()
 
                 } else {
                     frappe.msgprint({

@@ -206,28 +206,32 @@ window.Udshed.TeachingGrid.DataGrid = class TeachingGrid {
         let {ueIndex,courseIndex } = me.getUeByCourseCode(courseCode)
 
         let teachingUnit = me.data[ueIndex]["courses"][courseIndex]["teaching_unit"]
-        console.log("Teaching Unit ",teachingUnit)
         
         
         // Trouver le document Course correspondant
-        Udshed.TeachingGrid.UtilsQueries.load_doctype_list(
-            {
-                doctype: 'Course Teacher Item', // Votre doctype existant
-                filters: {
-                    'parent': teachingUnit,
-                },
-                fieldname: ['name']
-            },(data)=>{
-                if(data && data.name)
-                {
-                    Udshed.TeachingGrid.Dialog.open_teacher_assignment_dialog(data.name, courseCode,teachingUnit, rowIndex, colIndex);
-                }
-                else 
-                {
-                    frappe.msgprint(__('Cours non trouvé dans la base de données'));
-                }
-            }
-        )
+        // Udshed.TeachingGrid.UtilsQueries.load_doctype_list(
+        //     {
+        //         doctype: 'Course Teacher Item', // Votre doctype existant
+        //         filters: {
+        //             'parent': teachingUnit,
+        //         },
+        //         fieldname: ['name']
+        //     },(data)=>{
+        //         if(data && data.name)
+        //         {
+        //             Udshed.TeachingGrid.Dialog.open_teacher_assignment_dialog(data.name, courseCode,teachingUnit, rowIndex, colIndex,this.filters);
+        //         }
+        //         else 
+        //         {
+        //             frappe.msgprint(__('Cours non trouvé dans la base de données'));
+        //         }
+        //     }
+        // )
+
+        Udshed.TeachingGrid.Dialog.open_teacher_assignment_dialog(courseCode,teachingUnit, rowIndex, colIndex,this.filters,()=>{
+            me.refresh()
+        });
+
     }
 	create_teacher_editor(colIndex, rowIndex, data, column, row)
 	{

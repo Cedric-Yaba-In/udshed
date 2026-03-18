@@ -106,7 +106,6 @@ window.Udshed.Dialogs = {
                     options: "Building",
                     depends_on:'eval:doc.mode=="En présentiel"',
                     change() {
-
                         Udshed.UtilsQueries.loadRooms(this.get_value(),cur_dialog.fields_dict.salle,(data)=>{
                             cur_dialog.fields_dict.salle.df.options = data;
                             cur_dialog.fields_dict.salle.refresh();

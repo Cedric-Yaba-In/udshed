@@ -1,6 +1,8 @@
 import frappe
 from frappe.utils import cint
 from frappe.query_builder import DocType
+import json
+
 
 @frappe.whitelist()
 def get_teaching_units(
@@ -281,4 +283,22 @@ def clean_course_and_ue_by_acaemic_year(academic_year,faculty,filiere,niveau,sem
 	#Todo
 	pass
 
+
+@frappe.whitelist()
+def update_teacher_unit(teaching_unit_code,grid_teacher): 
+	if isinstance(grid_teacher, str):
+		grid_teacher = json.loads(grid_teacher)
+
+	teaching_unit = frappe.get_doc("Teaching Unit",teaching_unit_code)
+	teaching_unit.set("table_enseignant", [])
+	print("Grid teacher",grid_teacher)
+	for t in grid_teacher:
+		print("Teacher ",t)
+		teaching_unit.append("table_enseignant", {
+			"enseignant": t["enseignant"],
+			"type_de_cours": t["type_de_cours"]
+		})
+	teaching_unit.save()
+
+	return True
 

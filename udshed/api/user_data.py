@@ -32,7 +32,7 @@ def get_user_context():
 		role="Coordinateur"
 	
 	if "Coordonateur" or "Planning Manager" in roles:
-		User = DocType("User")
+		Teacher = DocType("User")
 		FieldOfStudy = DocType("Field of study")
 		FieldOfStudyLevel = DocType("Field of study Level")
 	

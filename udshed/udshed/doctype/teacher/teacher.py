@@ -14,6 +14,15 @@ class Teacher(Document):
 		if not self.is_new() and self.name!=new_full_name:
 			self.set_onload('rename_needed',self.get_unique_target_name(new_full_name))
 		
+		for row in self.contrats:
+			if row.signed_contract:
+				if row.have_signed_contract != True:
+					row.have_signed_contract = True
+			else:
+				if row.have_signed_contract == True:
+					row.have_signed_contract = False
+				
+		
 	def on_update(self):
 		new_full_name = f"{self.grade} {self.first_name} {self.last_name}".strip()
 		if not self.is_new() and self.name!=new_full_name:

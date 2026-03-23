@@ -69,8 +69,6 @@ def generate_planning_pdf(filters):
     school_name, school_logo = school_setting.get_school_data()
     school_logo = load_school_logo(school_logo)
     
-
-
     items = frappe.call(
         "udshed.api.planning_calendar.get_week_planning",
         academic_year=filters["academic_year"],
@@ -157,13 +155,13 @@ def generate_planning_pdf(filters):
         data_to_print
     )
     pdf = get_pdf(html,{
-    "orientation": "Landscape",
-    "page-size": "A4",
-    "margin-top": "10mm",
-    "margin-bottom": "10mm",
-    "margin-left": "12mm",
-    "margin-right": "12mm",
-})
+        "orientation": "Landscape",
+        "page-size": "A4",
+        "margin-top": "10mm",
+        "margin-bottom": "10mm",
+        "margin-left": "12mm",
+        "margin-right": "12mm",
+    })
     planning_name = "Planning"
     if filiere:
         planning_name += f" {filiere.field_of_study_code}"

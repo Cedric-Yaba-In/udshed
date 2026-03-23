@@ -9,8 +9,8 @@
   "academic_year",
   "have_signed_contract",
   "signed_contract",
-  "t\u00e9l\u00e9charger_le_contrat_sign\u00e9",
-  "t\u00e9l\u00e9charger_le_contrat_\u00e0_sign\u00e9"
+  "download_signed_contract",
+  "download_contract_to_signed"
  ],
  "fields": [
   {
@@ -18,7 +18,8 @@
    "fieldname": "have_signed_contract",
    "fieldtype": "Check",
    "in_list_view": 1,
-   "label": "Contact sign\u00e9?"
+   "label": "Contact sign\u00e9?",
+   "read_only": 1
   },
   {
    "fieldname": "academic_year",
@@ -36,24 +37,26 @@
   },
   {
    "button_color": "Primary",
-   "fieldname": "t\u00e9l\u00e9charger_le_contrat_sign\u00e9",
+   "depends_on": "eval:(doc.have_signed_contract==true)",
+   "fieldname": "download_signed_contract",
    "fieldtype": "Button",
    "in_list_view": 1,
    "label": "Contrat sign\u00e9"
   },
   {
    "button_color": "Info",
-   "fieldname": "t\u00e9l\u00e9charger_le_contrat_\u00e0_sign\u00e9",
+   "fieldname": "download_contract_to_signed",
    "fieldtype": "Button",
    "in_list_view": 1,
-   "label": "Contrat \u00e0 signer"
+   "label": "Contrat \u00e0 signer",
+   "placeholder": "T\u00e9l\u00e9charger le contrat sign\u00e9"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-03-18 09:50:06.665193",
+ "modified": "2026-03-23 23:09:28.065854",
  "modified_by": "Administrator",
  "module": "Udshed",
  "name": "Teacher Academic Contract",

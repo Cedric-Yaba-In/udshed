@@ -2,7 +2,11 @@ import frappe
 import os
 import base64
 from frappe import _
-from docxtpl import DocxTemplate
+from docxtpl import DocxTemplate, InlineImage
+from docx.shared import Mm
+import udshed.utils.file_utils as file_utils
+import udshed.api.school_setting as school_setting
+from datetime import datetime
 from io import BytesIO
 
 def load_template(template_file, from_file_db=True):
@@ -20,7 +24,7 @@ def load_template(template_file, from_file_db=True):
 def download_contract_to_signed():
     tpl = load_template("teacher_contract_tpl.docx",False)
 
-    connected_user = frappe.get_doc("User ",frappe.session.user)
+    connected_user = frappe.get_doc("User",frappe.session.user)
     obj = {
         "full_name":connected_user.name,
         "email":connected_user.email,
@@ -28,7 +32,7 @@ def download_contract_to_signed():
         "grade":"",
         "phone":connected_user.phone
     }
-    if frappe.db.exists("Teacher ",{"email":connected_user.email}):
+    if frappe.db.exists("Teacher",{"email":connected_user.email}):
         teacher_data = frappe.get_doc("Teacher",{"email":connected_user.email})
         obj = {
             **obj,
@@ -52,6 +56,52 @@ def download_contract_to_signed():
 def download_signed_contract(url_file):
     doc = load_template(url_file,True)
     doc.render({})
+
+    # Sauvegarder en mémoire
+    output = BytesIO()
+    doc.save(output)
+    output.seek(0)
+
+    # Récupérer le contenu binaire
+    file_content = output.getvalue()
+    return base64.b64encode(file_content).decode()
+
+
+@frappe.whitelist()
+def download_progression_cours(teaching_unit,teacher,nbre_heure,total_heure):
+    doc = load_template("fiche_progression_cours.docx",False)
+    teacher_obj = frappe.get_doc("Teacher",teacher)
+
+    teaching_unit_obj = frappe.get_doc("Teaching Unit",teaching_unit)
+    class_list = ""
+
+    for c_level in teaching_unit_obj.course_levels:
+        filiere = c_level.filiere
+        level = frappe.get_doc("Field of study Level",c_level.niveau)
+        class_list += f"{filiere} {level.level},"
+    
+    if len(class_list)>1:
+        class_list = class_list[:len(class_list)-1]
+    data_to_render ={
+        "teacher_name":teacher_obj.name,
+        "teacher_grade":teacher_obj.titre if teacher_obj.titre else "",
+        "classes_list":class_list,
+        "nbre_heure":f"{nbre_heure}/{total_heure} Heures",
+        "cours_intitule":teaching_unit_obj.intitule_cours,
+        "today_date": datetime.now().strftime("%d/%m/%Y"),
+        "created_date":datetime.now().strftime("%d/%m/%Y")
+    }
+
+    if frappe.db.exists("File",{"file_url": school_setting.get_school_logo()}):
+        # logo_school = file_utils.load_school_logo()
+        logo_path = frappe.get_doc("File", {"file_url": school_setting.get_school_logo()}).get_full_path()
+        logo_school = InlineImage(doc, logo_path, width=Mm(40))
+        data_to_render = {
+            **data_to_render,
+            "logo_compagny":logo_school
+        }
+
+    doc.render(data_to_render)
 
     # Sauvegarder en mémoire
     output = BytesIO()

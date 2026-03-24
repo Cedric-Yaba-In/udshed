@@ -1,5 +1,6 @@
 import pandas as pd
 import frappe
+import base64
 from frappe.utils import get_site_path, now_datetime
 import os
 
@@ -46,3 +47,22 @@ def read_frappe_excel(file_url):
         return data
     except Exception as e:
         frappe.throw( f'Erreur de lecture du fichier. fichier non conforme: {file_path}')
+
+
+def load_school_logo(school_logo):
+    file_doc = frappe.get_doc("File", {"file_url": school_logo})
+    file_path = file_doc.get_full_path()
+
+    with open(file_path, "rb") as f:
+        encoded = base64.b64encode(f.read()).decode()
+
+    return f"data:image/png;base64,{encoded}"
+
+
+def get_app_logo():
+    logo_path = os.path.join(
+        frappe.get_app_path("udshed"),"public","images","logo.png"
+    )
+    with open(logo_path, "rb") as f:
+        encoded = base64.b64encode(f.read()).decode()    
+    return f"data:image/png;base64,{encoded}"

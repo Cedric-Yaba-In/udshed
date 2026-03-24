@@ -1,14 +1,12 @@
 import frappe
 import os
-import base64
 from datetime import datetime, timedelta
 import udshed.api.school_setting as school_setting
 import udshed.api.planning_period as planning_period
+import udshed.utils.file_utils as file_utils
 from frappe.utils import getdate, add_days
 from frappe.utils.pdf import get_pdf
 from frappe.utils import get_url
-
-
 
 def get_valid_period(periods,items):
     periods_to_valid = {}
@@ -21,28 +19,10 @@ def get_valid_period(periods,items):
          periods_to_valid[period] = True
     return [p for p in periods if periods_to_valid[p["name"]]]
 
-def load_school_logo(school_logo):
-    file_doc = frappe.get_doc("File", {"file_url": school_logo})
-    file_path = file_doc.get_full_path()
-
-    with open(file_path, "rb") as f:
-        encoded = base64.b64encode(f.read()).decode()
-
-    return f"data:image/png;base64,{encoded}"
-
-
-def get_app_logo():
-    logo_path = os.path.join(
-        frappe.get_app_path("udshed"),"public","images","logo.png"
-    )
-    with open(logo_path, "rb") as f:
-        encoded = base64.b64encode(f.read()).decode()    
-    return f"data:image/png;base64,{encoded}"
-
 
 @frappe.whitelist(allow_guest=False)
 def generate_planning_pdf(filters):
-    app_logo = get_app_logo()
+    app_logo = file_utils.get_app_logo()
 
     filiere = None
     niveau_filiere = None
@@ -67,7 +47,7 @@ def generate_planning_pdf(filters):
         teacher_filter = None
 
     school_name, school_logo = school_setting.get_school_data()
-    school_logo = load_school_logo(school_logo)
+    school_logo = file_utils.load_school_logo(school_logo)
     
     items = frappe.call(
         "udshed.api.planning_calendar.get_week_planning",
@@ -86,8 +66,6 @@ def generate_planning_pdf(filters):
         period = get_valid_period(planning_period.get_all_periods(),items)
         if len(period)==0:
             period = planning_period.get_default_period()
-
-    
 
     grid = {
         "Monday": {},

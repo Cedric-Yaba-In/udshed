@@ -85,6 +85,5 @@ window.Udshed.Insight.Finance.Queries =   {
                 console.error("Error fetching user session data:", err);
             }
         });
-    },
-
+    }
 }

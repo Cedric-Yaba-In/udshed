@@ -90,5 +90,25 @@ window.Udshed.Utils = {
             style: 'currency', 
             currency: currency,
         }).format(amount);
+    },
+    make_download_file_word(data,filename="contract_to_signed")
+    {
+        const byteCharacters = atob(data);
+        const byteNumbers = new Array(byteCharacters.length);
+
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], {
+            type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        });
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${filename}.docx`;
+        link.click();
     }
 }

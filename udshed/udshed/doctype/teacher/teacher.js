@@ -1,5 +1,7 @@
 // Copyright (c) 2026, Cédric Nguendap Bedjama and contributors
 // For license information, please see license.txt
+frappe.require('/assets/udshed/js/utils/utils.js');
+
 
 frappe.ui.form.on("Teacher", {
 	refresh(frm) {
@@ -28,7 +30,7 @@ frappe.ui.form.on('Teacher Academic Contract', {
             freeze: true,
             freeze_message: __("Téléchargement du contrat en cours..."),
             callback: function(r) {
-                make_download(r.message)
+                Udshed.Utils.make_download_file_word(r.message)
             },
             error: function(r) {
                 frappe.msgprint(__("Erreur lors du téléchargement du contrat"));
@@ -47,7 +49,7 @@ frappe.ui.form.on('Teacher Academic Contract', {
             freeze: true,
             freeze_message: __("Téléchargement du modèle en cours..."),
             callback: function(r) {
-                make_download(r.message)
+                Udshed.Utils.make_download_file_word(r.message)
             },
             error: function(r) {
                 console.log("Error ",r)
@@ -58,23 +60,3 @@ frappe.ui.form.on('Teacher Academic Contract', {
 
 });
 
-function make_download(data)
-{
-    const byteCharacters = atob(data);
-    const byteNumbers = new Array(byteCharacters.length);
-
-    for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-
-    const byteArray = new Uint8Array(byteNumbers);
-
-    const blob = new Blob([byteArray], {
-        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    });
-
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = "contract_to_signed.docx";
-    link.click();
-}

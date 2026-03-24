@@ -103,13 +103,14 @@ window.Udshed.Insight.Academic.Teacher = {
                                 <th>CC</th>
                                 <th>Examen</th>
                                 <th>Rattrapage</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody> `;    
 
                         data.teaching_unit.forEach(c => {
                             html += `
-                                <tr class="cursor-pointer" onclick="navigateToCourse('${c.teaching_unit.name}')">
+                                <tr class="cursor-pointer">
                                     <td><strong>${c.teaching_unit.course}</strong><br><small>${c.teaching_unit.intitule_cours}</small></td>
                                     <td>${c.teaching_unit.course_levels.map((level)=>this.getStringFieldOfStudyAndLevel(level,levels)).join(', ')}</td>
                                     <td class="text-center">${c.sessions}</td>
@@ -128,6 +129,12 @@ window.Udshed.Insight.Academic.Teacher = {
                                     <td class="text-center">${c.sessions_map["Controlle Continue (CC)"]}</td>
                                     <td class="text-center">${c.sessions_map["Examen de session normal"]}</td>
                                     <td class="text-center">${c.sessions_map["Examen de rattrapage"]}</td>
+                                    <td> 
+                                        <button onclick="Udshed.Insight.Academic.Teacher.downloadProgressionCours('${c.teaching_unit.name}','${filters.teacher}',${c.done_hours},${c.total_hours})" class="btn btn-secondary btn-sm primary-action" data-label="Fiche progression de cours">
+                                            <svg class="icon  icon-xs" style="" aria-hidden="true"><use class="" href="#icon-download"></use></svg> 
+                                            <span class="hidden-xs" data-label="Fiche progression"> Fiche de progression</span>
+                                        </button>
+                                    </td>
                                 </tr>
                             `
                         });
@@ -146,5 +153,25 @@ window.Udshed.Insight.Academic.Teacher = {
     getStringFieldOfStudyAndLevel(level,levels)
     {
         return `${level.filiere} ${levels.find((l)=>l.name == level.niveau).level}`
+    },
+    downloadProgressionCours(teachingUnitName,teacher,nbre_heure,total_heure)
+    {
+        frappe.call({
+            method: "udshed.api.generate_teacher_doc.download_progression_cours",
+            args: {
+                teaching_unit:teachingUnitName,
+                teacher,
+                nbre_heure,
+                total_heure
+            },
+            freeze: true,
+            freeze_message: __("Génération de la fiche de progression..."),
+            callback: function(r) {
+                Udshed.Utils.make_download_file_word(r.message,"fiche_de_progression")
+            },
+            error: function(r) {
+                frappe.msgprint(__("Erreur lors du Génération de la fiche de progression"));
+            }
+        })
     }
 };

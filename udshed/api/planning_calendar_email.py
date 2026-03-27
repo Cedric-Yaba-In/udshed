@@ -81,8 +81,8 @@ def send_planning_to_mail(filters,to_all_teacher=None,to_teacher=None,to_me=None
 
 
 def email_html_template(school_name,school_logo, teacher_name,start_date,end_date):
-    school_data_logo = file_utils.get_url_school_logo(school_logo)
-    app_logo = file_utils.get_url_app_logo()
+    school_data_logo = file_utils.load_school_logo(school_logo)
+    app_logo = file_utils.get_app_logo()
     return f"""
         <div style="font-family: Arial, sans-serif; background:#f4f6f9; padding:30px;">
             <div style="max-width:700px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,0.08);">

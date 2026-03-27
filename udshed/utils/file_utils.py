@@ -1,4 +1,7 @@
 import pandas as pd
+
+from frappe.utils import get_url
+
 import frappe
 import base64
 from frappe.utils import get_site_path, now_datetime
@@ -66,3 +69,15 @@ def get_app_logo():
     with open(logo_path, "rb") as f:
         encoded = base64.b64encode(f.read()).decode()    
     return f"data:image/png;base64,{encoded}"
+
+def get_url_app_logo():
+    # logo_path = os.path.join("public","images","logo.png")
+    # logo_path = get_url(logo_path)
+    return frappe.utils.get_url("/assets/udshed/images/logo.png")
+
+
+def get_url_school_logo(school_logo):
+    file_doc = frappe.get_doc("File", {"file_url": school_logo})
+    file_path = file_doc.file_url
+    return frappe.utils.get_url(file_path)
+

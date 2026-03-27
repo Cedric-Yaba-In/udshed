@@ -1,6 +1,8 @@
 import frappe,json
+
 from datetime import datetime
 import udshed.api.planning_calendar_pdf as planning_calendar_pdf
+import udshed.utils.file_utils as file_utils
 import udshed.utils.email_utils as email_utils
 import udshed.api.school_setting as school_setting
 
@@ -10,7 +12,7 @@ def send_planning_to_teacher_email(filters,teacher,school_name,school_logo):
     frappe.sendmail(
         recipients = [teacher.email],
         subject =  f"UdM: {planning_name}",
-        message =  email_html_template(school_name,school_logo,teacher.full_name,start_date,end_date),
+        message =  email_html_template(school_name,school_logo,teacher.name,start_date,end_date),
         attachments= [{
             "fname": planning_name + ".pdf",
             "fcontent": pdf
@@ -34,7 +36,7 @@ def send_planning_to_mail(filters,to_all_teacher=None,to_teacher=None,to_me=None
             sender = email_utils.get_formatted_sender(),
             recipients = [teacher.email],
             subject =  f"UdM: {planning_name}",
-            message =  email_html_template(school_name,school_logo,teacher.full_name,start_date,end_date),
+            message =  email_html_template(school_name,school_logo,teacher.name,start_date,end_date),
             attachments= [{
                 "fname": planning_name + ".pdf",
                 "fcontent": pdf
@@ -67,7 +69,7 @@ def send_planning_to_mail(filters,to_all_teacher=None,to_teacher=None,to_me=None
             sender = email_utils.get_formatted_sender(),
             recipients = [current_user.email],
             subject =  f"UdM: {planning_name}",
-            message =  email_html_template(school_name, school_logo, current_user.full_name, start_date, end_date),
+            message =  email_html_template(school_name, school_logo, current_user.name, start_date, end_date),
             attachments= [{
                 "fname": planning_name + ".pdf",
                 "fcontent": pdf
@@ -79,8 +81,8 @@ def send_planning_to_mail(filters,to_all_teacher=None,to_teacher=None,to_me=None
 
 
 def email_html_template(school_name,school_logo, teacher_name,start_date,end_date):
-    school_logo = planning_calendar_pdf.load_school_logo(school_logo)
-    app_logo = planning_calendar_pdf.get_app_logo()
+    school_data_logo = file_utils.get_url_school_logo(school_logo)
+    app_logo = file_utils.get_url_app_logo()
     return f"""
         <div style="font-family: Arial, sans-serif; background:#f4f6f9; padding:30px;">
             <div style="max-width:700px; margin:auto; background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 6px 18px rgba(0,0,0,0.08);">
@@ -90,7 +92,7 @@ def email_html_template(school_name,school_logo, teacher_name,start_date,end_dat
                 
                 <!-- Logo Institution -->
                 <div style="margin-bottom:15px;">
-                    <img src="{school_logo}" style="height:70px;">
+                    <img src="{school_data_logo}" style="height:70px;">
                 </div>
 
                 <!-- Nom Institution -->

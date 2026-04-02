@@ -40,6 +40,23 @@ window.Udshed.PlanningQueries  = {
             }
         });
     },
+    getPlanningType(level,startDate,academic_year,callback_function=()=>{})
+    {
+        console.log("Getting planning type for level ",level," week starting on ",startDate," and academic year ",academic_year)
+        frappe.call({
+            method: "udshed.api.planning_calendar.get_planning_type",
+            freeze: true,
+            freeze_message: __("Récupération du type de planning..."),
+            args: { 
+                field_of_study_level: level,
+                week_start: frappe.datetime.obj_to_str(startDate),
+                academic_year: academic_year
+             },
+            callback: (r) => {
+                return callback_function(r.message);
+            }
+        });
+    },
 
     deletePlanning(planning_name,callback_function=()=>{})
     {
@@ -56,14 +73,18 @@ window.Udshed.PlanningQueries  = {
         });
     },
 
-    loadCoursePeriod(level)
+    loadCoursePeriod(level,startDate,academic_year)
     {
         return new Promise((resolve, reject) => {
             frappe.call({
                 method: "udshed.api.planning_period.get_period",
                 freeze: true,
                 freeze_message: __("Chargement des périodes de cours..."),
-                args: { field_of_study_level: level },
+                args: { 
+                    field_of_study_level: level,
+                    week_start: frappe.datetime.obj_to_str(startDate),
+                    academic_year: academic_year
+                },
                 callback: (r) => {
                     resolve(r.message);
                 }

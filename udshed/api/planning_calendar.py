@@ -221,3 +221,21 @@ def delete_planning(planning_name):
     frappe.delete_doc("Planning Item",planning_name)
     return True
 
+@frappe.whitelist()
+def get_planning_type(field_of_study_level,week_start,academic_year):
+    week_start_date = datetime.strptime(week_start, "%Y-%m-%d")
+
+    session_exam = frappe.get_all("Session Examen", filters=[
+            ["academic_year", "=", academic_year], 
+            ["date_debut", "<=",    week_start_date], 
+            ["date_de_fin", ">=", week_start_date],
+            ["Session Examen Field of study Level", "niveau", "=", field_of_study_level]
+        ],
+        fields = ["name", "calendar"],
+        distinct = True,
+    )
+
+    if len(session_exam) > 0:
+        return "Examen"
+    return "Cours"
+

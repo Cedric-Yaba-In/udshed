@@ -3,6 +3,7 @@ import os
 from datetime import datetime, timedelta
 import udshed.api.school_setting as school_setting
 import udshed.api.planning_period as planning_period
+import udshed.api.planning_calendar as planning_calendar
 import udshed.utils.file_utils as file_utils
 from frappe.utils import getdate, add_days
 from frappe.utils.pdf import get_pdf
@@ -59,9 +60,9 @@ def generate_planning_pdf(filters):
     )
 
     if "niveau" in filters and  filters["niveau"]:
-        period = get_valid_period(planning_period.get_period(niveau_filiere.name), items)
+        period = get_valid_period(planning_period.get_period(niveau_filiere.name,filters["week_start"],filters["academic_year"]), items)
         if len(period)==0:
-            period = planning_period.get_period(niveau_filiere.name)
+            period = planning_period.get_period(niveau_filiere.name,filters["week_start"],filters["academic_year"])
     else:
         period = get_valid_period(planning_period.get_all_periods(),items)
         if len(period)==0:
@@ -112,6 +113,7 @@ def generate_planning_pdf(filters):
             "school_logo": school_logo,
             "app_logo": app_logo,
             "generated_on": datetime.now().strftime("%d/%m/%Y à %H:%M"),
+            "type_planning": planning_calendar.get_planning_type(niveau_filiere.name,filters["week_start"],filters["academic_year"]),
             "period":[
                 {
                     **p,

@@ -21,10 +21,35 @@ def get_unique_sorted_period(periods):
 
 
 @frappe.whitelist()
-def get_period(field_of_study_level):
-    calendar_name = frappe.get_doc("Field of study Level",field_of_study_level).calendrier
-    calendar = frappe.get_doc("Calendar Planing",{"name":calendar_name})
-    periods = frappe.db.get_all('Planning Period', filters={"parent":calendar_name},fields=["name","libelle","heure_de_debut","heure_de_fin"])
+def get_period(field_of_study_level,week_start,academic_year):
+    session_exam = []
+    print("Field of study level:", field_of_study_level)
+    week_start_date = datetime.strptime(week_start, "%Y-%m-%d")
+    if academic_year and week_start:
+        session_exam = frappe.get_all("Session Examen", filters=[
+                ["academic_year", "=", academic_year], 
+                ["date_debut", "<=",    week_start_date], 
+                ["date_de_fin", ">=", week_start_date],
+                ["Session Examen Field of study Level", "niveau", "=", field_of_study_level]
+            ],
+            fields = ["name", "calendar"],
+            distinct = True,
+        )
+    periods = []
+
+    if len(session_exam) > 0:
+        for session in session_exam:  
+            session_f = frappe.get_doc("Session Examen", session.name)
+            print("Session:", session_f, session_f.classes_concernees)              
+            calendar_name = session.calendar
+            calendar = frappe.get_doc("Calendar Planing",{"name":calendar_name})
+            periods.extend(frappe.db.get_all('Planning Period', filters={"parent":calendar_name},fields=["name","libelle","heure_de_debut","heure_de_fin"]))
+        # 
+    else:
+        calendar_name = frappe.get_doc("Field of study Level",field_of_study_level).calendrier
+        calendar = frappe.get_doc("Calendar Planing",{"name":calendar_name})
+        periods = frappe.db.get_all('Planning Period', filters={"parent":calendar_name},fields=["name","libelle","heure_de_debut","heure_de_fin"])
+    
     return get_unique_sorted_period([{"name":p.name,"libelle": p.libelle,"fuseau_horaire":calendar.fuseau_horaire,"heure_de_debut":p.heure_de_debut,"heure_de_fin":p.heure_de_fin} for p in periods])
 
 @frappe.whitelist()

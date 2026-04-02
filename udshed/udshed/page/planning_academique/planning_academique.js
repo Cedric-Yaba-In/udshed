@@ -14,6 +14,11 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 
 
 		var currentWeekStart = Udshed.DateUtils.getMonday(new Date());
+		let page = frappe.ui.make_app_page({
+			parent: wrapper,
+			title: 'Planning',
+			single_column: true
+		});
 
 		async function loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods) {
 			Udshed.DateUtils.updateWeekLabel(currentWeekStart);
@@ -23,12 +28,21 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 				Udshed.UI.show_calendar(calendar_zone, Udshed.UI.get_grid_calendar_item(items,filters,periods),periods,filters.teacher?true:false)
 			});
 		}
-	
-		let page = frappe.ui.make_app_page({
-			parent: wrapper,
-			title: 'Planning',
-			single_column: true
-		});
+
+		function update_exam_label(currentWeekStart,filters,page)
+		{
+			if(!filters.niveau || !filters.academic_year) return;
+			Udshed.PlanningQueries.getPlanningType(filters.niveau,currentWeekStart,filters.academic_year,(planning_type)=>{
+				console.log("Planning type for the week ",currentWeekStart," is ",planning_type)
+				if(planning_type=="Examen") {
+					page.set_indicator('Session d\'examen', 'orange')
+				} 
+				else
+				{
+					page.clear_indicator()
+				}
+			})
+		}
 
 		let filters = {
 			academic_year: null,
@@ -137,8 +151,9 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 			fieldname: 'niveau',
 			async change() {
 				filters.niveau = levelMap[this.get_value()];
-				periods = this.get_value()==null ? [...defaultPeriods]: await Udshed.PlanningQueries.loadCoursePeriod(filters.niveau)
+				periods = this.get_value()==null ? [...defaultPeriods]: await Udshed.PlanningQueries.loadCoursePeriod(filters.niveau,currentWeekStart,filters.academic_year)
 				loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
+				update_exam_label(currentWeekStart,filters,page)
 				Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)
 			}
 		});
@@ -153,39 +168,52 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 
 				filters.teacher = this.get_value()
 				loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
+				update_exam_label(currentWeekStart,filters,page)
 				Udshed.UI.update_page_actions(filters, btnEporterPDF,btnEnvoiMail)
 			}
 		});
 
-		document.getElementById("prev-week").onclick = () => {
+		document.getElementById("prev-week").onclick = async () => {
+			console.log("Niveau selected:", niveau_field.get_value());
 			currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+			periods = niveau_field.get_value()==null ? [...defaultPeriods]: await Udshed.PlanningQueries.loadCoursePeriod(filters.niveau,currentWeekStart,filters.academic_year)
 			loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
+			update_exam_label(currentWeekStart,filters,page)
 		};
 
-		document.getElementById("next-week").onclick = () => {
+		document.getElementById("next-week").onclick = async () => {
 			currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+			periods = niveau_field.get_value()==null ? [...defaultPeriods]: await Udshed.PlanningQueries.loadCoursePeriod(filters.niveau,currentWeekStart,filters.academic_year)
 			loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
+			update_exam_label(currentWeekStart,filters,page)
 		};
 
-		document.getElementById("today-week").onclick = () => {
+		document.getElementById("today-week").onclick = async () => {
 			currentWeekStart = Udshed.DateUtils.getMonday(new Date());
+			periods = niveau_field.get_value()==null ? [...defaultPeriods]: await Udshed.PlanningQueries.loadCoursePeriod(filters.niveau,currentWeekStart,filters.academic_year)
 			loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
+			update_exam_label(currentWeekStart,filters,page)
 		};
 
 	
-		monthPicker.addEventListener("change", function () {
+		monthPicker.addEventListener("change", async function () {
 			const [year, month] = this.value.split("-").map(Number);
 			Udshed.DateUtils.updateWeekSelect(year, month,weekSelect);
 
 			// 🔑 On force la 1ère semaine visible du mois
 			const weeks = Udshed.DateUtils.getWeeksOfMonth(year, month);
 			currentWeekStart = Udshed.DateUtils.getFirstWeekInsideMonth(weeks, year, month);
+			periods = niveau_field.get_value()==null ? [...defaultPeriods]: await Udshed.PlanningQueries.loadCoursePeriod(filters.niveau,currentWeekStart,filters.academic_year)
+			
 			loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
+			update_exam_label(currentWeekStart,filters,page)
 		});
 
-		weekSelect.addEventListener("change", (e) => {
+		weekSelect.addEventListener("change", async (e) => {
 			currentWeekStart = new Date(Number(e.currentTarget.value));
+			periods = niveau_field.get_value()==null ? [...defaultPeriods]: await Udshed.PlanningQueries.loadCoursePeriod(filters.niveau,currentWeekStart,filters.academic_year)
 			loadPlanning(weekSelect,monthPicker,filters,calendar_zone,periods);
+			update_exam_label(currentWeekStart,filters,page)
 		});
 
 

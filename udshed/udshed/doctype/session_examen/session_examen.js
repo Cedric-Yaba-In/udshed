@@ -1,10 +1,11 @@
-// // Copyright (c) 2026, Cédric Nguendap Bedjama and contributors
-// // For license information, please see license.txt
+// Copyright (c) 2026, Cédric Nguendap Bedjama and contributors
+// For license information, please see license.txt
 
-frappe.ui.form.on("Course Field of study level item", {
+frappe.ui.form.on("Session Examen Field of study Level", {
 	filiere(frm, cdt, cdn){
+        console.log("Filiere changed:", frm.doc.filiere);
 		// met à jour le get_query du champ 'niveau' pour cette ligne
-		frm.fields_dict['course_levels'].grid.update_docfield_property('niveau', 'get_query', function() {
+		frm.fields_dict['classes_concernees'].grid.update_docfield_property('niveau', 'get_query', function() {
 			let row = locals[cdt][cdn];
 
 
@@ -20,6 +21,4 @@ frappe.ui.form.on("Course Field of study level item", {
 			};
 		});
 	},
-
-
 });

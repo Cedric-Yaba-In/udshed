@@ -1,0 +1,128 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format: {date_debut}-{date_de_fin}-{###}",
+ "creation": "2026-04-02 05:27:23.684812",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "academic_year",
+  "calendar",
+  "type_dexamen",
+  "column_break_ctlg",
+  "date_debut",
+  "date_de_fin",
+  "semestre",
+  "section_break_kmhq",
+  "classes_concernees"
+ ],
+ "fields": [
+  {
+   "fieldname": "date_debut",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date de d\u00e9but",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_ctlg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "date_de_fin",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date de fin",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_kmhq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Ann\u00e9e Acad\u00e9mique",
+   "options": "Academic Year",
+   "reqd": 1
+  },
+  {
+   "fieldname": "type_dexamen",
+   "fieldtype": "Select",
+   "label": "Type d'examen",
+   "options": "Controlle Continue (CC)\nExamen de session normal\nExamen de rattrapage"
+  },
+  {
+   "fieldname": "semestre",
+   "fieldtype": "Select",
+   "label": "Semestre",
+   "options": "Semestre 1\nSemestre 2"
+  },
+  {
+   "fieldname": "classes_concernees",
+   "fieldtype": "Table",
+   "label": "Classes concern\u00e9es",
+   "options": "Session Examen Field of study Level"
+  },
+  {
+   "fieldname": "calendar",
+   "fieldtype": "Link",
+   "label": "Planning",
+   "options": "Calendar Planing",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-02 06:36:27.387334",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "Session Examen",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Coordonateur",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Planning Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

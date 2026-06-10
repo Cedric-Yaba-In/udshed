@@ -1,0 +1,169 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-04-11 06:46:47.537518",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "choix_du_de_la_candidate_candidate_selection_section",
+  "column_break_etdp",
+  "filiere",
+  "niveau",
+  "column_break_nmqp",
+  "choix_de_formation",
+  "informations_personnellespersonal_informations_section",
+  "first_name",
+  "last_name",
+  "full_name",
+  "birthdate",
+  "birth_place",
+  "sexe",
+  "column_break_xyrz",
+  "phone",
+  "email",
+  "parent_phone",
+  "email_parent",
+  "diplome_acces_formation",
+  "diplome_formation"
+ ],
+ "fields": [
+  {
+   "fieldname": "choix_du_de_la_candidate_candidate_selection_section",
+   "fieldtype": "Section Break",
+   "label": "Choix du (de la) Candidate (candidate selection)"
+  },
+  {
+   "fieldname": "column_break_nmqp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_etdp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "filiere",
+   "fieldtype": "Link",
+   "label": "Fili\u00e9re",
+   "options": "Field of study"
+  },
+  {
+   "fieldname": "niveau",
+   "fieldtype": "Select",
+   "label": "Niveau",
+   "options": "BTS\nLICENCE 1\nLICENCE 2\nLICENCE 3\nMASTER 1\nMASTER 2"
+  },
+  {
+   "fieldname": "choix_de_formation",
+   "fieldtype": "Table",
+   "label": "Choix de formation",
+   "options": "ChildTable Choise Formation Inscription Candidat"
+  },
+  {
+   "fieldname": "informations_personnellespersonal_informations_section",
+   "fieldtype": "Section Break",
+   "label": "Informations personnelles/Personal informations"
+  },
+  {
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "label": "Nom(s) / First name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Pr\u00e9nom / Last name",
+   "reqd": 1
+  },
+  {
+   "default": "f\"{first_name} {last_name}\"",
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "label": "Nom Complet",
+   "read_only": 1
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Phone",
+   "label": "T\u00e9l\u00e9phone (WhatsApp) / Phone",
+   "reqd": 1
+  },
+  {
+   "fieldname": "birth_place",
+   "fieldtype": "Data",
+   "label": "N\u00e9e \u00e0",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_xyrz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sexe",
+   "fieldtype": "Select",
+   "label": "Sexe",
+   "options": "Homme\nFemme",
+   "reqd": 1
+  },
+  {
+   "fieldname": "email_parent",
+   "fieldtype": "Data",
+   "label": "Email Parent"
+  },
+  {
+   "fieldname": "birthdate",
+   "fieldtype": "Date",
+   "label": "Date de naissace / Birthdate",
+   "reqd": 1
+  },
+  {
+   "fieldname": "parent_phone",
+   "fieldtype": "Phone",
+   "label": "Contact Parent"
+  },
+  {
+   "fieldname": "diplome_acces_formation",
+   "fieldtype": "Section Break",
+   "label": "Dipl\u00f4me donnant acc\u00e8s \u00e0 la formation/Diploma giving access to training"
+  },
+  {
+   "fieldname": "diplome_formation",
+   "fieldtype": "Table",
+   "options": "Choise Formation Diplome Inscription Candidat"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-15 10:18:34.745151",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "Session Inscription Candidate",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

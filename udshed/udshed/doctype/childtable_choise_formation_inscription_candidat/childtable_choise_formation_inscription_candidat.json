@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-04-15 09:39:23.170747",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "choix",
+  "filiere",
+  "niveau"
+ ],
+ "fields": [
+  {
+   "fieldname": "choix",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Choix",
+   "options": "1er choix\n2nd Choix\n3ieme Choix",
+   "reqd": 1
+  },
+  {
+   "fieldname": "filiere",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Filiere",
+   "options": "Field of study",
+   "reqd": 1
+  },
+  {
+   "fieldname": "niveau",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Niveau",
+   "options": "Field of study Level",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-04-15 09:45:33.753048",
+ "modified_by": "Administrator",
+ "module": "Udshed",
+ "name": "ChildTable Choise Formation Inscription Candidat",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -33,7 +33,6 @@ frappe.pages['planning-academique'].on_page_load = function(wrapper) {
 		{
 			if(!filters.niveau || !filters.academic_year) return;
 			Udshed.PlanningQueries.getPlanningType(filters.niveau,currentWeekStart,filters.academic_year,(planning_type)=>{
-				console.log("Planning type for the week ",currentWeekStart," is ",planning_type)
 				if(planning_type=="Examen") {
 					page.set_indicator('Session d\'examen', 'orange')
 				} 
